@@ -1,3 +1,5 @@
+package com.CS2103.Model;
+
 import java.util.Date;
 
 class FloatingTask extends BaseClass {

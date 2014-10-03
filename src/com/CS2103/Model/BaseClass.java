@@ -1,3 +1,5 @@
+package com.CS2103.Model;
+
 import java.util.ArrayList;
 
 class BaseClass {

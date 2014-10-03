@@ -1,5 +1,6 @@
-import java.util.Date;
+package com.CS2103.Model;
 
+import java.util.Date;
 
 class TimedTask extends BaseClass {
 	public static Date insertStartDate(Date calendar) {
