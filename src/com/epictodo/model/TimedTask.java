@@ -2,7 +2,7 @@ package com.epictodo.model;
 
 import java.util.Date;
 
-class TimedTask extends BaseClass {
+class TimedTask extends Task {
 	public static Date insertStartDate(Date calendar) {
 		Date result = new Date();
 		return result;
