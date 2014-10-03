@@ -2,7 +2,7 @@ package com.epictodo.model;
 
 import java.util.ArrayList;
 
-class Task {
+public class Task {
 
 	/************** Data members **********************/
 	private static ArrayList<String> Tasks = new ArrayList<String>();
