@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.json;
 
+import com.epictodo.model.*;
 import java.io.*;
 import java.util.ArrayList;
 import com.google.gson.Gson;
@@ -44,5 +45,26 @@ public class Storage {
         Gson _gson = gson_builder.create();
 
         return _gson;
+    }
+
+    public static boolean saveToJson(String file_name, ArrayList<Task> array_list){
+        try {
+            FileWriter file_writer = new FileWriter(file_name);
+            Gson _gson = instantiateObject();
+            String json_result = _gson.toJson(array_list);
+
+            if (array_list.isEmpty()) {
+                file_writer.write("");
+            } else {
+                file_writer.write(json_result);
+            }
+
+            file_writer.close();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }
