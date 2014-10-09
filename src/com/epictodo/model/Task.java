@@ -13,12 +13,6 @@ class Task {
 	private boolean isDone = false;
 
 	/************** Constructors **********************/
-	Task() {
-		setTaskName("NIL");
-		setTaskDescription("NIL");
-		setPriority(0);
-		isDone = false;
-	}
 
 	Task(String taskName, String taskDescription, int priority,
 			boolean isDone) {
