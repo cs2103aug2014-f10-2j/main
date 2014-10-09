@@ -90,7 +90,7 @@ class Task {
 		return result;
 	}
 
-	static void main(String[] args) {
+	public static void main(String[] args) {
 		//Unix timestamp testing
 		long epoch = System.currentTimeMillis()/1000;
 		String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (epoch*1000));
