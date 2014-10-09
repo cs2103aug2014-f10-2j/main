@@ -31,14 +31,6 @@ public class Main {
 			Display(proceedInstruc(instruc));
 			
 		}
-		
-	    //menuDisplay();
-	    //sc.nextLine();
-	    //otherMenuDisplay();
-	    //sc.nextLine();
-	    //helpmenu();
-	    
-	    
 	}
 	
 	public static void helpmenu(){
@@ -198,7 +190,7 @@ public class Main {
 					// call add
 				}
 				else{
-					taskDuration = getTaskDurationThroughInstruction(s);
+					double taskDuration = getTaskDurationThroughInstruction(s);
 					//new timed task eric
 					//TimedlineTask (taskName, taskDate, taskTime, taskDuration, taskDesc); 
 					// call add
@@ -212,11 +204,11 @@ public class Main {
 		return null;
 	}
 
-	private static String getTaskDurationThroughInstruction(Scanner s2) {
+	private static double getTaskDurationThroughInstruction(Scanner s2) {
 		while(s.hasNext()){
-			return s.next();
+			return s.nextDouble();
 		}
-		return null;
+		return -1;
 	}
 	
 	private static String getTaskTimeThroughInstruction(Scanner s2) {
