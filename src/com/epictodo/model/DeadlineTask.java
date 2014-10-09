@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
-class DeadlineTask{
+class DeadlineTask extends Task {
 	/************** Data members **********************/
 	private static ArrayList<String> Tasks = new ArrayList<String>();
 	private String taskName;

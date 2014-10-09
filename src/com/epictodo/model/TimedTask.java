@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
-class TimedTask{
+class TimedTask extends BaseClass {
 	/************** Data members **********************/
 	private static ArrayList<String> Tasks = new ArrayList<String>();
 	private String taskName;

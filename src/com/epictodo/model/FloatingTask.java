@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
-class FloatingTask{
+class FloatingTask extends BaseClass {
 	/************** Data members **********************/
 	private static ArrayList<String> Tasks = new ArrayList<String>();
 	private String taskName;
