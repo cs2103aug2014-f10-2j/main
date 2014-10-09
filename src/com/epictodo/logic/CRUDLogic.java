@@ -1,6 +1,8 @@
 package com.epictodo.logic;
 
+import com.epictodo.controller.json.TokenParser;
 import com.epictodo.model.*;
+
 import java.util.ArrayList;
 
 /**
@@ -15,13 +17,13 @@ public class CRUDLogic {
 	/*
 	 * Private Attributes
 	 */
-	private ArrayList<Task> items;
+	private ArrayList<Object> items;
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		items = new ArrayList<Task>();
+		items = new ArrayList<Object>();
 	}
 
 	/*
@@ -32,7 +34,7 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing all the tasks
 	 */
-	public ArrayList<Task> getAllTasks() {
+	public ArrayList<Object> getAllTasks() {
 		/*
 		 * CODE HERE
 		 */
@@ -44,37 +46,101 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing selected tasks
 	 */
-	public ArrayList<Task> getTasksByStatus(boolean done) {
+	public ArrayList<Object> getTasksByStatus(boolean done) {
 		/*
 		 * CODE HERE
 		 */
 		return null;
 	}
-	
+
 	/**
 	 * This method returns a list of tasks based on the priority set
-	 * @param p the priority enum
+	 * 
+	 * @param p
+	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
 	 */
-	public ArrayList<Task> getTasksByPriority(){
+	public ArrayList<Object> getTasksByPriority() {
 		/*
 		 * CODE HERE
 		 */
 		return null;
 	}
-	
+
 	/*
 	 * Other CRUD Methods
 	 */
-	
+
 	/**
-	 * this method allows the user to add a task
+	 * This method adds an Floating Task to the list
+	 * 
+	 * @param ft
+	 *            the FloatingTask obj
+	 * @return The result in a String
 	 */
-	public void addTask(){
-		
+	public String createTask(FloatingTask ft) {
+		items.add(ft);
+		return "floating task added";
 	}
-	
+
+	/**
+	 * This method adds an Deadline Task to the list
+	 * 
+	 * @param dt
+	 *            the DeadlineTask obj
+	 * @return The result in a String
+	 */
+	public String createTask(DeadlineTask dt) {
+		items.add(dt);
+		return "deadline task added";
+	}
+
+	/**
+	 * This method adds an Floating Task to the list
+	 * 
+	 * @param tt
+	 *            the TimedTask obj
+	 * @return The result in a String
+	 */
+	public String createTask(TimedTask tt) {
+		items.add(tt);
+		return "timed task added";
+	}
+
+	/**
+	 * This method removes a
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public String deleteTask(Task t) {
+		if (this.items.remove(t)) {
+			return "task removed";
+		} else {
+			return "can't remove task";
+		}
+	}
+
 	/*
 	 * Other Methods
 	 */
+
+	/*
+	 * Storage handlers
+	 */
+
+	/**
+	 * This method loads all tasks from the text file
+	 */
+	public String loadFromFile() {
+		items = TokenParser.jsonObjectHandler();
+		return "data loaded";
+	}
+
+	/**
+	 * This method saves all tasks to the text file
+	 */
+	public void saveToFile() {
+		// Code here
+	}
 }
