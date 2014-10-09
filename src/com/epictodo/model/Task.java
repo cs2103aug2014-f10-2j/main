@@ -14,7 +14,7 @@ public class Task {
 
 	/************** Constructors **********************/
 
-	Task(String taskName, String taskDescription, int priority,
+	public Task(String taskName, String taskDescription, int priority,
 			boolean isDone) {
 		setTaskName(taskName);
 		setTaskDescription(taskDescription);
@@ -23,36 +23,36 @@ public class Task {
 	}
 
 	/**************** Accessors ***********************/
-	String getTaskName() {
+	public String getTaskName() {
 		return taskName;
 	}
 
-	String getTaskDescription() {
+	public String getTaskDescription() {
 		return taskDescription;
 	}
 
-	int getPriority() {
+	public int getPriority() {
 		return priority;
 	}
 
-	boolean getIsDone() {
+	public boolean getIsDone() {
 		return isDone;
 	}
 
 	/**************** Mutators ************************/
-	void setTaskName(String newTask) {
+	public void setTaskName(String newTask) {
 		taskName = newTask;
 	}
 
-	void setTaskDescription(String newTaskDescription) {
+	public void setTaskDescription(String newTaskDescription) {
 		taskDescription = newTaskDescription;
 	}
 
-	void setPriority(int newPriority) {
+	public void setPriority(int newPriority) {
 		priority = newPriority;
 	}
 
-	void setIsDone(boolean status) {
+	public void setIsDone(boolean status) {
 		isDone = status;
 	}
 }
