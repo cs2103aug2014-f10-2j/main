@@ -1,11 +1,12 @@
 package com.epictodo.model;
 
-import java.util.ArrayList;
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.*;
 
 class Task {
 
 	/************** Data members **********************/
-	private static ArrayList<String> Tasks = new ArrayList<String>();
 	private String taskName;
 	private String taskDescription;
 	private int priority = 0;
@@ -59,41 +60,5 @@ class Task {
 
 	void setIsDone(boolean status) {
 		isDone = status;
-	}
-
-	/**************** Class Methods ************************/
-	static String addTask(String str) {
-		String result = " ";
-		Tasks.add(str);
-		return result;
-	}
-
-	static String display() {
-		String result = " ";
-		return result;
-	}
-
-	static String deleteTask(String str) {
-		String result = " ";
-		Tasks.remove(str);
-		return result;
-	}
-
-	static String searchTask(String str) {
-		String result = " ";
-		return result;
-	}
-
-	// This method allows user to update priority in task in the ArrayList
-	static int updatePriority(int priority) {
-		int result = 0;
-		return result;
-	}
-
-	public static void main(String[] args) {
-		//Unix timestamp testing
-		long epoch = System.currentTimeMillis()/1000;
-		String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (epoch*1000));
-		System.out.println(date);
 	}
 }
