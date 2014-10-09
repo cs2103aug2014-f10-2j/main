@@ -1,13 +1,29 @@
-package com.epictodo;
-
 import java.util.Scanner;
 
+import main.CommandType;
 
-public class Main {
+
+
+public class main {
+	// COMMAND INPUT
+	private final static String COMMAND_EXIT = "exit";
+	private final static String COMMAND_ADD = "add";
+	private final static String COMMAND_DELETE = "delete";
+	private final static String COMMAND_SEARCH = "search";
+	private final static String COMMAND_CLEAR = "clear";
+	private final static String COMMAND_DISPLAY = "display";
+	
+	
 	static Scanner sc = new Scanner(System.in);
+	
 	public static void main(String[] args) {
-
-		//bannerDisplay();
+		bannerDisplay();
+		while(true){
+			String instruc = sc.nextLine();
+			Display(proceedInstruc(instruc));
+			
+		}
+		
 	    //menuDisplay();
 	    //sc.nextLine();
 	    //otherMenuDisplay();
@@ -113,6 +129,74 @@ public class Main {
 	public static void Display(String a){
 		System.out.print(a);
 	}
+	
+	/*
+	 * This part is for LanguageProcessor
+	 * 
+	 */
+	private static String proceedInstruc(String instruc) {
+		CommandType command = defineCommandType(instruc);
+		instruc = removeCommand(instruc);
+		switch(command){
+		case DISPLAY:
+			
+		case ADD:
+			
+		case DELETE:
+			
+		case CLEAR:
+
+		case SEARCH:
+		
+		case EXIT:
+			System.exit(0);
+			break;
+		case INVALID:
+		}
+		
+		
+		return null;
+	}
+
+	private static String removeCommand(String instruc) {
+		return instruc.replace(getCommand(instruc), "").trim();
+	}
+	
+	private static CommandType defineCommandType(String instruc){
+		String command = getCommand(instruc);
+		if (compareString(command,""))
+			return CommandType.NULL;
+		else if (compareString(command,COMMAND_ADD))
+			return CommandType.ADD;
+		else if (compareString(command,COMMAND_DELETE))
+			return CommandType.DELETE;
+		else if (compareString(command,COMMAND_CLEAR))
+			return CommandType.CLEAR;
+		else if (compareString(command,COMMAND_SEARCH))
+			return CommandType.SEARCH;
+		else if (compareString(command,COMMAND_EXIT))
+			return CommandType.EXIT;	
+		else if (compareString(command,COMMAND_DISPLAY))
+			return CommandType.DISPLAY;
+		else 
+			return CommandType.INVALID;
+	}
+	
+	private static String getCommand(String instruc) {
+		String commandTypeString = instruc.trim().split("\\s+")[0];
+		return commandTypeString;
+	}
+
+	private static boolean compareString(String text, String text2){
+		return (text.equalsIgnoreCase(text2));
+	}
+
+	enum CommandType{
+		DISPLAY, ADD, DELETE, CLEAR, SEARCH, EXIT, INVALID, NULL
+	};
+	
+	
+	
 	
 	
 }
