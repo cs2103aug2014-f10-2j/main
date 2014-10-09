@@ -1,26 +1,20 @@
-//package com.epictodo.model;
+package com.epictodo.model;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
-class TimedTask extends BaseClass {
+class TimedTask {
 	/************** Data members **********************/
-	private static ArrayList<String> Tasks = new ArrayList<String>();
 	private String taskName;
 	private String taskDescription;
-	private String date;
-	private String time;
-	private double duration;
-	private String dateTime;
-	private long unixTimeStamp;
+	private long startDateTime;
+	private long endDateTime;
 
 	/************** Constructors 
 	 * @throws ParseException **********************/
 	TimedTask() throws ParseException {
 		setTaskName("NIL");
-		setDate("010170");
-		setTime("23:59");
 		setDuration(1.5);
 		setTaskDescription("NIL");
 		setDateTime("010170", "23:59");
@@ -28,36 +22,32 @@ class TimedTask extends BaseClass {
 
 	TimedTask(String taskName, String ddmmyy, String time, double duration, String desc) throws ParseException {
 		setTaskName(taskName);
-		setDate(ddmmyy);
-		setTime(time);
+		setDateTime(ddmmyy, time);
 		setDuration(duration);
 		setTaskDescription(taskDescription);
-		setDateTime(ddmmyy, time);
+
 	}
 	
+
+
 	/**************** Accessors ***********************/
 	String getTaskName() {
 		return taskName;
 	}
+
 	
-	String getDate() {
-		return date;
-	}
-	
-	String getTime() {
-		return time;
-	}
-	
-	double getDuration() {
-		return duration;
-	}
 
 	String getTaskDescription() {
 		return taskDescription;
 	}
 	//This method converts the stored unixTimeStamp into "ddMMyy HH:mm"
 	String getDateTime() {
-		dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date (unixTimeStamp*1000));
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date (startDateTime*1000));
+		return dateTime;
+	}
+	
+	String getendDateTime() {
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date (endDateTime*1000));
 		return dateTime;
 	}
 
@@ -66,17 +56,12 @@ class TimedTask extends BaseClass {
 		taskName = newTask;
 	}
 	
-	void setDate(String newDate) {
-		date = newDate;
+	private void setDuration(double duration) {
+		// TODO Auto-generated method stub
+		long temp = (long) (startDateTime + (duration*60*60));
+		endDateTime = temp;
 	}
 	
-	void setTime(String newTime) {
-		time = newTime;
-	}
-	
-	void setDuration(double newDuration) {
-		duration = newDuration;
-	}
 
 	void setTaskDescription(String newTaskDescription) {
 		taskDescription = newTaskDescription;
@@ -86,7 +71,7 @@ class TimedTask extends BaseClass {
 		String dateTimeTemp = date + " " + time;
 		//long epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse("01/01/1970 01:00:00").getTime() / 1000;
 		long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
-		unixTimeStamp = epoch;
+		startDateTime = epoch;
 	}
 	
 	
