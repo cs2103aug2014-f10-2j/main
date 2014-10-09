@@ -28,6 +28,7 @@ import com.epictodo.model.*;
 import java.io.*;
 import java.util.ArrayList;
 import com.google.gson.Gson;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,7 +41,9 @@ public class Storage {
 	 */
     private static Gson instantiateObject() {
         GsonBuilder gson_builder = new GsonBuilder();
-        gson_builder.setPrettyPrinting();
+        gson_builder.setPrettyPrinting()
+                    .serializeNulls()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
         Gson _gson = gson_builder.create();
 
