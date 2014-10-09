@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.util.*;
 
-class Task {
+public class Task {
 
 	/************** Data members **********************/
 	private String taskName;
