@@ -2,7 +2,7 @@ package com.epictodo.model;
 
 import java.util.ArrayList;
 
-public class Task {
+class Task {
 
 	/************** Data members **********************/
 	private static ArrayList<String> Tasks = new ArrayList<String>();
@@ -12,14 +12,14 @@ public class Task {
 	private boolean isDone = false;
 
 	/************** Constructors **********************/
-	public Task() {
+	Task() {
 		setTaskName("NIL");
 		setTaskDescription("NIL");
 		setPriority(0);
 		isDone = false;
 	}
 
-	public Task(String taskName, String taskDescription, int priority,
+	Task(String taskName, String taskDescription, int priority,
 			boolean isDone) {
 		setTaskName(taskName);
 		setTaskDescription(taskDescription);
@@ -28,69 +28,69 @@ public class Task {
 	}
 
 	/**************** Accessors ***********************/
-	public String getTaskName() {
+	String getTaskName() {
 		return taskName;
 	}
 
-	public String getTaskDescription() {
+	String getTaskDescription() {
 		return taskDescription;
 	}
 
-	public int getPriority() {
+	int getPriority() {
 		return priority;
 	}
 
-	public boolean getIsDone() {
+	boolean getIsDone() {
 		return isDone;
 	}
 
 	/**************** Mutators ************************/
-	public void setTaskName(String newTask) {
+	void setTaskName(String newTask) {
 		taskName = newTask;
 	}
 
-	public void setTaskDescription(String newTaskDescription) {
+	void setTaskDescription(String newTaskDescription) {
 		taskDescription = newTaskDescription;
 	}
 
-	public void setPriority(int newPriority) {
+	void setPriority(int newPriority) {
 		priority = newPriority;
 	}
 
-	public void setIsDone(boolean status) {
+	void setIsDone(boolean status) {
 		isDone = status;
 	}
 
 	/**************** Class Methods ************************/
-	public static String addTask(String str) {
+	static String addTask(String str) {
 		String result = " ";
 		Tasks.add(str);
 		return result;
 	}
 
-	public static String display() {
+	static String display() {
 		String result = " ";
 		return result;
 	}
 
-	public static String deleteTask(String str) {
+	static String deleteTask(String str) {
 		String result = " ";
 		Tasks.remove(str);
 		return result;
 	}
 
-	public static String searchTask(String str) {
+	static String searchTask(String str) {
 		String result = " ";
 		return result;
 	}
 
 	// This method allows user to update priority in task in the ArrayList
-	public static int updatePriority(int priority) {
+	static int updatePriority(int priority) {
 		int result = 0;
 		return result;
 	}
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		//Unix timestamp testing
 		long epoch = System.currentTimeMillis()/1000;
 		String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (epoch*1000));
