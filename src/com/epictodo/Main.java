@@ -185,28 +185,39 @@ public class Main {
 		String taskName = "";
 		String taskDate = "";
 		String taskTime = "";
-		String taskEndTime ="";
 		String next= "";
+		String taskDesc="";
 			taskName = getTaskNameThroughInstruction(s);
 			taskDate = getTaskDateThroughInstruction(s);
+			
 			if (taskDate!=null){
 				taskTime = getTaskTimeThroughInstruction(s);
 				if(taskTime==null){
 					//new deadline Task eric
+					// DeadlineTask (taskName, taskDate, taskTime, taskDesc); 
 					// call add
 				}
 				else{
+					taskDuration = getTaskDurationThroughInstruction(s);
 					//new timed task eric
+					//TimedlineTask (taskName, taskDate, taskTime, taskDuration, taskDesc); 
 					// call add
 				}
 			}
 			else{
 				//new floating task eric
+				//FloatingTask(taskName, taskDesc)
 				// call add
 			}
 		return null;
 	}
 
+	private static String getTaskDurationThroughInstruction(Scanner s2) {
+		while(s.hasNext()){
+			return s.next();
+		}
+		return null;
+	}
 	
 	private static String getTaskTimeThroughInstruction(Scanner s2) {
 		while(s.hasNext()){
@@ -254,16 +265,19 @@ public class Main {
 		    	Display("Enter Task Duration in hours(Optional)");
 		    	String durationTemp = sc.nextLine();
 		    	if (!durationTemp.equals("")){
-		    		
+		    		double duration = Double.valueOf(durationTemp);
 		    	// new timedTask eric
+		    	// TimedTask tt = new TimedTask (name, date, time, duration ,desc);
 		    	// call add
 		    	}else{
 		    		// new deadlineTask eric
+		    		// DeadlineTask (name, date, time, desc);
 		    		// call add
 		    	}
 		    }
 	    }else{
 	    	// new floatingTask eric
+	    	//FloatingTask (name, desc);
 	    	// call add
 	    }
 	    result = name+" is scheduled in the list!";
