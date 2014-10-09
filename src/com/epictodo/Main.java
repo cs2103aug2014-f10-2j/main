@@ -1,4 +1,5 @@
-package com.epictodo
+package com.epictodo;
+
 import java.util.Date;
 import java.util.Scanner;
 
