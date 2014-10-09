@@ -1,10 +1,10 @@
+package com.epictodo
+import java.util.Date;
 import java.util.Scanner;
 
-import main.CommandType;
 
 
-
-public class main {
+public class Main {
 	// COMMAND INPUT
 	private final static String COMMAND_EXIT = "exit";
 	private final static String COMMAND_ADD = "add";
@@ -12,6 +12,13 @@ public class main {
 	private final static String COMMAND_SEARCH = "search";
 	private final static String COMMAND_CLEAR = "clear";
 	private final static String COMMAND_DISPLAY = "display";
+	private final static String OPTION_ADD = "1";
+	private final static String OPTION_FIND = "2";
+	private final static String OPTION_DISPLAY= "3";
+	private final static String OPTION_UNDO = "4";
+	private final static String OPTION_OTHERS = "5";
+	private final static String OPTION_EXIT = "6";
+
 	
 	
 	static Scanner sc = new Scanner(System.in);
@@ -19,6 +26,7 @@ public class main {
 	public static void main(String[] args) {
 		bannerDisplay();
 		while(true){
+			menuDisplay();
 			String instruc = sc.nextLine();
 			Display(proceedInstruc(instruc));
 			
@@ -112,15 +120,16 @@ public class main {
 		" |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n"+
 		"/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n"+
 		"        \\/|__|           \\/                      \\/       \n"+
-		"\n");
+		"");
 	}
 	
 	public static void menuDisplay(){
-		DisplayLine("1. Add");
+		DisplayLine("\n1. Add");
 		DisplayLine("2. Find/Update/Delete");
-		DisplayLine("3. Undo");
-		DisplayLine("4. Others");
-		DisplayLine("5. Exit");
+		DisplayLine("3. Display");
+		DisplayLine("4. Undo");
+		DisplayLine("5. Others");
+		DisplayLine("6. Exit");
 		System.out.print("Insert Your option or command: ");
 	}
 	public static void DisplayLine(String a){
@@ -134,6 +143,7 @@ public class main {
 	 * This part is for LanguageProcessor
 	 * 
 	 */
+	static Scanner s = new Scanner(System.in);
 	private static String proceedInstruc(String instruc) {
 		CommandType command = defineCommandType(instruc);
 		instruc = removeCommand(instruc);
@@ -141,6 +151,7 @@ public class main {
 		case DISPLAY:
 			
 		case ADD:
+			Task t = createTask(instruc);
 			
 		case DELETE:
 			
@@ -152,10 +163,111 @@ public class main {
 			System.exit(0);
 			break;
 		case INVALID:
+			break;
+		case O_ADD:
+			return addGuide();
+		case O_FIND:
+			break;
+			
+		case O_UNDO:
+			break;
+			
+		case O_OTHERS:
+			break;
 		}
 		
 		
 		return null;
+	}
+
+	private static Task createTask(String instruc) {
+		Scanner s = new Scanner(instruc);
+		String taskName = "";
+		String taskDate = "";
+		String taskTime = "";
+		String taskEndTime ="";
+		String next= "";
+			taskName = getTaskNameThroughInstruction(s);
+			taskDate = getTaskDateThroughInstruction(s);
+			if (taskDate!=null){
+				taskTime = getTaskTimeThroughInstruction(s);
+				if(taskTime==null){
+					//new deadline Task eric
+					// call add
+				}
+				else{
+					//new timed task eric
+					// call add
+				}
+			}
+			else{
+				//new floating task eric
+				// call add
+			}
+		return null;
+	}
+
+	
+	private static String getTaskTimeThroughInstruction(Scanner s2) {
+		while(s.hasNext()){
+			return s.next();
+		}
+		return null;
+	}
+
+	private static String getTaskDateThroughInstruction(Scanner s2) {
+		// exception to be added next time
+		while(s.hasNext()){
+			return s.next();
+		}
+		return null;
+	}
+
+	private static String getTaskNameThroughInstruction(Scanner s) {
+		//exception to be added next time
+		String taskName = "";
+		while (s.hasNext()){
+			String next = sc.next();
+			if (next.equals ("@"))
+				return taskName;
+			else
+				taskName += next;
+		}
+		return null;
+	}
+
+	private static String addGuide() {
+		// TODO Auto-generated method stub
+		s = new Scanner(System.in);
+		String result ="";
+	    Display("Enter Task Name: ");
+	    String name = s.nextLine();
+	    Display("Enter Discription: ");
+	    String desc = s.nextLine();
+	    Display("Enter Task Date (DDMMYY): ");
+	    String date = s.nextLine();
+	    
+	    if (!date.equals("")){
+	    	Display("Enter Task Time(Optional): ");
+		   	String time = s.nextLine();
+		    if (!time.equals("")){
+		    	Display("Enter Task Duration in hours(Optional)");
+		    	String durationTemp = sc.nextLine();
+		    	if (!durationTemp.equals("")){
+		    		
+		    	// new timedTask eric
+		    	// call add
+		    	}else{
+		    		// new deadlineTask eric
+		    		// call add
+		    	}
+		    }
+	    }else{
+	    	// new floatingTask eric
+	    	// call add
+	    }
+	    result = name+" is scheduled in the list!";
+		return result;
 	}
 
 	private static String removeCommand(String instruc) {
@@ -178,7 +290,19 @@ public class main {
 			return CommandType.EXIT;	
 		else if (compareString(command,COMMAND_DISPLAY))
 			return CommandType.DISPLAY;
-		else 
+		else if (compareString(command,OPTION_ADD))
+			return CommandType.O_ADD;
+		else if (compareString(command,OPTION_FIND))
+			return CommandType.O_FIND;
+		else if (compareString(command,OPTION_UNDO))
+			return CommandType.O_UNDO;
+		else if (compareString(command,OPTION_OTHERS))
+			return CommandType.O_OTHERS;
+		else if (compareString(command,OPTION_EXIT))
+			return CommandType.EXIT;	
+		else if (compareString(command,COMMAND_DISPLAY))
+			return CommandType.O_DISPLAY;
+		else
 			return CommandType.INVALID;
 	}
 	
@@ -192,7 +316,8 @@ public class main {
 	}
 
 	enum CommandType{
-		DISPLAY, ADD, DELETE, CLEAR, SEARCH, EXIT, INVALID, NULL
+		DISPLAY, ADD, DELETE, CLEAR, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND, 
+		O_DISPLAY, O_UNDO, O_OTHERS
 	};
 	
 	
