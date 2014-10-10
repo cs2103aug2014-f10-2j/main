@@ -148,7 +148,7 @@ public class Main {
 		instruc = removeCommand(instruc);
 		switch(command){
 		case DISPLAY:
-			
+			//do this
 		case ADD:
 			return createTask(instruc);
 			
