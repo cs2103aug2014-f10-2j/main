@@ -31,6 +31,8 @@ public class Main {
 	static Scanner sc = new Scanner(System.in);
 	static CRUDLogic logic = new CRUDLogic();
 	public static void main(String[] args) {
+
+		
 		bannerDisplay();
 		while(true){
 			menuDisplay();
@@ -152,8 +154,9 @@ public class Main {
 			return logic.displayAllTaskList();
 			
 		case ADD:
-			return createTask(instruc);
-			
+			String result =  createTask(instruc);
+			logic.saveToFile();
+			return result;
 		case DELETE:
 			
 		case CLEAR:
@@ -166,7 +169,9 @@ public class Main {
 		case INVALID:
 			break;
 		case O_ADD:
-			return addGuide();
+			result =  addGuide();
+			logic.saveToFile();
+			return result;
 		case O_FIND:
 			break;
 			

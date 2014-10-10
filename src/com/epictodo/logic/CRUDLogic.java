@@ -185,7 +185,7 @@ public class CRUDLogic {
 //		JsonReader _reader = new JsonReader(new StringReader(json));
 //		TokenParser.jsonObjectHandler(_reader);
 		ArrayList<Task> tasks = new ArrayList<Task>();
-		Storage.loadDbFile("storage.txt");
+		tasks = Storage.loadDbFile("storage.txt");
 		return "data loaded";
 	}
 
