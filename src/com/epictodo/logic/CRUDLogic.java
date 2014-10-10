@@ -17,11 +17,13 @@ import java.util.ArrayList;
  *
  */
 public class CRUDLogic {
+
 	/*
 	 * Constants
 	 */
 	private static final String STRING_LINE_BREAK = "\r\n";
-	
+	private static final String PATH_DATA_FILE = "storage.txt";
+
 	/*
 	 * Private Attributes
 	 */
@@ -54,13 +56,14 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksByName(String keyword) {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getTaskName().toLowerCase().contains(keyword.trim().toLowerCase())) {
+			if (items.get(i).getTaskName().toLowerCase()
+					.contains(keyword.trim().toLowerCase())) {
 				list.add(items.get(i));
 			}
 		}
 		return list;
 	}
-	
+
 	/**
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
@@ -160,16 +163,39 @@ public class CRUDLogic {
 	}
 
 	/**
-	 * This method returns a string that represent all the tasks in the list
+	 * This method returns a string that represent all the tasks in the task
+	 * list in RAM
+	 * 
 	 * @return
 	 */
 	public String displayAllTaskList() {
+		return displayList(items);
+	}
+
+	/**
+	 * This method returns a string that represent all the tasks in a list
+	 * 
+	 * @param li
+	 * @return
+	 */
+	public String displayList(ArrayList<Task> li) {
 		String retStr = "";
 		for (int i = 0; i < size(); i++) {
-			retStr += String.valueOf(i + 1) + ". " + items.get(i)
+			retStr += String.valueOf(i + 1) + ". " + li.get(i)
 					+ STRING_LINE_BREAK;
 		}
 		return retStr;
+	}
+
+	/**
+	 * This method displays the content of all the tasks that matches the
+	 * keyword in names
+	 * 
+	 * @param keyword
+	 * @return
+	 */
+	public String searchForTasks(String keyword) {
+		return displayList(getTasksByName(keyword));
 	}
 
 	/*
@@ -180,12 +206,8 @@ public class CRUDLogic {
 	 * This method loads all tasks from the text file
 	 */
 	public String loadFromFile() throws IOException {
-		// items = TokenParser.jsonObjectHandler();
-//		String json = "{\"key\" : \"value\"}";
-//		JsonReader _reader = new JsonReader(new StringReader(json));
-//		TokenParser.jsonObjectHandler(_reader);
 		ArrayList<Task> tasks = new ArrayList<Task>();
-		tasks = Storage.loadDbFile("storage.txt");
+		tasks = Storage.loadDbFile(PATH_DATA_FILE);
 		return "data loaded";
 	}
 
@@ -193,9 +215,8 @@ public class CRUDLogic {
 	 * This method saves all tasks to the text file
 	 */
 	public void saveToFile() {
-		String file_name = "storage.txt";
-		Storage _s = new Storage();
-		_s.saveToJson(file_name, items);
-		// Code here
+		String filename = PATH_DATA_FILE;
+		Storage s = new Storage();
+		s.saveToJson(filename, items);
 	}
 }
