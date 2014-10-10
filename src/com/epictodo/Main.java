@@ -3,6 +3,7 @@ package com.epictodo;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
@@ -28,7 +29,7 @@ public class Main {
 	
 	
 	static Scanner sc = new Scanner(System.in);
-	
+	static CRUDLogic logic = new CRUDLogic();
 	public static void main(String[] args) {
 		bannerDisplay();
 		while(true){
@@ -149,7 +150,7 @@ public class Main {
 		case DISPLAY:
 			
 		case ADD:
-			Task t = createTask(instruc);
+			return createTask(instruc);
 			
 		case DELETE:
 			
@@ -178,7 +179,7 @@ public class Main {
 		return null;
 	}
 
-	private static Task createTask(String instruc) {
+	private static String createTask(String instruc) {
 		Scanner s = new Scanner(instruc);
 		String taskName = "";
 		String taskDate = "";
@@ -194,20 +195,22 @@ public class Main {
 					//new deadline Task eric
 					DeadlineTask dlt = new DeadlineTask (taskName, taskDesc, 2, taskDate, taskTime); 
 					// call add
+					return logic.createTask(dlt);
 				}
 				else{
 					double taskDuration = getTaskDurationThroughInstruction(s);
 					//new timed task eric
 					TimedTask tt = new TimedTask (taskName,taskDesc,2, taskDate, taskTime, taskDuration); 
 					// call add
+					return logic.createTask(tt);
 				}
 			}
 			else{
 				//new floating task eric
 				FloatingTask tf = new FloatingTask(taskName, taskDesc,2);
 				// call add
+				return logic.createTask(tf);
 			}
-		return null;
 	}
 
 	private static double getTaskDurationThroughInstruction(Scanner s2) {
@@ -217,26 +220,23 @@ public class Main {
 		return -1;
 	}
 	
-	private static String getTaskTimeThroughInstruction(Scanner s2) {
+	private static String getTaskTimeThroughInstruction(Scanner s) {
 		while(s.hasNext()){
 			return s.next();
 		}
 		return null;
 	}
 
-	private static String getTaskDateThroughInstruction(Scanner s2) {
+	private static String getTaskDateThroughInstruction(Scanner s) {
 		// exception to be added next time
-		while(s.hasNext()){
 			return s.next();
-		}
-		return null;
 	}
 
 	private static String getTaskNameThroughInstruction(Scanner s) {
 		//exception to be added next time
 		String taskName = "";
 		while (s.hasNext()){
-			String next = sc.next();
+			String next = s.next();
 			if (next.equals ("@"))
 				return taskName;
 			else
@@ -267,16 +267,19 @@ public class Main {
 		    	// new timedTask eric
 		    	 TimedTask tt = new TimedTask (name, desc, 2,  date, time, duration);
 		    	// call add
+		    	 logic.createTask(tt);
 		    	}else{
 		    		// new deadlineTask eric
 		    		DeadlineTask dlt =  new DeadlineTask (name, desc, 2, date, time);
 		    		// call add
+		    		logic.createTask(dlt);
 		    	}
 		    }
 	    }else{
 	    	// new floatingTask eric
 	    	FloatingTask ft = new FloatingTask (name, desc,2);
 	    	// call add
+	    	logic.createTask(ft);
 	    }
 	    result = name+" is scheduled in the list!";
 		return result;
