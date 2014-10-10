@@ -42,8 +42,8 @@ public class Storage {
     private static Gson instantiateObject() {
         GsonBuilder gson_builder = new GsonBuilder();
         gson_builder.setPrettyPrinting()
-                    .serializeNulls()
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+                    .serializeNulls();
+//                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
         Gson _gson = gson_builder.create();
 
