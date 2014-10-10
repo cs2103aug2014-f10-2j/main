@@ -14,14 +14,13 @@ public class Task {
 
 	/************** Constructors **********************/
 
-	public Task(String taskName, String taskDescription, int priority,
-			boolean isDone) {
+	public Task(String taskName, String taskDescription, int priority) {
 		setTaskName(taskName);
 		setTaskDescription(taskDescription);
 		setPriority(priority);
-		setIsDone(isDone);
+		setIsDone(false);
 	}
-
+	
 	/**************** Accessors ***********************/
 	public String getTaskName() {
 		return taskName;
