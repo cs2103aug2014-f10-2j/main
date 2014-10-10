@@ -18,6 +18,7 @@ public class DeadlineTask extends Task {
 	}
 	
 	/**************** Accessors ***********************/
+	// This method converts the unixTimeStamp to readable date time format
 	public String getEndDateTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date (endDateTime*1000));
 		return dateTime;
