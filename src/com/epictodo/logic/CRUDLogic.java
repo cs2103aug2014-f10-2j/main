@@ -101,6 +101,20 @@ public class CRUDLogic {
 	 */
 
 	/**
+	 * This method adds a Task to the list
+	 * 
+	 * @param t
+	 *            the Task obj
+	 * @return The result in a String
+	 */
+	public String createTask(Task t) {
+		items.add(t);
+		saveToFile();
+		return "task added";
+	}
+	
+	
+	/**
 	 * This method adds an Floating Task to the list
 	 * 
 	 * @param ft
