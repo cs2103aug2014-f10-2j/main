@@ -54,4 +54,9 @@ public class Task {
 	public void setIsDone(boolean status) {
 		isDone = status;
 	}
+	
+	/**************** Other methods ************************/
+	public String toString(){
+		return getTaskName();
+	}
 }
