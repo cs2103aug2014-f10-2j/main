@@ -316,7 +316,7 @@ public class Main {
 		else if (compareString(command,OPTION_EXIT))
 			return CommandType.EXIT;	
 		else if (compareString(command,COMMAND_DISPLAY))
-			return CommandType.O_DISPLAY;
+			return CommandType.DISPLAY;
 		else
 			return CommandType.INVALID;
 	}
