@@ -17,7 +17,11 @@ import java.util.ArrayList;
  *
  */
 public class CRUDLogic {
+	/*
+	 * Constants
+	 */
 	private static final String STRING_LINE_BREAK = "\r\n";
+	
 	/*
 	 * Private Attributes
 	 */
@@ -42,6 +46,21 @@ public class CRUDLogic {
 		return items;
 	}
 
+	/**
+	 * This method returns tasks based on whether it has been marked as done
+	 * 
+	 * @return the ArrayList containing selected tasks
+	 */
+	public ArrayList<Task> getTasksByName(String keyword) {
+		ArrayList<Task> list = new ArrayList<Task>();
+		for (int i = 0; i < size(); i++) {
+			if (items.get(i).getTaskName().toLowerCase().contains(keyword.trim().toLowerCase())) {
+				list.add(items.get(i));
+			}
+		}
+		return list;
+	}
+	
 	/**
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
@@ -134,16 +153,20 @@ public class CRUDLogic {
 	/**
 	 * This method returns the number of task obj in the list
 	 * 
-	 * @return
+	 * @return int the size of the list of tasks
 	 */
 	public int size() {
 		return items.size();
 	}
 
+	/**
+	 * This method returns a string that represent all the tasks in the list
+	 * @return
+	 */
 	public String displayAllTaskList() {
 		String retStr = "";
 		for (int i = 0; i < size(); i++) {
-			retStr = String.valueOf(i+1) + ". " + items.get(i)
+			retStr += String.valueOf(i + 1) + ". " + items.get(i)
 					+ STRING_LINE_BREAK;
 		}
 		return retStr;
@@ -158,9 +181,11 @@ public class CRUDLogic {
 	 */
 	public String loadFromFile() throws IOException {
 		// items = TokenParser.jsonObjectHandler();
-		String json = "{\"key\" : \"value\"}";
-		JsonReader _reader = new JsonReader(new StringReader(json));
-		TokenParser.jsonObjectHandler(_reader);
+//		String json = "{\"key\" : \"value\"}";
+//		JsonReader _reader = new JsonReader(new StringReader(json));
+//		TokenParser.jsonObjectHandler(_reader);
+		ArrayList<Task> tasks = new ArrayList<Task>();
+		Storage.loadDbFile("storage.data");
 		return "data loaded";
 	}
 
