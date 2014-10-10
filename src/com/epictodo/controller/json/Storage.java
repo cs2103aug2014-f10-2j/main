@@ -50,7 +50,7 @@ public class Storage {
         return _gson;
     }
 
-    public static boolean saveToJson(String file_name, ArrayList<Task> array_list){
+    public static boolean saveToJson(String file_name, ArrayList<Task> array_list) {
         try {
             FileWriter file_writer = new FileWriter(file_name);
             Gson _gson = instantiateObject();
@@ -69,5 +69,22 @@ public class Storage {
         }
 
         return true;
+    }
+
+    public static ArrayList<Task> loadDbFile(String file_name) {
+        ArrayList<Task> _result = new ArrayList<Task>();
+
+        try {
+            FileReader _reader = new FileReader(file_name);
+            Gson _gson = instantiateObject();
+            TypeToken<ArrayList<Task>> type_token = new TypeToken<ArrayList<Task>>(){};
+
+            _result = _gson.fromJson(_reader, type_token.getType());
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        return _result;
     }
 }
