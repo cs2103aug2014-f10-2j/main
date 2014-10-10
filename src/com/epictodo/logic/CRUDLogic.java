@@ -185,7 +185,7 @@ public class CRUDLogic {
 //		JsonReader _reader = new JsonReader(new StringReader(json));
 //		TokenParser.jsonObjectHandler(_reader);
 		ArrayList<Task> tasks = new ArrayList<Task>();
-		Storage.loadDbFile("storage.data");
+		Storage.loadDbFile("storage.txt");
 		return "data loaded";
 	}
 
@@ -193,6 +193,9 @@ public class CRUDLogic {
 	 * This method saves all tasks to the text file
 	 */
 	public void saveToFile() {
+		String file_name = "storage.txt";
+		Storage _s = new Storage();
+		_s.saveToJson(file_name, items);
 		// Code here
 	}
 }
