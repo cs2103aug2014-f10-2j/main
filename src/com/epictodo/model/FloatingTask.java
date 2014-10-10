@@ -4,8 +4,7 @@ public class FloatingTask extends Task {
 	/************** Data members **********************/
 
 	/************** Constructors **********************/
-	public FloatingTask(String taskName, String taskDescription, int priority,
-			boolean isDone) {
+	public FloatingTask(String taskName, String taskDescription, int priority) {
 		super(taskName, taskDescription, priority);
 	}
 	

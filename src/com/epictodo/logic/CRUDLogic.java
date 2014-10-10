@@ -17,13 +17,13 @@ public class CRUDLogic {
 	/*
 	 * Private Attributes
 	 */
-	private ArrayList<Object> items;
+	private ArrayList<Task> items;
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		items = new ArrayList<Object>();
+		items = new ArrayList<Task>();
 	}
 
 	/*
@@ -34,11 +34,8 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing all the tasks
 	 */
-	public ArrayList<Object> getAllTasks() {
-		/*
-		 * CODE HERE
-		 */
-		return null;
+	public ArrayList<Task> getAllTasks() {
+		return items;
 	}
 
 	/**
@@ -46,11 +43,14 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing selected tasks
 	 */
-	public ArrayList<Object> getTasksByStatus(boolean done) {
-		/*
-		 * CODE HERE
-		 */
-		return null;
+	public ArrayList<Task> getTasksByStatus(boolean done) {
+		ArrayList<Task> list = new ArrayList<Task>();
+		for (int i = 0; i < size(); i++) {
+			if (items.get(i).getIsDone() == done) {
+				list.add(items.get(i));
+			}
+		}
+		return list;
 	}
 
 	/**
@@ -60,11 +60,14 @@ public class CRUDLogic {
 	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
 	 */
-	public ArrayList<Object> getTasksByPriority() {
-		/*
-		 * CODE HERE
-		 */
-		return null;
+	public ArrayList<Task> getTasksByPriority(int p) {
+		ArrayList<Task> list = new ArrayList<Task>();
+		for (int i = 0; i < size(); i++) {
+			if (items.get(i).getPriority() == p) {
+				list.add(items.get(i));
+			}
+		}
+		return list;
 	}
 
 	/*
@@ -124,6 +127,14 @@ public class CRUDLogic {
 	/*
 	 * Other Methods
 	 */
+	/**
+	 * This method returns the number of task obj in the list
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return items.size();
+	}
 
 	/*
 	 * Storage handlers
