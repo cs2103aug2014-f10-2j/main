@@ -1,5 +1,8 @@
 package com.epictodo.engine;
 
+import java.awt.DisplayMode;
+import java.util.ArrayList;
+
 import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.Task;
 
@@ -8,9 +11,9 @@ public class WorkDistributor {
 	static CRUDLogic logic = new CRUDLogic();
 	private final static String COMMAND_EXIT = "exit";
 	private final static String COMMAND_ADD = "add";
+	private final static String COMMAND_UPDATE = "update";
 	private final static String COMMAND_DELETE = "delete";
 	private final static String COMMAND_SEARCH = "search";
-	private final static String COMMAND_CLEAR = "clear";
 	private final static String COMMAND_DISPLAY = "display";
 	private final static String OPTION_ADD = "1";
 	private final static String OPTION_FIND = "2";
@@ -20,7 +23,7 @@ public class WorkDistributor {
 	private final static String OPTION_EXIT = "6";
 	
 	enum CommandType{
-		DISPLAY, ADD, DELETE, CLEAR, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND, 
+		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND, 
 		O_DISPLAY, O_UNDO, O_OTHERS
 	};
 	
@@ -33,6 +36,7 @@ public class WorkDistributor {
 		//read instruction
 		instruc = removeCommand(instruc);
 		String result = "";
+		ArrayList<Task> list= null;
 		Task t = null;
 		switch(command){
 		case DISPLAY:
@@ -44,10 +48,14 @@ public class WorkDistributor {
 			return result;
 			
 		case DELETE:
-			return result;
-		case CLEAR:
+			list = logic.getTasksByName(instruc);
+			t = MenuWorker.selectDeleteMenu(list, logic.displayList(list));
+			//todo: delete task t in memory and storage return successful message in String
 			return result;
 		case SEARCH:
+			result = logic.searchForTasks(instruc);
+			t = MenuWorker.selectSearchMenu(list, logic.displayList(list));
+			//todo: display task in a properformat  return successful message in String
 			return result;
 		case EXIT:
 			System.exit(0);
@@ -81,8 +89,8 @@ public class WorkDistributor {
 			return CommandType.ADD;
 		else if (compareString(command,COMMAND_DELETE))
 			return CommandType.DELETE;
-		else if (compareString(command,COMMAND_CLEAR))
-			return CommandType.CLEAR;
+		else if (compareString(command,COMMAND_UPDATE))
+			return CommandType.UPDATE;
 		else if (compareString(command,COMMAND_SEARCH))
 			return CommandType.SEARCH;
 		else if (compareString(command,COMMAND_EXIT))

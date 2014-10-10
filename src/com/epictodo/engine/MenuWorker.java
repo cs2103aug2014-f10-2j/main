@@ -1,10 +1,16 @@
 package com.epictodo.engine;
 
+import java.util.ArrayList;
 import java.util.Scanner;
+
 import com.epictodo.model.Task;
 import com.epictodo.util.TaskBuilder;
 
 public class MenuWorker {
+	
+	private final static String MENU_SELECT_DELETE_OPTION ="Enter your option to be deleted (or 0 to menu): ";
+	private final static String MENU_SELECT_SEARCH_OPTION ="Enter your option for details (or 0 to menu): ";
+	
 	private static int _defaultPriority = 2;
 	private static String _defaultTime = "09:00";
 	static Scanner s = null;
@@ -43,7 +49,33 @@ public class MenuWorker {
 		    return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,_defaultTime);
 	}
 	
-	private static void Display(String a){
+	public static Task selectDeleteMenu(ArrayList<Task> list, String items){
+		s = new Scanner(System.in);
+		DisplayLine(items);
+		Display(MENU_SELECT_DELETE_OPTION);
+		int option = s.nextInt();
+		if (option== 0){
+			return null;
+		}
+		return list.get(option-1);
+	}
+	
+	public static Task selectSearchMenu(ArrayList<Task> list, String items){
+		s = new Scanner(System.in);
+		DisplayLine(items);
+		Display(MENU_SELECT_DELETE_OPTION);
+		int option = s.nextInt();
+		if (option== 0){
+			return null;
+		}
+		return list.get(option-1);
+	}
+	
+	public static void DisplayLine(String a){
+		System.out.println(a);
+	}
+	
+	public static void Display(String a){
 		System.out.print(a);
 	}
 }

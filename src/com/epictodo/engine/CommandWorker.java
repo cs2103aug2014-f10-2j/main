@@ -1,12 +1,10 @@
 package com.epictodo.engine;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import com.epictodo.model.DeadlineTask;
-import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
 import com.epictodo.util.TaskBuilder;
 
 public class CommandWorker {
@@ -44,7 +42,37 @@ public class CommandWorker {
 			return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime); 
 			
 	}
+	
+	public static Task updateTask(String instruc) {
+		Logger logger = Logger.getLogger("System Log");
+		Scanner s = new Scanner(instruc);
+		String taskName = getTaskNameThroughInstruction(s);
+		String taskDate = getTaskDateThroughInstruction(s);
+		String taskTime = getTaskTimeThroughInstruction(s);
+		double taskDuration = getTaskDurationThroughInstruction(s);
+		String taskDesc="";
 
+			if (taskName == null){
+				logger.info("invalid command!");
+				return null;
+			}
+			if (taskDate == null){
+				return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
+			}
+			if(taskTime==null){
+				//Deadline Task (default end time)
+				return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, _defaultTime); 
+			}
+			if(taskDuration != -1){
+				// Timed Task
+				return TaskBuilder.buildTask (taskName,taskDesc,_defaultPriority, taskDate, taskTime, taskDuration);
+			}
+				// Deadline Task
+			return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime); 
+			
+	}
+
+	
 	private static double getTaskDurationThroughInstruction(Scanner s) {
 		while(s.hasNext()){
 			return s.nextDouble();

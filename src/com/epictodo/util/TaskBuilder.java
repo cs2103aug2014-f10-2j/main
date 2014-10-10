@@ -22,10 +22,12 @@ public class TaskBuilder {
 		Task tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
 		return tt;
 	}
+	
 	public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time){
 		Task dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
 		return dt;
 	}
+	
 	public static Task buildTask(String taskName, String taskDescription, int priority){
 		Task ft = new FloatingTask(taskName, taskDescription, priority);
 		return ft;
