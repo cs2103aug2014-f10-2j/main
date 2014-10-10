@@ -1,8 +1,11 @@
 package com.epictodo.logic;
 
-import com.epictodo.controller.json.TokenParser;
+import com.epictodo.controller.json.*;
 import com.epictodo.model.*;
+import com.google.gson.stream.JsonReader;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +17,7 @@ import java.util.ArrayList;
  *
  */
 public class CRUDLogic {
+	private static final String STRING_LINE_BREAK = "\r\n";
 	/*
 	 * Private Attributes
 	 */
@@ -136,6 +140,15 @@ public class CRUDLogic {
 		return items.size();
 	}
 
+	public String displayAllTaskList() {
+		String retStr = "";
+		for (int i = 0; i < size(); i++) {
+			retStr = String.valueOf(i) + ". " + items.get(i)
+					+ STRING_LINE_BREAK;
+		}
+		return retStr;
+	}
+
 	/*
 	 * Storage handlers
 	 */
@@ -143,8 +156,11 @@ public class CRUDLogic {
 	/**
 	 * This method loads all tasks from the text file
 	 */
-	public String loadFromFile() {
-		items = TokenParser.jsonObjectHandler();
+	public String loadFromFile() throws IOException {
+		// items = TokenParser.jsonObjectHandler();
+		String json = "{\"key\" : \"value\"}";
+		JsonReader _reader = new JsonReader(new StringReader(json));
+		TokenParser.jsonObjectHandler(_reader);
 		return "data loaded";
 	}
 
