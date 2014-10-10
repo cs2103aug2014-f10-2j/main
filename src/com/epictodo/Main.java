@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 import com.epictodo.model.DeadlineTask;
+import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
 
@@ -191,19 +192,19 @@ public class Main {
 				taskTime = getTaskTimeThroughInstruction(s);
 				if(taskTime==null){
 					//new deadline Task eric
-					// DeadlineTask (taskName, taskDate, taskTime, taskDesc); 
+					DeadlineTask dlt = new DeadlineTask (taskName, taskDesc, 2, taskDate, taskTime); 
 					// call add
 				}
 				else{
 					double taskDuration = getTaskDurationThroughInstruction(s);
 					//new timed task eric
-					//TimedlineTask (taskName, taskDate, taskTime, taskDuration, taskDesc); 
+					TimedTask tt = new TimedTask (taskName,taskDesc,2, taskDate, taskTime, taskDuration); 
 					// call add
 				}
 			}
 			else{
 				//new floating task eric
-				//FloatingTask(taskName, taskDesc)
+				FloatingTask tf = new FloatingTask(taskName, taskDesc,2);
 				// call add
 			}
 		return null;
@@ -268,13 +269,13 @@ public class Main {
 		    	// call add
 		    	}else{
 		    		// new deadlineTask eric
-		    	//	DeadlineTask dlt =  DeadlineTask (name, desc, 2, date, time);
+		    		DeadlineTask dlt =  new DeadlineTask (name, desc, 2, date, time);
 		    		// call add
 		    	}
 		    }
 	    }else{
 	    	// new floatingTask eric
-	    	//FloatingTask (name, desc);
+	    	FloatingTask ft = new FloatingTask (name, desc,2);
 	    	// call add
 	    }
 	    result = name+" is scheduled in the list!";
