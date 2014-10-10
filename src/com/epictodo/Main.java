@@ -3,6 +3,10 @@ package com.epictodo;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.epictodo.model.DeadlineTask;
+import com.epictodo.model.Task;
+import com.epictodo.model.TimedTask;
+
 
 
 public class Main {
@@ -260,11 +264,11 @@ public class Main {
 		    	if (!durationTemp.equals("")){
 		    		double duration = Double.valueOf(durationTemp);
 		    	// new timedTask eric
-		    	// TimedTask tt = new TimedTask (name, date, time, duration ,desc);
+		    	 TimedTask tt = new TimedTask (name, desc, 2,  date, time, duration);
 		    	// call add
 		    	}else{
 		    		// new deadlineTask eric
-		    		// DeadlineTask (name, date, time, desc);
+		    	//	DeadlineTask dlt =  DeadlineTask (name, desc, 2, date, time);
 		    		// call add
 		    	}
 		    }
