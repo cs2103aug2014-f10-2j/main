@@ -9,8 +9,8 @@ public class Task {
 	/************** Data members **********************/
 	private String taskName;
 	private String taskDescription;
-	private int priority = 0;
-	private boolean isDone = false;
+	private int priority;
+	private boolean isDone;
 
 	/************** Constructors **********************/
 
