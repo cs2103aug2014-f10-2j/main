@@ -31,23 +31,4 @@ public class DeadlineTask extends Task {
 		long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
 		endDateTime = epoch;
 	}
-	
-/*	void setDateTime(String date, String time) throws ParseException {
-		String dateTimeTemp = date + " " + time;
-		long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
-		unixTimeStamp = epoch;
-	}
-*/	
-	
-/*	
-	public static Date insertStartDate(Date calendar) {
-		Date result = new Date();
-		return result;
-	}
-	
-	public static Date insertEndDate(Date calendar) {
-		Date result = new Date();
-		return result;
-	}
-	*/
 }
