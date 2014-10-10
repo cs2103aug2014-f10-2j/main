@@ -20,10 +20,13 @@ class TimedTask {
 		setDateTime("010170", "23:59");
 	}
 
-	TimedTask(String taskName, String ddmmyy, String time, double duration, String desc) throws ParseException {
+	TimedTask(String taskName, String ddmmyy, String time, double duration, String desc) {
 		setTaskName(taskName);
+		try{
 		setDateTime(ddmmyy, time);
 		setDuration(duration);
+		}
+		catch(Exception e){}
 		setTaskDescription(taskDescription);
 
 	}
