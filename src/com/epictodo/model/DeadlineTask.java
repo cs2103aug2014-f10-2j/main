@@ -31,4 +31,10 @@ public class DeadlineTask extends Task {
 		long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
 		endDateTime = epoch;
 	}
+	
+
+	/**************** Other methods ************************/
+	public String toString(){
+		return super.toString() + " by " + this.getEndDateTime();
+	}
 }
