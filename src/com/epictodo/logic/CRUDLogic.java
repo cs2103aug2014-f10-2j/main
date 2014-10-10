@@ -143,7 +143,7 @@ public class CRUDLogic {
 	public String displayAllTaskList() {
 		String retStr = "";
 		for (int i = 0; i < size(); i++) {
-			retStr = String.valueOf(i) + ". " + items.get(i)
+			retStr = String.valueOf(i+1) + ". " + items.get(i)
 					+ STRING_LINE_BREAK;
 		}
 		return retStr;

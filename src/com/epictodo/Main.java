@@ -149,6 +149,8 @@ public class Main {
 		switch(command){
 		case DISPLAY:
 			//do this
+			return logic.displayAllTaskList();
+			
 		case ADD:
 			return createTask(instruc);
 			
@@ -213,7 +215,7 @@ public class Main {
 			}
 	}
 
-	private static double getTaskDurationThroughInstruction(Scanner s2) {
+	private static double getTaskDurationThroughInstruction(Scanner s) {
 		while(s.hasNext()){
 			return s.nextDouble();
 		}
@@ -315,7 +317,7 @@ public class Main {
 			return CommandType.O_OTHERS;
 		else if (compareString(command,OPTION_EXIT))
 			return CommandType.EXIT;	
-		else if (compareString(command,COMMAND_DISPLAY))
+		else if (compareString(command,OPTION_DISPLAY))
 			return CommandType.DISPLAY;
 		else
 			return CommandType.INVALID;
