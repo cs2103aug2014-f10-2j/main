@@ -61,6 +61,7 @@ public class WorkDistributor {
 			System.exit(0);
 			break;
 		case INVALID:
+			//todo: defined all invalid cases 
 			break;
 		case O_ADD:
 			t =  MenuWorker.addMenu();
