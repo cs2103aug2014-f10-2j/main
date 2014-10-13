@@ -41,7 +41,7 @@ public class MenuWorker {
 		    	String durationTemp = s.nextLine();
 		    	if (!durationTemp.equals("")){
 		    		taskDuration = Double.valueOf(durationTemp);
-		    		return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
+		    		return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority,taskDate, taskTime, taskDuration);
 		    	}else{
 		    		return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,taskTime);
 		    	}
