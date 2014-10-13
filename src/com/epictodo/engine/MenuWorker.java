@@ -63,7 +63,7 @@ public class MenuWorker {
 	public static Task selectSearchMenu(ArrayList<Task> list, String items){
 		s = new Scanner(System.in);
 		DisplayLine(items);
-		Display(MENU_SELECT_DELETE_OPTION);
+		Display(MENU_SELECT_SEARCH_OPTION);
 		int option = s.nextInt();
 		if (option== 0){
 			return null;
@@ -71,11 +71,11 @@ public class MenuWorker {
 		return list.get(option-1);
 	}
 	
-	public static void DisplayLine(String a){
+	private static void DisplayLine(String a){
 		System.out.println(a);
 	}
 	
-	public static void Display(String a){
+	private static void Display(String a){
 		System.out.print(a);
 	}
 }

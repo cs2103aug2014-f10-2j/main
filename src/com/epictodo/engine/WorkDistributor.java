@@ -15,6 +15,7 @@ public class WorkDistributor {
 	private final static String COMMAND_DELETE = "delete";
 	private final static String COMMAND_SEARCH = "search";
 	private final static String COMMAND_DISPLAY = "display";
+	private final static String COMMAND_UNDO = "undo";
 	private final static String OPTION_ADD = "1";
 	private final static String OPTION_FIND = "2";
 	private final static String OPTION_DISPLAY= "3";
@@ -24,7 +25,7 @@ public class WorkDistributor {
 	
 	enum CommandType{
 		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND, 
-		O_DISPLAY, O_UNDO, O_OTHERS
+		O_DISPLAY, UNDO, O_OTHERS
 	};
 	
 	
@@ -52,17 +53,19 @@ public class WorkDistributor {
 			t = MenuWorker.selectDeleteMenu(list, logic.displayList(list));
 			//todo: delete task t in memory and storage return successful message in String
 			return result;
+			
 		case SEARCH:
 			result = logic.searchForTasks(instruc);
 			t = MenuWorker.selectSearchMenu(list, logic.displayList(list));
 			//todo: display task in a properformat  return successful message in String
 			return result;
+			
 		case EXIT:
 			System.exit(0);
 			break;
 		case INVALID:
 			//todo: defined all invalid cases 
-			break;
+			return "This is invalid";
 		case O_ADD:
 			t =  MenuWorker.addMenu();
 			result = logic.createTask(t);
@@ -71,18 +74,18 @@ public class WorkDistributor {
 		case O_FIND:
 			return result;
 			
-		case O_UNDO:
+		case UNDO:
 			return result;
 			
 		case O_OTHERS:
 			return result;
 		}
 		
-		
+		//todo handle invalid input here
 		return null;
 	}
 	
-	public static CommandType defineCommandType(String instruc){
+	private static CommandType defineCommandType(String instruc){
 		String command = getCommand(instruc);
 		if (compareString(command,""))
 			return CommandType.NULL;
@@ -98,12 +101,14 @@ public class WorkDistributor {
 			return CommandType.EXIT;	
 		else if (compareString(command,COMMAND_DISPLAY))
 			return CommandType.DISPLAY;
+		else if (compareString(command,COMMAND_UNDO))
+			return CommandType.UNDO;
 		else if (compareString(command,OPTION_ADD))
 			return CommandType.O_ADD;
 		else if (compareString(command,OPTION_FIND))
 			return CommandType.O_FIND;
 		else if (compareString(command,OPTION_UNDO))
-			return CommandType.O_UNDO;
+			return CommandType.UNDO;
 		else if (compareString(command,OPTION_OTHERS))
 			return CommandType.O_OTHERS;
 		else if (compareString(command,OPTION_EXIT))
@@ -118,11 +123,11 @@ public class WorkDistributor {
 		return (text.equalsIgnoreCase(text2));
 	}
 
-	public static String removeCommand(String instruc) {
+	private static String removeCommand(String instruc) {
 		return instruc.replace(getCommand(instruc), "").trim();
 	}
 	
-	public static String getCommand(String instruc) {
+	private static String getCommand(String instruc) {
 		String commandTypeString = instruc.trim().split("\\s+")[0];
 		return commandTypeString;
 	}
