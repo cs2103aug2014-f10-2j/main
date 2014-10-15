@@ -24,21 +24,23 @@
 
 package com.epictodo.controller.json;
 
-import com.epictodo.model.*;
-import java.io.*;
-import java.util.ArrayList;
-import com.google.gson.Gson;
+import com.epictodo.model.Task;
 import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+
 public class Storage {
-    /*
-	 * This method instantiates a GSON Object.
-	 * Method will read JSON Object from memory and translates to JSON.
-	 *
-	 * @return      GSON object
-	 */
+    /**
+     * This method instantiates a GSON Object.
+     * Method will read JSON Object from memory and translates to JSON.
+     *
+     * @return Gson
+     */
     private static Gson instantiateObject() {
         GsonBuilder gson_builder = new GsonBuilder();
         gson_builder.setPrettyPrinting()
@@ -50,6 +52,13 @@ public class Storage {
         return _gson;
     }
 
+    /**
+     * This method saves ArrayList<Task> from memory object to Json file.
+     *
+     * @param file_name
+     * @param array_list
+     * @return boolean
+     */
     public static boolean saveToJson(String file_name, ArrayList<Task> array_list) {
         try {
             FileWriter file_writer = new FileWriter(file_name);
@@ -71,6 +80,12 @@ public class Storage {
         return true;
     }
 
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     *
+     * @param file_name
+     * @return ArrayList<Task>
+     */
     public static ArrayList<Task> loadDbFile(String file_name) {
         ArrayList<Task> _result = new ArrayList<Task>();
 
