@@ -32,6 +32,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Storage {
@@ -45,6 +46,7 @@ public class Storage {
         GsonBuilder gson_builder = new GsonBuilder();
         gson_builder.setPrettyPrinting()
                     .serializeNulls()
+                    .disableHtmlEscaping()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
         Gson _gson = gson_builder.create();
@@ -72,7 +74,7 @@ public class Storage {
             }
 
             file_writer.close();
-        } catch(Exception ex) {
+        } catch(IOException ex) {
             ex.printStackTrace();
             return false;
         }
@@ -95,7 +97,7 @@ public class Storage {
             TypeToken<ArrayList<Task>> type_token = new TypeToken<ArrayList<Task>>(){};
 
             _result = _gson.fromJson(_reader, type_token.getType());
-        } catch(Exception ex) {
+        } catch(IOException ex) {
             ex.printStackTrace();
             return null;
         }
