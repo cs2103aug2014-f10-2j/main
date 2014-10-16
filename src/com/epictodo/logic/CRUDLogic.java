@@ -2,10 +2,7 @@ package com.epictodo.logic;
 
 import com.epictodo.controller.json.*;
 import com.epictodo.model.*;
-import com.google.gson.stream.JsonReader;
-
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 /**
@@ -27,13 +24,16 @@ public class CRUDLogic {
 	/*
 	 * Private Attributes
 	 */
-	private ArrayList<Task> items;
+	private ArrayList<Task> _items; // to store all tasks
+	private ArrayList<Undoable> _commands; // to store undoable commands
+	private ArrayList<Task> _currentList; // to store the last retrieved list of
+											// tasks
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		items = new ArrayList<Task>();
+		_items = new ArrayList<Task>();
 	}
 
 	/*
@@ -45,7 +45,7 @@ public class CRUDLogic {
 	 * @return the ArrayList containing all the tasks
 	 */
 	public ArrayList<Task> getAllTasks() {
-		return items;
+		return _items;
 	}
 
 	/**
@@ -55,11 +55,29 @@ public class CRUDLogic {
 	 */
 	public ArrayList<Task> getTasksByName(String keyword) {
 		ArrayList<Task> list = new ArrayList<Task>();
-		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getTaskName().toLowerCase()
-					.contains(keyword.trim().toLowerCase())) {
-				list.add(items.get(i));
+
+		/*
+		 * Exception handling to make sure param is not null
+		 */
+		try {
+			if (keyword == null)
+				throw new NullPointerException("Keyword cannot be <null>");
+			for (int i = 0; i < size(); i++) {
+				if (_items.get(i).getTaskName().toLowerCase()
+						.contains(keyword.trim().toLowerCase())) {
+					list.add(_items.get(i));
+				}
 			}
+		} catch (NullPointerException npe) {
+			/*
+			 * Remove this statement after deployment
+			 */
+			displayMsg(npe.getMessage());
+
+			/*
+			 * When code goes wrong, return empty list instead
+			 */
+			list.clear();
 		}
 		return list;
 	}
@@ -72,8 +90,8 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksByStatus(boolean done) {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getIsDone() == done) {
-				list.add(items.get(i));
+			if (_items.get(i).getIsDone() == done) {
+				list.add(_items.get(i));
 			}
 		}
 		return list;
@@ -89,8 +107,8 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksByPriority(int p) {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getPriority() == p) {
-				list.add(items.get(i));
+			if (_items.get(i).getPriority() == p) {
+				list.add(_items.get(i));
 			}
 		}
 		return list;
@@ -108,12 +126,11 @@ public class CRUDLogic {
 	 * @return The result in a String
 	 */
 	public String createTask(Task t) {
-		items.add(t);
+		_items.add(t);
 		saveToFile();
 		return "task added";
 	}
-	
-	
+
 	/**
 	 * This method adds an Floating Task to the list
 	 * 
@@ -122,8 +139,7 @@ public class CRUDLogic {
 	 * @return The result in a String
 	 */
 	public String createTask(FloatingTask ft) {
-		items.add(ft);
-		return "floating task added";
+		return createTask(ft);
 	}
 
 	/**
@@ -134,8 +150,7 @@ public class CRUDLogic {
 	 * @return The result in a String
 	 */
 	public String createTask(DeadlineTask dt) {
-		items.add(dt);
-		return "deadline task added";
+		return createTask(dt);
 	}
 
 	/**
@@ -146,8 +161,7 @@ public class CRUDLogic {
 	 * @return The result in a String
 	 */
 	public String createTask(TimedTask tt) {
-		items.add(tt);
-		return "timed task added";
+		return createTask(tt);
 	}
 
 	/**
@@ -157,7 +171,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String deleteTask(Task t) {
-		if (this.items.remove(t)) {
+		if (this._items.remove(t)) {
 			return "task removed";
 		} else {
 			return "can't remove task";
@@ -173,7 +187,7 @@ public class CRUDLogic {
 	 * @return int the size of the list of tasks
 	 */
 	public int size() {
-		return items.size();
+		return _items.size();
 	}
 
 	/**
@@ -183,7 +197,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		return displayList(items);
+		return displayList(_items);
 	}
 
 	/**
@@ -231,6 +245,10 @@ public class CRUDLogic {
 	public void saveToFile() {
 		String filename = PATH_DATA_FILE;
 		Storage s = new Storage();
-		s.saveToJson(filename, items);
+		s.saveToJson(filename, _items);
+	}
+
+	private void displayMsg(String m) {
+		System.out.print(m);
 	}
 }
