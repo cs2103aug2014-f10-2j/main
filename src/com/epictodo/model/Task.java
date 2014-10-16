@@ -15,6 +15,7 @@ public class Task {
 	/************** Constructors **********************/
 
 	public Task(String taskName, String taskDescription, int priority) {
+		assert priority >= 0 && priority <= 10;
 		setTaskName(taskName);
 		setTaskDescription(taskDescription);
 		setPriority(priority);
@@ -48,10 +49,12 @@ public class Task {
 	}
 
 	public void setPriority(int newPriority) {
+		assert newPriority >= 0 && newPriority <= 10;
 		priority = newPriority;
 	}
 
 	public void setIsDone(boolean status) {
+		assert status == true || status == false;
 		isDone = status;
 	}
 	
