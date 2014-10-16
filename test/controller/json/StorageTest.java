@@ -32,24 +32,35 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class StorageTest {
     final String file_name = "storage_test";
     Task _task = new Task("Project Meeting", "2103 project meeting", 2);
     Task task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
-    ArrayList<Task> task_list = new ArrayList<Task>();
-    ArrayList<Task> expected_task = Storage.loadDbFile(file_name);
+    private ArrayList<Task> task_list;
+    private ArrayList<Task> expected_task;
 
     @Before
     public void initialize() throws IOException {
+        task_list = new ArrayList<Task>();
+        expected_task = Storage.loadDbFile(file_name);
+
         task_list.add(_task);
         task_list.add(task_2);
+
         Storage.saveToJson(file_name, task_list);
     }
 
     @Test
     public void assertSaveToJson() throws IOException {
         assertTrue(true);
+    }
+
+    @Test
+    public void assertLoadDb() throws IOException {
+        assertThat(task_list, is(expected_task));
     }
 }
