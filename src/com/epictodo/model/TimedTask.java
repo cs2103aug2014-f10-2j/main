@@ -18,10 +18,23 @@ public class TimedTask extends Task {
 	public TimedTask(String taskName, String taskDescription, int priority,
 			String ddmmyy, String time, double duration) {
 		super(taskName, taskDescription, priority);
+		// This checks whether date and time entered are of correct length
+		assert ddmmyy.length() == 6;
+		assert time.length() == 4;
+		
+		// This checks whether date and time entered are valid integers or not
+		try {
+			int enteredDate = Integer.parseInt(ddmmyy);
+			int enteredTime = Integer.parseInt(time);
+		} catch (NumberFormatException e) {
+			System.out.println(e.getMessage());
+		}
+		
 		try {
 			setDateTime(ddmmyy, time);
 			setDuration(duration);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -42,10 +55,20 @@ public class TimedTask extends Task {
 	/**************** Mutators ************************/
 	public void setDuration(double duration) {
 		long temp = (long) (startDateTime + (duration * 60 * 60));
+		assert temp != 0;
 		endDateTime = temp;
 	}
 
 	public void setDateTime(String date, String time) throws ParseException {
+		assert date.length() == 6;
+		assert time.length() == 4;
+		// Check whether entered date and time are valid integers before converting it to string format
+		try {
+			int enteredDate = Integer.parseInt(date);
+			int enteredTime = Integer.parseInt(time);
+		} catch (NumberFormatException e) {
+			System.out.println(e.getMessage());
+		}
 		String dateTimeTemp = date + " " + time;
 		// long epoch = new
 		// java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse("01/01/1970 01:00:00").getTime()
