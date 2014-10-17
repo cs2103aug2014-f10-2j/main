@@ -13,7 +13,7 @@ public class FloatingTask extends Task {
 	/**************** Mutators ************************/
 	
 	/**************** Class Methods ************************/
-	public Task clone() {
+	public FloatingTask clone() {
 		String taskName = super.getTaskName();
 		String taskDescription = super.getTaskDescription();
 		int priority = super.getPriority();
