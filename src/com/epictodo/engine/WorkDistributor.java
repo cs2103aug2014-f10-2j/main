@@ -54,10 +54,16 @@ public class WorkDistributor {
 			//todo: delete task t in memory and storage return successful message in String
 			return result;
 			
+		case UPDATE:
+			list = logic.getTasksByName(instruc);
+			t = MenuWorker.selectDeleteMenu(list, logic.displayList(list));
+			//todo: delete task t in memory and storage return successful message in String
+			return result;
+			
 		case SEARCH:
 			result = logic.searchForTasks(instruc);
 			t = MenuWorker.selectSearchMenu(list, logic.displayList(list));
-			//todo: display task in a properformat  return successful message in String
+			//todo: display task in a proper format  return successful message in String
 			return result;
 			
 		case EXIT:

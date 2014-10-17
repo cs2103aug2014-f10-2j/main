@@ -2,6 +2,7 @@ package com.epictodo.engine;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import com.epictodo.model.Task;
 import com.epictodo.util.TaskBuilder;
@@ -10,7 +11,7 @@ public class MenuWorker {
 	
 	private final static String MENU_SELECT_DELETE_OPTION ="Enter your option to be deleted (or 0 to menu): ";
 	private final static String MENU_SELECT_SEARCH_OPTION ="Enter your option for details (or 0 to menu): ";
-	
+	static Logger logger = Logger.getLogger("System Menu Log");
 	private static int _defaultPriority = 2;
 	private static String _defaultTime = "09:00";
 	static Scanner s = null;
@@ -32,6 +33,7 @@ public class MenuWorker {
 	    Display("Enter Task Date (DDMMYY): ");
 	    taskDate = s.nextLine();
 	    if (taskDate.equals("")){
+			logger.info("floating task is created!");
 	    	return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
 	    }
 	    Display("Enter Task Time: ");
@@ -41,13 +43,18 @@ public class MenuWorker {
 		    	String durationTemp = s.nextLine();
 		    	if (!durationTemp.equals("")){
 		    		taskDuration = Double.valueOf(durationTemp);
+					logger.info("timed task is created!");
 		    		return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority,taskDate, taskTime, taskDuration);
 		    	}else{
+					logger.info("deadline task is created!");
 		    		return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,taskTime);
 		    	}
 		    }
+			logger.info("deadline task with default time is created!");
 		    return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,_defaultTime);
 	}
+	
+	
 	
 	public static Task selectDeleteMenu(ArrayList<Task> list, String items){
 		s = new Scanner(System.in);
@@ -57,6 +64,7 @@ public class MenuWorker {
 		if (option== 0){
 			return null;
 		}
+		logger.info(list.get(option-1).getTaskName()+" is selected");
 		return list.get(option-1);
 	}
 	
@@ -68,6 +76,7 @@ public class MenuWorker {
 		if (option== 0){
 			return null;
 		}
+		logger.info(list.get(option-1).getTaskName()+" is selected");
 		return list.get(option-1);
 	}
 	
