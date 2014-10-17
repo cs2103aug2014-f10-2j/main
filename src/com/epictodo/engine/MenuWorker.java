@@ -12,6 +12,8 @@ public class MenuWorker {
 	private final static String MENU_SELECT_UPDATE_OPTION ="Enter your option to be updated (or 0 to menu): ";	
 	private final static String MENU_SELECT_DELETE_OPTION ="Enter your option to be deleted (or 0 to menu): ";
 	private final static String MENU_SELECT_SEARCH_OPTION ="Enter your option for details (or 0 to menu): ";
+	private final static String MENU_SEARCH_INSTRUCTION ="Enter keyword: ";
+
 	static Logger logger = Logger.getLogger("System Menu Log");
 	private static int _defaultPriority = 2;
 	private static String _defaultTime = "09:00";
@@ -55,6 +57,13 @@ public class MenuWorker {
 		    return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,_defaultTime);
 	}
 	
+	public static String findMenu(){
+		String result = "";
+		s= new Scanner(System.in);
+		Display(MENU_SEARCH_INSTRUCTION);
+		result = s.nextLine();
+		return result;
+	}
 	
 	
 	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
@@ -65,7 +74,7 @@ public class MenuWorker {
 			Display(MENU_SELECT_DELETE_OPTION);
 		}else if(type ==CommandType.UPDATE){
 			Display(MENU_SELECT_UPDATE_OPTION);
-		}else if(type ==CommandType.SEARCH){
+		}else if(type ==CommandType.SEARCH || type == CommandType.O_FIND){
 			Display(MENU_SELECT_SEARCH_OPTION);
 		}
 		int option = s.nextInt();

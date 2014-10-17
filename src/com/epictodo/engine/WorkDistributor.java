@@ -61,7 +61,7 @@ public class WorkDistributor {
 			return result;
 			
 		case SEARCH:
-			result = logic.searchForTasks(instruc);
+			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list, logic.displayList(list));
 			//todo: display task in a proper format  return successful message in String
 			return result;
@@ -78,6 +78,9 @@ public class WorkDistributor {
 			return result;
 			
 		case O_FIND:
+			list = logic.getTasksByName(MenuWorker.findMenu());
+			t = MenuWorker.selectItemFromList(command, list, logic.displayList(list));
+			//todo prepare to display them in details as "result"
 			return result;
 			
 		case UNDO:
