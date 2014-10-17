@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import com.epictodo.engine.WorkDistributor.CommandType;
 import com.epictodo.model.Task;
 import com.epictodo.util.TaskBuilder;
 
 public class MenuWorker {
-	
+	private final static String MENU_SELECT_UPDATE_OPTION ="Enter your option to be updated (or 0 to menu): ";	
 	private final static String MENU_SELECT_DELETE_OPTION ="Enter your option to be deleted (or 0 to menu): ";
 	private final static String MENU_SELECT_SEARCH_OPTION ="Enter your option for details (or 0 to menu): ";
 	static Logger logger = Logger.getLogger("System Menu Log");
@@ -56,10 +57,17 @@ public class MenuWorker {
 	
 	
 	
-	public static Task selectDeleteMenu(ArrayList<Task> list, String items){
+	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
+		
 		s = new Scanner(System.in);
 		DisplayLine(items);
-		Display(MENU_SELECT_DELETE_OPTION);
+		if(type== CommandType.DELETE){
+			Display(MENU_SELECT_DELETE_OPTION);
+		}else if(type ==CommandType.UPDATE){
+			Display(MENU_SELECT_UPDATE_OPTION);
+		}else if(type ==CommandType.SEARCH){
+			Display(MENU_SELECT_SEARCH_OPTION);
+		}
 		int option = s.nextInt();
 		if (option== 0){
 			return null;
@@ -68,17 +76,6 @@ public class MenuWorker {
 		return list.get(option-1);
 	}
 	
-	public static Task selectSearchMenu(ArrayList<Task> list, String items){
-		s = new Scanner(System.in);
-		DisplayLine(items);
-		Display(MENU_SELECT_SEARCH_OPTION);
-		int option = s.nextInt();
-		if (option== 0){
-			return null;
-		}
-		logger.info(list.get(option-1).getTaskName()+" is selected");
-		return list.get(option-1);
-	}
 	
 	private static void DisplayLine(String a){
 		System.out.println(a);
