@@ -62,6 +62,8 @@ public class Storage {
      * @return boolean
      */
     public static boolean saveToJson(String file_name, ArrayList<Task> array_list) {
+        assert file_name.equalsIgnoreCase("storage.txt");
+
         try {
             FileWriter file_writer = new FileWriter(file_name);
             Gson _gson = instantiateObject();
@@ -90,6 +92,7 @@ public class Storage {
      */
     public static ArrayList<Task> loadDbFile(String file_name) {
         ArrayList<Task> _result = new ArrayList<Task>();
+        assert file_name.equalsIgnoreCase("storage.txt");
 
         try {
             FileReader _reader = new FileReader(file_name);
