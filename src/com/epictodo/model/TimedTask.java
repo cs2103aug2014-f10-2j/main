@@ -67,9 +67,9 @@ public class TimedTask extends Task {
 		return timeHour + timeMinute;
 	}
 	
-	private int getDuration() {
+	private double getDuration() {
 		long hoursInSeconds = endDateTime - startDateTime;
-		int hour = (int) hoursInSeconds / 60 / 60;
+		double hour = (int) hoursInSeconds / 60 / 60;
 		return hour;
 	}
 
@@ -104,7 +104,7 @@ public class TimedTask extends Task {
 		return super.toString() + " from " + this.getStartDateTime() + " to "
 				+ this.getEndDateTime();
 	}
-
+/*
 	public TimedTask clone() {
 		String taskName = super.getTaskName();
 		String taskDescription = super.getTaskDescription();
@@ -113,6 +113,20 @@ public class TimedTask extends Task {
 		String time = getStartTime();
 		int duration = getDuration();
 		TimedTask newClone = new TimedTask(taskName, taskDescription, priority, date, time, duration);
+		return newClone;
+	}
+	*/
+	
+	public TimedTask clone() {
+		TimedTask newClone = (TimedTask)super.clone();
+		
+		try {
+			newClone.setDateTime(getStartDate(), getStartTime());
+			newClone.setDuration(getDuration());
+		} catch(ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 		return newClone;
 	}
 }
