@@ -24,25 +24,19 @@
 
 package com.epictodo.controller.json;
 
-public class Token {
-	public final int type;
-	public final String value;
-	public final int line_num;
-	public final int col_num;
+/**
+ * General exception class for Storage API class
+ * Lower level exceptions are also wrapped into it.
+ */
+public class StorageException extends Exception {
+    private String error_message = "UNKNOWN_EXCEPTION";
 
-	public Token(int _type, String _value, int line_num, int col_num) {
-		this.type = _type;
-		this.line_num = line_num;
-		this.col_num = col_num;
-		this.value = _value;
-	}
+    public StorageException(String _message, String error_message) {
+        super(_message);
+        this.error_message = error_message;
+    }
 
-	public Token(int _type, int line_num, int col_num) {
-		this(_type, null, line_num, col_num);
-	}
-
-	@Override
-	public String toString() {
-		return TokenTypes.asString(type) + " " + (value != null ? value : "");
-	}
+    public String getErrorMessage() {
+        return this.error_message;
+    }
 }

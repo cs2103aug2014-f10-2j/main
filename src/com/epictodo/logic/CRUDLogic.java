@@ -2,10 +2,8 @@ package com.epictodo.logic;
 
 import com.epictodo.controller.json.*;
 import com.epictodo.model.*;
-import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 /**
@@ -23,17 +21,22 @@ public class CRUDLogic {
 	 */
 	private static final String STRING_LINE_BREAK = "\r\n";
 	private static final String PATH_DATA_FILE = "storage.txt";
+	private static final int CONFIG_PRIORITY_MIN = 1;
+	private static final int CONFIG_PRIORITY_MAX = 3;
 
 	/*
 	 * Private Attributes
 	 */
-	private ArrayList<Task> items;
+	private ArrayList<Task> _items; // to store all tasks
+	private ArrayList<Undoable> _commands; // to store undoable commands
+	private ArrayList<Task> _currentList; // to store the last retrieved list of
+											// tasks
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		items = new ArrayList<Task>();
+		_items = new ArrayList<Task>();
 	}
 
 	/*
@@ -45,7 +48,7 @@ public class CRUDLogic {
 	 * @return the ArrayList containing all the tasks
 	 */
 	public ArrayList<Task> getAllTasks() {
-		return items;
+		return _items;
 	}
 
 	/**
@@ -53,12 +56,21 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing selected tasks
 	 */
-	public ArrayList<Task> getTasksByName(String keyword) {
+	public ArrayList<Task> getTasksByName(String keyword)
+			throws NullPointerException {
 		ArrayList<Task> list = new ArrayList<Task>();
+
+		/*
+		 * Exception handling to make sure param is not null
+		 */
+		if (keyword == null) {
+			throw new NullPointerException("Keyword must not be <null>");
+		}
+
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getTaskName().toLowerCase()
+			if (_items.get(i).getTaskName().toLowerCase()
 					.contains(keyword.trim().toLowerCase())) {
-				list.add(items.get(i));
+				list.add(_items.get(i));
 			}
 		}
 		return list;
@@ -68,12 +80,13 @@ public class CRUDLogic {
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
 	 * @return the ArrayList containing selected tasks
+	 * @param boolean when true = Marked as done
 	 */
 	public ArrayList<Task> getTasksByStatus(boolean done) {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getIsDone() == done) {
-				list.add(items.get(i));
+			if (_items.get(i).getIsDone() == done) {
+				list.add(_items.get(i));
 			}
 		}
 		return list;
@@ -86,11 +99,19 @@ public class CRUDLogic {
 	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
 	 */
-	public ArrayList<Task> getTasksByPriority(int p) {
+	public ArrayList<Task> getTasksByPriority(int p)
+			throws IllegalArgumentException {
 		ArrayList<Task> list = new ArrayList<Task>();
+
+		/*
+		 * Exception handling to make sure the priority is within valid range
+		 */
+		if (p < CONFIG_PRIORITY_MIN || p > CONFIG_PRIORITY_MAX) {
+			throw new IllegalArgumentException("Illegal priority");
+		}
 		for (int i = 0; i < size(); i++) {
-			if (items.get(i).getPriority() == p) {
-				list.add(items.get(i));
+			if (_items.get(i).getPriority() == p) {
+				list.add(_items.get(i));
 			}
 		}
 		return list;
@@ -107,13 +128,21 @@ public class CRUDLogic {
 	 *            the Task obj
 	 * @return The result in a String
 	 */
-	public String createTask(Task t) {
-		items.add(t);
-		saveToFile();
+	public String createTask(Task t) throws NullPointerException {
+		if (t == null) {
+			throw new NullPointerException("Cannot create <null> into CRUD");
+		}
+		_items.add(t);
+
+		try {
+			saveToFile();
+		} catch (IOException ioe) {
+			_items.remove(t);
+			return "Failed to create task due to File IO error";
+		}
 		return "task added";
 	}
-	
-	
+
 	/**
 	 * This method adds an Floating Task to the list
 	 * 
@@ -121,9 +150,8 @@ public class CRUDLogic {
 	 *            the FloatingTask obj
 	 * @return The result in a String
 	 */
-	public String createTask(FloatingTask ft) {
-		items.add(ft);
-		return "floating task added";
+	public String createTask(FloatingTask ft) throws NullPointerException {
+		return createTask(ft);
 	}
 
 	/**
@@ -133,9 +161,8 @@ public class CRUDLogic {
 	 *            the DeadlineTask obj
 	 * @return The result in a String
 	 */
-	public String createTask(DeadlineTask dt) {
-		items.add(dt);
-		return "deadline task added";
+	public String createTask(DeadlineTask dt) throws NullPointerException {
+		return createTask(dt);
 	}
 
 	/**
@@ -145,9 +172,8 @@ public class CRUDLogic {
 	 *            the TimedTask obj
 	 * @return The result in a String
 	 */
-	public String createTask(TimedTask tt) {
-		items.add(tt);
-		return "timed task added";
+	public String createTask(TimedTask tt) throws NullPointerException {
+		return createTask(tt);
 	}
 
 	/**
@@ -157,7 +183,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String deleteTask(Task t) {
-		if (this.items.remove(t)) {
+		if (this._items.remove(t)) {
 			return "task removed";
 		} else {
 			return "can't remove task";
@@ -173,7 +199,7 @@ public class CRUDLogic {
 	 * @return int the size of the list of tasks
 	 */
 	public int size() {
-		return items.size();
+		return _items.size();
 	}
 
 	/**
@@ -183,22 +209,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		return displayList(items);
-	}
-
-	/**
-	 * This method returns a string that represent all the tasks in a list
-	 * 
-	 * @param li
-	 * @return
-	 */
-	public String displayList(ArrayList<Task> li) {
-		String retStr = "";
-		for (int i = 0; i < size(); i++) {
-			retStr += String.valueOf(i + 1) + ". " + li.get(i)
-					+ STRING_LINE_BREAK;
-		}
-		return retStr;
+		return displayList(_items);
 	}
 
 	/**
@@ -208,7 +219,7 @@ public class CRUDLogic {
 	 * @param keyword
 	 * @return
 	 */
-	public String searchForTasks(String keyword) {
+	public String searchForTasks(String keyword) throws NullPointerException {
 		return displayList(getTasksByName(keyword));
 	}
 
@@ -228,9 +239,28 @@ public class CRUDLogic {
 	/**
 	 * This method saves all tasks to the text file
 	 */
-	public void saveToFile() {
+	public void saveToFile() throws IOException {
 		String filename = PATH_DATA_FILE;
 		Storage s = new Storage();
-		s.saveToJson(filename, items);
+		s.saveToJson(filename, _items);
+	}
+
+	/**
+	 * This method returns a string that represent all the tasks in a list
+	 * 
+	 * @param li
+	 * @return
+	 */
+	public String displayList(ArrayList<Task> li) {
+		String retStr = "";
+		for (int i = 0; i < size(); i++) {
+			retStr += String.valueOf(i + 1) + ". " + li.get(i)
+					+ STRING_LINE_BREAK;
+		}
+		return retStr;
+	}
+
+	private void displayMsg(String m) {
+		System.out.print(m);
 	}
 }

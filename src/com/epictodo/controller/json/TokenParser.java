@@ -24,9 +24,13 @@
 
 package com.epictodo.controller.json;
 
-import java.io.IOException;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+
+import java.io.IOException;
 
 public class TokenParser {
     /**
@@ -99,5 +103,20 @@ public class TokenParser {
                 jsonObjectHandler(_reader);
             } else { nonArrayTokensHandler(_reader, _token); }
         }
+    }
+
+    public String searchToken(String _json, String search_param) {
+        JsonParser _parser = new JsonParser();
+        // The JsonElement is the root node.
+        // It can be an object, array, null or java primitive.
+        JsonElement _element = _parser.parse(_json);
+        String search_result = null;
+        
+        if (_element.isJsonObject()) {
+            JsonObject _storage = _element.getAsJsonObject();
+            search_result = _storage.get(search_param).getAsString();
+        }
+
+        return search_result;
     }
 }
