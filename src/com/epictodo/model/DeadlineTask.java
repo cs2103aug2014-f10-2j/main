@@ -35,6 +35,21 @@ public class DeadlineTask extends Task {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date (endDateTime*1000));
 		return dateTime;
 	}
+	
+	/**************** Accessors for local class only ***********************/
+	private String getDate() {
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(endDateTime * 1000));
+		String date = dateTime.substring(0, 6);
+		return date;
+	}
+	
+	private String getTime() {
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(endDateTime * 1000));
+		// Index 9 is the colon
+		String timeHour = dateTime.substring(7, 9);
+		String timeMinute = dateTime.substring(10);
+		return timeHour + timeMinute;
+	}
 
 	/**************** Mutators ************************/
 	public void setDateTime(String date, String time) throws ParseException {
@@ -56,9 +71,18 @@ public class DeadlineTask extends Task {
 		endDateTime = epoch;
 	}
 	
-
-	/**************** Other methods ************************/
+	/**************** Class methods ************************/
 	public String toString(){
 		return super.toString() + " by " + this.getEndDateTime();
+	}
+	
+	public DeadlineTask clone() {
+		String taskName = super.getTaskName();
+		String taskDescription = super.getTaskDescription();
+		int priority = super.getPriority();
+		String date = getDate();
+		String time = getTime();
+		DeadlineTask newClone = new DeadlineTask(taskName, taskDescription, priority, date, time);
+		return newClone;
 	}
 }

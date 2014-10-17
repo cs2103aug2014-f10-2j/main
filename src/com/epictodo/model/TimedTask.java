@@ -51,6 +51,27 @@ public class TimedTask extends Task {
 				.format(new java.util.Date(endDateTime * 1000));
 		return dateTime;
 	}
+	
+	/**************** Accessors for local class only ****/
+	private String getStartDate() {
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+		String date = dateTime.substring(0, 6);
+		return date;
+	}
+	
+	private String getStartTime() {
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+		// Index 9 is the colon
+		String timeHour = dateTime.substring(7, 9);
+		String timeMinute = dateTime.substring(10);
+		return timeHour + timeMinute;
+	}
+	
+	private int getDuration() {
+		long hoursInSeconds = endDateTime - startDateTime;
+		int hour = (int) hoursInSeconds / 60 / 60;
+		return hour;
+	}
 
 	/**************** Mutators ************************/
 	public void setDuration(double duration) {
@@ -78,17 +99,20 @@ public class TimedTask extends Task {
 		startDateTime = epoch;
 	}
 
-	/**************** Other methods ************************/
+	/**************** Class methods ************************/
 	public String toString() {
 		return super.toString() + " from " + this.getStartDateTime() + " to "
 				+ this.getEndDateTime();
 	}
 
-	/*
-	 * public static Date insertStartDate(Date calendar) { Date result = new
-	 * Date(); return result; }
-	 * 
-	 * public static Date insertEndDate(Date calendar) { Date result = new
-	 * Date(); return result; }
-	 */
+	public TimedTask clone() {
+		String taskName = super.getTaskName();
+		String taskDescription = super.getTaskDescription();
+		int priority = super.getPriority();
+		String date = getStartDate();
+		String time = getStartTime();
+		int duration = getDuration();
+		TimedTask newClone = new TimedTask(taskName, taskDescription, priority, date, time, duration);
+		return newClone;
+	}
 }

@@ -11,4 +11,9 @@ public class FloatingTask extends Task {
 	/**************** Accessors ***********************/
 
 	/**************** Mutators ************************/
+	
+	/**************** Class Methods ************************/
+	public Task clone() {
+		return super.clone();
+	}
 }

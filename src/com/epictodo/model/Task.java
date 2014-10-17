@@ -58,8 +58,13 @@ public class Task {
 		isDone = status;
 	}
 	
-	/**************** Other methods ************************/
+	/**************** Class methods ************************/
 	public String toString(){
 		return getTaskName();
+	}
+	
+	public Task clone() {
+		Task newClone = new Task(getTaskName(), getTaskDescription(), getPriority());
+		return newClone;
 	}
 }
