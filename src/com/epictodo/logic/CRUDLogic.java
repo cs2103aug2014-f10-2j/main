@@ -251,7 +251,7 @@ public class CRUDLogic {
 	 * @param li
 	 * @return
 	 */
-	private String displayList(ArrayList<Task> li) {
+	public String displayList(ArrayList<Task> li) {
 		String retStr = "";
 		for (int i = 0; i < size(); i++) {
 			retStr += String.valueOf(i + 1) + ". " + li.get(i)
