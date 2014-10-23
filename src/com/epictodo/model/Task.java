@@ -7,6 +7,7 @@ import java.util.*;
 public class Task {
 
 	/************** Data members **********************/
+	private long uid;
 	private String taskName;
 	private String taskDescription;
 	private int priority;
@@ -16,13 +17,22 @@ public class Task {
 
 	public Task(String taskName, String taskDescription, int priority) {
 		assert priority >= 0 && priority <= 10;
+		/*
+		 * New member: long uid
+		 */
+		uid = -1; // -1 indicates an newly created Task object
+
 		setTaskName(taskName);
 		setTaskDescription(taskDescription);
 		setPriority(priority);
 		setIsDone(false);
 	}
-	
+
 	/**************** Accessors ***********************/
+	public long getUid() {
+		return uid;
+	}
+
 	public String getTaskName() {
 		return taskName;
 	}
@@ -40,6 +50,10 @@ public class Task {
 	}
 
 	/**************** Mutators ************************/
+	public void setUid(long uid) {
+		this.uid = uid;
+	}
+
 	public void setTaskName(String newTask) {
 		taskName = newTask;
 	}
@@ -57,14 +71,16 @@ public class Task {
 		assert status == true || status == false;
 		isDone = status;
 	}
-	
+
 	/**************** Class methods ************************/
-	public String toString(){
+	public String toString() {
 		return getTaskName();
 	}
-	
+
 	public Task clone() {
-		Task newClone = new Task(getTaskName(), getTaskDescription(), getPriority());
-		return newClone;
+		Task cloned = new Task(getTaskName(), getTaskDescription(),
+				getPriority());
+		cloned.setUid(uid);
+		return cloned;
 	}
 }
