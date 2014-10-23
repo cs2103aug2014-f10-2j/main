@@ -23,10 +23,12 @@ public class CRUDLogic {
 	private static final String PATH_DATA_FILE = "storage.txt";
 	private static final int CONFIG_PRIORITY_MIN = 1;
 	private static final int CONFIG_PRIORITY_MAX = 3;
+	private static final long CONFIG_STARTING_NEXTUID = 1;
 
 	/*
 	 * Private Attributes
 	 */
+	private long _nextUid; // to track the next available uid for new Task
 	private ArrayList<Task> _items; // to store all tasks
 	private ArrayList<Undoable> _commands; // to store undoable commands
 	private ArrayList<Task> _currentList; // to store the last retrieved list of
@@ -36,6 +38,7 @@ public class CRUDLogic {
 	 * Constructor
 	 */
 	public CRUDLogic() {
+		_nextUid = CONFIG_STARTING_NEXTUID;
 		_items = new ArrayList<Task>();
 	}
 
@@ -48,7 +51,14 @@ public class CRUDLogic {
 	 * @return the ArrayList containing all the tasks
 	 */
 	public ArrayList<Task> getAllTasks() {
-		return _items;
+		/*
+		 * the return should only deliver a duplicate of the objects
+		 */
+		ArrayList<Task> retList = new ArrayList<Task>();
+		for (int i = 0; i < _items.size(); i++) {
+			retList.add(_items.get(i).clone());
+		}
+		return retList;
 	}
 
 	/**
@@ -70,7 +80,7 @@ public class CRUDLogic {
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getTaskName().toLowerCase()
 					.contains(keyword.trim().toLowerCase())) {
-				list.add(_items.get(i));
+				list.add(_items.get(i).clone());
 			}
 		}
 		return list;
@@ -86,7 +96,7 @@ public class CRUDLogic {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getIsDone() == done) {
-				list.add(_items.get(i));
+				list.add(_items.get(i).clone());
 			}
 		}
 		return list;
@@ -111,7 +121,7 @@ public class CRUDLogic {
 		}
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getPriority() == p) {
-				list.add(_items.get(i));
+				list.add(_items.get(i).clone());
 			}
 		}
 		return list;
@@ -120,6 +130,18 @@ public class CRUDLogic {
 	/*
 	 * Other CRUD Methods
 	 */
+
+	/**
+	 * This method assign UID to new Task and add it to the list
+	 * 
+	 * @param t
+	 *            : the task to add
+	 */
+	private void addToItems(Task t) {
+		t.setUid(_nextUid);
+		_items.add(t);
+		_nextUid++;
+	}
 
 	/**
 	 * This method adds a Task to the list
@@ -132,7 +154,7 @@ public class CRUDLogic {
 		if (t == null) {
 			throw new NullPointerException("Cannot create <null> into CRUD");
 		}
-		_items.add(t);
+		addToItems(t);
 
 		try {
 			saveToFile();
@@ -177,7 +199,7 @@ public class CRUDLogic {
 	}
 
 	/**
-	 * This method removes a
+	 * This method removes a Task by passing reference
 	 * 
 	 * @param t
 	 * @return
@@ -209,7 +231,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		return displayList(_items);
+		return displayList(getAllTasks());
 	}
 
 	/**
