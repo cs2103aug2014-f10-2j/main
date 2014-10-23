@@ -26,9 +26,11 @@ package controller.json;
 
 import com.epictodo.controller.json.Storage;
 import com.epictodo.model.Task;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -37,9 +39,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class StorageTest {
-    final String file_name = "storage_test";
-    Task _task = new Task("Project Meeting", "2103 project meeting", 2);
-    Task task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
+    private static final String file_name = "storage_test";
+    private Storage _storage = new Storage();
+    private Task _task = new Task("Project Meeting", "2103 project meeting", 2);
+    private Task task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
     private ArrayList<Task> task_list;
     private ArrayList<Task> expected_task;
 
@@ -51,12 +54,19 @@ public class StorageTest {
         task_list.add(_task);
         task_list.add(task_2);
 
-        Storage.saveToJson(file_name, task_list);
+        _storage.saveToJson(file_name, task_list);
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        File _file = new File(file_name);
+        _file.delete();
     }
 
     @Test
     public void assertSaveToJson() throws IOException {
-        assertTrue(true);
+        boolean _result = _storage.saveToJson(file_name, task_list);
+        assertTrue(_result);
     }
 
     @Test
