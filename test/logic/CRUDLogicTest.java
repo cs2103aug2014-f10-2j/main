@@ -44,4 +44,23 @@ public class CRUDLogicTest {
         String _result = crud_logic.createTask(task_null);
         assertEquals("task added", _result);
     }
+
+    @Test
+    public void createNormalTaskTest() {
+        String _result = crud_logic.createTask(_task);
+        assertEquals("task added", _result);
+    }
+
+    @Test
+    public void removeUnknownTaskTest() {
+        String _result = crud_logic.deleteTask(task_2);
+        assertEquals("can't remove task", _result);
+    }
+
+    @Test
+    public void removeNormalTaskTest() {
+        crud_logic.createTask(_task);
+        String _result = crud_logic.deleteTask(_task);
+        assertEquals("task removed", _result);
+    }
 }
