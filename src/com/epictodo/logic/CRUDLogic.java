@@ -31,8 +31,6 @@ public class CRUDLogic {
 	private long _nextUid; // to track the next available uid for new Task
 	private ArrayList<Task> _items; // to store all tasks
 	private ArrayList<Undoable> _commands; // to store undoable commands
-	private ArrayList<Task> _currentList; // to store the last retrieved list of
-											// tasks
 
 	/*
 	 * Constructor
