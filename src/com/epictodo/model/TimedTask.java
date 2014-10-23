@@ -1,8 +1,6 @@
 package com.epictodo.model;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class TimedTask extends Task {
 	/************** Data members **********************/
