@@ -19,7 +19,7 @@ public class TimedTask extends Task {
 		// This checks whether date and time entered are of correct length
 		assert ddmmyy.length() == 6;
 		assert time.length() == 4;
-		
+
 		// This checks whether date and time entered are valid integers or not
 		try {
 			int enteredDate = Integer.parseInt(ddmmyy);
@@ -27,7 +27,7 @@ public class TimedTask extends Task {
 		} catch (NumberFormatException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		try {
 			setDateTime(ddmmyy, time);
 			setDuration(duration);
@@ -49,22 +49,24 @@ public class TimedTask extends Task {
 				.format(new java.util.Date(endDateTime * 1000));
 		return dateTime;
 	}
-	
+
 	/**************** Accessors for local class only ****/
 	private String getStartDate() {
-		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
+				.format(new java.util.Date(startDateTime * 1000));
 		String date = dateTime.substring(0, 6);
 		return date;
 	}
-	
+
 	private String getStartTime() {
-		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
+				.format(new java.util.Date(startDateTime * 1000));
 		// Index 9 is the colon
 		String timeHour = dateTime.substring(7, 9);
 		String timeMinute = dateTime.substring(10);
 		return timeHour + timeMinute;
 	}
-	
+
 	private double getDuration() {
 		long hoursInSeconds = endDateTime - startDateTime;
 		double hour = (int) hoursInSeconds / 60 / 60;
@@ -81,7 +83,8 @@ public class TimedTask extends Task {
 	public void setDateTime(String date, String time) throws ParseException {
 		assert date.length() == 6;
 		assert time.length() == 4;
-		// Check whether entered date and time are valid integers before converting it to string format
+		// Check whether entered date and time are valid integers before
+		// converting it to string format
 		try {
 			int enteredDate = Integer.parseInt(date);
 			int enteredTime = Integer.parseInt(time);
@@ -102,29 +105,31 @@ public class TimedTask extends Task {
 		return super.toString() + " from " + this.getStartDateTime() + " to "
 				+ this.getEndDateTime();
 	}
-/*
+
+	/*
+	 * public TimedTask clone() { String taskName = super.getTaskName(); String
+	 * taskDescription = super.getTaskDescription(); int priority =
+	 * super.getPriority(); String date = getStartDate(); String time =
+	 * getStartTime(); int duration = getDuration(); TimedTask newClone = new
+	 * TimedTask(taskName, taskDescription, priority, date, time, duration);
+	 * return newClone; }
+	 */
+
 	public TimedTask clone() {
-		String taskName = super.getTaskName();
-		String taskDescription = super.getTaskDescription();
-		int priority = super.getPriority();
-		String date = getStartDate();
-		String time = getStartTime();
-		int duration = getDuration();
-		TimedTask newClone = new TimedTask(taskName, taskDescription, priority, date, time, duration);
-		return newClone;
-	}
-	*/
-	
-	public TimedTask clone() {
-		TimedTask newClone = (TimedTask)super.clone();
-		
+		Task t = super.clone();
+		TimedTask cloned;
 		try {
-			newClone.setDateTime(getStartDate(), getStartTime());
-			newClone.setDuration(getDuration());
-		} catch(ParseException e) {
+			if (t instanceof TimedTask) {
+				cloned = (TimedTask) t;
+				cloned.setDateTime(getStartDate(), getStartTime());
+				cloned.setDuration(getDuration());
+			} else {
+				throw new ClassCastException("Not an instance of TimedTask");
+			}
+		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return newClone;
+		return cloned;
 	}
 }

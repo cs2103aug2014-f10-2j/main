@@ -93,14 +93,19 @@ public class DeadlineTask extends Task {
 		/*
 		 * Use super class method to begin with instead
 		 */
-		DeadlineTask newClone = (DeadlineTask) super.clone();
-
+		Task t = super.clone();
+		DeadlineTask cloned;
 		/*
-		 * Then use setters to initialize the additional attributes
-		 * Try-catch block to handle the ParseException thrown by .setDateTime()
+		 * Then use setters to initialize the additional attributes Try-catch
+		 * block to handle the ParseException thrown by .setDateTime()
 		 */
 		try {
-			newClone.setDateTime(getDate(), getTime());
+			if (t instanceof DeadlineTask) {
+				cloned = (DeadlineTask) t;
+				cloned.setDateTime(getDate(), getTime());
+			} else {
+				throw new ClassCastException("Not an instance of DeadlineTask");
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,6 +119,6 @@ public class DeadlineTask extends Task {
 		// String time = getTime();
 		// DeadlineTask newClone = new DeadlineTask(taskName, taskDescription,
 		// priority, date, time);
-		return newClone;
+		return cloned;
 	}
 }
