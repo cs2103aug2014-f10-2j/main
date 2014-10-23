@@ -199,17 +199,34 @@ public class CRUDLogic {
 	}
 
 	/**
-	 * This method removes a Task by passing reference
+	 * This method removes a Task by UID
 	 * 
 	 * @param t
 	 * @return
 	 */
 	public String deleteTask(Task t) {
-		if (this._items.remove(t)) {
+		Task found = getTaskByUid(t.getUid());
+		if (found != null && _items.remove(found)) {
 			return "task removed";
 		} else {
 			return "can't remove task";
 		}
+	}
+
+	/**
+	 * This method returns an actual reference to the task with a specific UID
+	 * in the item list
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	private Task getTaskByUid(long uid) {
+		for (int i = 0; i < _items.size(); i++) {
+			if (_items.get(i).getUid() == uid) {
+				return _items.get(i);
+			}
+		}
+		return null;
 	}
 
 	/*
