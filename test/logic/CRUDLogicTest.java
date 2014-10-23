@@ -63,4 +63,13 @@ public class CRUDLogicTest {
         String _result = crud_logic.deleteTask(_task);
         assertEquals("task removed", _result);
     }
+
+    @Test
+    public void displayTaskTest() {
+        crud_logic.createTask(_task);
+        crud_logic.createTask(task_2);
+        String _result = crud_logic.displayAllTaskList();
+        assertEquals("1. Project Meeting\r\n" +
+                     "2. Board Meeting\r\n", _result);
+    }
 }
