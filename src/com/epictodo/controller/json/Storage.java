@@ -34,13 +34,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Storage {
+    private static Logger _logger = Logger.getLogger("--- Storage Parser Log ---");
+    private static final String file_name = "storage.txt";
+
     /**
      * This method instantiates a GSON Object.
      * Method will read JSON Object from memory and translates to JSON.
      *
-     * @return Gson
+     * @return _gson
      */
     private static Gson instantiateObject() {
         GsonBuilder gson_builder = new GsonBuilder();
@@ -59,20 +64,23 @@ public class Storage {
      *
      * @param file_name
      * @param array_list
-     * @return boolean
+     * @return true
      */
     public static boolean saveToJson(String file_name, ArrayList<Task> array_list) {
-        assert file_name.equalsIgnoreCase("storage.txt");
+        assert file_name.equalsIgnoreCase(file_name);
+        _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
 
         try {
             FileWriter file_writer = new FileWriter(file_name);
             Gson _gson = instantiateObject();
             String json_result = _gson.toJson(array_list);
 
-            if (array_list.isEmpty()) {
+            if (array_list.isEmpty() || array_list == null) {
+                _logger.log(Level.WARNING, "ArrayList<Task> is empty.");
                 file_writer.write("");
             } else {
                 file_writer.write(json_result);
+                _logger.log(Level.INFO, "Successfully stored JSON results to Storage");
             }
 
             file_writer.close();
@@ -88,11 +96,12 @@ public class Storage {
      * This method loads the Json file to ArrayList<Task> of memory objects
      *
      * @param file_name
-     * @return ArrayList<Task>
+     * @return _result
      */
     public static ArrayList<Task> loadDbFile(String file_name) {
         ArrayList<Task> _result = new ArrayList<Task>();
-        assert file_name.equalsIgnoreCase("storage.txt");
+        assert file_name.equalsIgnoreCase(file_name);
+        _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
 
         try {
             FileReader _reader = new FileReader(file_name);
