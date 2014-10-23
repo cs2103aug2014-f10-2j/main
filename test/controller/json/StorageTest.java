@@ -64,13 +64,13 @@ public class StorageTest {
     }
 
     @Test
-    public void assertSaveToJson() throws IOException {
+    public void saveToJsonTest() throws IOException {
         boolean _result = _storage.saveToJson(file_name, task_list);
         assertTrue(_result);
     }
 
     @Test
-    public void assertLoadDb() throws IOException {
+    public void loadDbTest() throws IOException {
         assertThat(task_list, is(expected_task));
     }
 }
