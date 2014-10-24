@@ -26,7 +26,7 @@ package controller.json;
 
 import com.epictodo.controller.json.Storage;
 import com.epictodo.model.Task;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,8 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class StorageTest {
@@ -57,8 +56,8 @@ public class StorageTest {
         _storage.saveToJson(file_name, task_list);
     }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         File _file = new File(file_name);
         _file.delete();
     }
@@ -71,6 +70,6 @@ public class StorageTest {
 
     @Test
     public void loadDbTest() throws IOException {
-        assertThat(task_list, is(expected_task));
+        assertEquals(expected_task.get(0).getTaskName(), task_list.get(0).getTaskName());
     }
 }
