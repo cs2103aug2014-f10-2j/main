@@ -78,8 +78,23 @@ public class Task {
 	}
 
 	public Task clone() {
-		Task cloned = new Task(getTaskName(), getTaskDescription(),
-				getPriority());
+		Task cloned = null;
+		if (this instanceof FloatingTask) {
+			cloned = new FloatingTask(getTaskName(), getTaskDescription(),
+					getPriority());
+		} else if (this instanceof DeadlineTask) {
+			cloned = new DeadlineTask(getTaskName(), getTaskDescription(),
+					getPriority(), ((DeadlineTask) this).getDate(),
+					((DeadlineTask) this).getTime());
+		} else if (this instanceof TimedTask) {
+			cloned = new TimedTask(getTaskName(), getTaskDescription(),
+					getPriority(), ((TimedTask) this).getStartDate(),
+					((TimedTask) this).getStartTime(),
+					((TimedTask) this).getDuration());
+		} else {
+			cloned = new Task(getTaskName(), getTaskDescription(),
+					getPriority());
+		}
 		cloned.setUid(uid);
 		return cloned;
 	}
