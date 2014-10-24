@@ -72,4 +72,13 @@ public class CRUDLogicTest {
         assertEquals("1. Project Meeting\r\n" +
                      "2. Board Meeting\r\n", _result);
     }
+
+    @Test
+    public void searchByTaskNameTest() {
+        crud_logic.createTask(_task);
+        task_list = new ArrayList<Task>();
+        task_list.add(_task);
+        ArrayList<Task> _result = crud_logic.getTasksByName("Meeting");
+        assertEquals(task_list.get(0).getTaskName(), _result.get(0).getTaskName());
+    }
 }
