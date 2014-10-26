@@ -33,12 +33,18 @@ public class NLPEngine {
     public NLPEngine() {
     }
 
+    /**
+     * This method mutes NLP API Error Messages temporarily
+     */
     public void mute() {
         System.setErr(new PrintStream(new OutputStream() {
             public void write(int a) { }
         }));
     }
 
+    /**
+     * This method restores NLP API Error Messages to be displayed
+     */
     public void restore() {
         System.setErr(_err);
     }
