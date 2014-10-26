@@ -51,7 +51,7 @@ public class Lemmatizer {
 
         // Iterate over all of the sentences found
         List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);
-        for(CoreMap sentence : sentences) {
+        for (CoreMap sentence : sentences) {
             // Iterate over all tokens in a sentence
             for (CoreLabel _tokens : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 // Retrieve and add lemma for each word into a List of lemmas
