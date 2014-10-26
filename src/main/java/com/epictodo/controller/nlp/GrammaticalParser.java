@@ -31,11 +31,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GrammaticalParser {
-    protected LexicalizedParser lexicalized_parser = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-    protected TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
-    protected GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
-    protected GrammaticalStructure grammartical_structure;
-    protected List<TypedDependency> typed_dependency_list;
+    private LexicalizedParser lexicalized_parser = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+    private TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
+    private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
+    private GrammaticalStructure grammartical_structure;
+    private List<TypedDependency> typed_dependency_list;
 
     public GrammaticalParser() {
         lexicalized_parser.setOptionFlags(new String[] { "-maxLength", "80", "-retainTmpSubcategories" });
