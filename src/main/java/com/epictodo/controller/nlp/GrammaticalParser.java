@@ -38,15 +38,25 @@ public class GrammaticalParser {
     protected List<TypedDependency> typed_dependency_list;
 
     public GrammaticalParser() {
-        lexicalized_parser.setOptionFlags(new String[]{"-maxLength", "80", "-retainTmpSubcategories"});
+        lexicalized_parser.setOptionFlags(new String[] { "-maxLength", "80", "-retainTmpSubcategories" });
     }
 
+    /**
+     * This method will return the grammatical Tree structure of the sentence parsed
+     * @param _sentence
+     * @return _tree
+     */
     public Tree buildGrammarStructure(String _sentence) {
         Tree _tree = lexicalized_parser.parse(_sentence);
 
         return _tree;
     }
 
+    /**
+     * This method will return the weight of each grammatical token of the sentence parsed
+     * @param _sentence
+     * @return typed_dependency_list
+     */
     public List<TypedDependency> grammarAnalyzer(String _sentence) {
         Tree _tree = lexicalized_parser.parse(_sentence);
         grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
@@ -55,8 +65,14 @@ public class GrammaticalParser {
         return typed_dependency_list;
     }
 
+    /**
+     * This method will grammartize the sentence and extract individual tokens into a List<String>
+     * @param _tree
+     * @param _sentence
+     * @return _grammar
+     */
     public List<String> grammartize(Tree _tree, String _sentence) {
-        List<String> _grammar = new LinkedList<String>();
+        List<String> _grammar = new LinkedList<>();
         _tree = lexicalized_parser.parse(_sentence);
         grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
         typed_dependency_list = grammartical_structure.typedDependenciesCCprocessed();

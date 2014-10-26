@@ -44,8 +44,13 @@ public class Lemmatizer {
         this._pipeline = new StanfordCoreNLP(_properties);
     }
 
+    /**
+     * This method will lemmatize the sentence into individual lemmatized tokens before storing into List<String>
+     * @param _sentence
+     * @return _lemmas
+     */
     public List<String> lemmatize(String _sentence) {
-        List<String> _lemmas = new LinkedList<String>();
+        List<String> _lemmas = new LinkedList<>();
         Annotation annotate_sentence = new Annotation(_sentence);
         this._pipeline.annotate(annotate_sentence);
 
