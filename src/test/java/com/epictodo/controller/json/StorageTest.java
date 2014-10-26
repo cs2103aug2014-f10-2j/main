@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package controller.json;
+package com.epictodo.controller.json;
 
-import com.epictodo.controller.json.Storage;
 import com.epictodo.model.Task;
 import org.junit.After;
 import org.junit.Before;

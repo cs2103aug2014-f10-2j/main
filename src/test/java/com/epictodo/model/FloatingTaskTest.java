@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package model;
+package com.epictodo.model;
 
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;

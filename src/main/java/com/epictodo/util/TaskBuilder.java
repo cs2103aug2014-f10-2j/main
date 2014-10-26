@@ -1,8 +1,9 @@
 package com.epictodo.util;
 
-import java.util.HashMap;
-
-import com.epictodo.model.*;
+import com.epictodo.model.DeadlineTask;
+import com.epictodo.model.FloatingTask;
+import com.epictodo.model.Task;
+import com.epictodo.model.TimedTask;
 
 /*
     "start_date_time": 1412907000,

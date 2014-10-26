@@ -1,10 +1,9 @@
 package com.epictodo.engine;
 
-import java.awt.DisplayMode;
-import java.util.ArrayList;
-
 import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.Task;
+
+import java.util.ArrayList;
 
 // user input = { command + instruction }
 public class WorkDistributor {

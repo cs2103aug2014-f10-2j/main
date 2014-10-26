@@ -1,9 +1,5 @@
 package com.epictodo.model;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.util.*;
-
 public class Task {
 
 	/************** Data members **********************/

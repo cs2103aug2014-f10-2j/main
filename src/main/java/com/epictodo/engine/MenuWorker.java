@@ -1,12 +1,12 @@
 package com.epictodo.engine;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Logger;
-
 import com.epictodo.engine.WorkDistributor.CommandType;
 import com.epictodo.model.Task;
 import com.epictodo.util.TaskBuilder;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class MenuWorker {
 	private final static String MENU_SELECT_UPDATE_OPTION ="Enter your option to be updated (or 0 to menu): ";	

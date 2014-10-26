@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package logic;
+package com.epictodo.logic;
 
-import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.Task;
 import org.junit.Test;
 

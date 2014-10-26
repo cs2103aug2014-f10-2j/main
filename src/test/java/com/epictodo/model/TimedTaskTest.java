@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package model;
+package com.epictodo.model;
 
-import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.Task;
+import com.epictodo.model.TimedTask;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,29 +36,38 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by kennetham on 24/10/14.
  */
-public class DeadlineTaskTest {
+public class TimedTaskTest {
     private Task _task;
-    private DeadlineTask deadline_task;
+    private TimedTask timed_task;
 
     @Before
     public void initialise() {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "241014", "10:00");
+        timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
     }
 
     @Test
-    public void checkDeadlineTaskSetDateTime() throws ParseException {
-        deadline_task.setDateTime("251014", "23:59");
-        assertEquals(deadline_task.getEndDateTime(), "251014 23:59");
+    public void checkSetDuration() {
+        timed_task.setDuration(4.0);
+        assertEquals(timed_task.getEndDateTime(), "251014 00:00");
     }
 
     @Test
-    public void checkDeadlineTaskCloneMethod() {
-        DeadlineTask tempDeadlineTask;
-        tempDeadlineTask = deadline_task.clone();
-        assertEquals(tempDeadlineTask.getTaskName(), "Do CS2103 homework");
-        assertEquals(tempDeadlineTask.getTaskDescription(), "Homework on testing");
-        assertEquals(tempDeadlineTask.getPriority(), 5);
-        assertEquals(tempDeadlineTask.getIsDone(), false);
+    public void checkTimedTaskSetDateTime() throws ParseException {
+        timed_task.setDateTime("261014", "19:00");
+        assertEquals(timed_task.getStartDateTime(), "261014 19:00");
+    }
+
+    @Test
+    public void checkTimedTaskToString() {
+        assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
+    }
+
+    @Test
+    public void checkTimedTaskCloneMethod() {
+        TimedTask temp_ttask;
+        temp_ttask = timed_task.clone();
+        assertEquals(temp_ttask.getStartDateTime(), "241014 20:00");
+        assertEquals(temp_ttask.getEndDateTime(), "241014 22:00");
     }
 }

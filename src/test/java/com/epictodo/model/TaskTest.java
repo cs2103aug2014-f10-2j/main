@@ -22,52 +22,56 @@
  * SOFTWARE.
  */
 
-package model;
+package com.epictodo.model;
 
 import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by kennetham on 24/10/14.
  */
-public class TimedTaskTest {
+public class TaskTest {
     private Task _task;
-    private TimedTask timed_task;
 
     @Before
     public void initialise() {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
     }
 
     @Test
-    public void checkSetDuration() {
-        timed_task.setDuration(4.0);
-        assertEquals(timed_task.getEndDateTime(), "251014 00:00");
+    public void checkIsDoneMethod() {
+        _task.setIsDone(true);
+        assertEquals(_task.getIsDone(), true);
     }
 
     @Test
-    public void checkTimedTaskSetDateTime() throws ParseException {
-        timed_task.setDateTime("261014", "19:00");
-        assertEquals(timed_task.getStartDateTime(), "261014 19:00");
+    public void checkSetTaskNameMethod() {
+        _task.setTaskName("newTask");
+        assertEquals(_task.getTaskName(), "newTask");
     }
 
     @Test
-    public void checkTimedTaskToString() {
-        assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
+    public void checkSetTaskDescriptionMethod() {
+        _task.setTaskDescription("newTaskDescription");
+        assertEquals(_task.getTaskDescription(), "newTaskDescription");
     }
 
     @Test
-    public void checkTimedTaskCloneMethod() {
-        TimedTask temp_ttask;
-        temp_ttask = timed_task.clone();
-        assertEquals(temp_ttask.getStartDateTime(), "241014 20:00");
-        assertEquals(temp_ttask.getEndDateTime(), "241014 22:00");
+    public void checkSetPriorityMethod() {
+        _task.setPriority(10);
+        assertEquals(_task.getPriority(), 10);
+    }
+
+    @Test
+    public void checkTaskCloneMethod() {
+        Task tempTask;
+        tempTask = _task.clone();
+        assertEquals(tempTask.getTaskName(), "Meeting at CLB");
+        assertEquals(tempTask.getTaskDescription(), "Group Project");
+        assertEquals(tempTask.getPriority(), 2);
+        assertEquals(tempTask.getIsDone(), false);
     }
 }
