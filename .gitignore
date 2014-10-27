@@ -80,6 +80,8 @@ local.properties
 .loadpath
 .classpath
 .project
+*.crf.ser.gz
+*.prop
 
 # External tool builders
 .externalToolBuilders/
