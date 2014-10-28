@@ -34,17 +34,19 @@ import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SentenceAnalysis {
     protected StanfordCoreNLP _pipeline;
+    private final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
 
     public SentenceAnalysis() {
-        Properties props = new Properties();
-        props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
-        _pipeline = new StanfordCoreNLP(props);
-        _pipeline.addAnnotator(new TimeAnnotator("sutime", props));
+        Properties _properties = new Properties();
+        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+        _pipeline = new StanfordCoreNLP(_properties);
+        _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
     }
 
     /**
@@ -54,8 +56,12 @@ public class SentenceAnalysis {
      * @param _sentence
      * @return _results
      */
-    public List<String> dateTimeAnalyzer(String _sentence) {
-        List<String> _results = new LinkedList<>();
+    public Map<String, String> dateTimeAnalyzer(String _sentence) throws ParseException {
+        Map<String, String> _results = new HashMap<>();
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        String _prev;
+        String _current = "";
+        String _latest = "";
 
         Annotation _document = new Annotation(_sentence);
         _document.set(CoreAnnotations.DocDateAnnotation.class, getTodayDate());
@@ -64,8 +70,37 @@ public class SentenceAnalysis {
 
         for (CoreMap _tokens : timex_annotations) {
             _tokens.get(CoreAnnotations.TokensAnnotation.class);
-            _results.add(_tokens.toString());
-            _results.add(_tokens.get(TimeExpression.Annotation.class).getTemporal().toString());
+            _prev = _tokens.get(TimeExpression.Annotation.class).getTemporal().toString();
+
+            /**
+             * Algorithm to check if the date is the latest date or an earlier date
+             * Checks to get the latest date into the results
+             *
+             * This is a simple check for cases like:
+             * 1. next Tuesday from 1:00pm to 4:00pm.
+             *    -> this will result in changing the date of 1:00pm & 4:00pm to next Tuesday instead of Today's date
+             * 2. If today is Tuesday, "on Wednesday at 9am"
+             *    -> this will result in identifying that today is 'Tuesday'
+             *    -> return tomorrow's date at 9:00am
+             *    -> for example, "2014-10-29-WXX-3T09:00"
+             * 3. 3 days later at 10am
+             *    -> this will correctly identify 3 days laters' date
+             *    -> for example, "2014-10-31T10:00"
+             * 4. 3 days later from 10am to 15:00pm
+             *    -> this will break the sentence into tokens as following into a Map
+             *    -> for example, "{3pm=2014-10-31, 3 days later=2014-10-31, 10am=2014-10-31}"
+             */
+            if (_current.equals("")) _latest = _current = _prev;
+            else if (!_current.equals("")) {
+                Date date_prev = date_format.parse(_prev);
+                Date date_current = date_format.parse(_current);
+
+                if (date_prev.compareTo(date_current) <= 0) {
+                    _latest = _current;
+                }
+            }
+
+            _results.put(_tokens.toString(), _latest);
         }
 
         return _results;
@@ -105,12 +140,11 @@ public class SentenceAnalysis {
      * This method identify and extract NER entities such as Name, Person, Date, Time, Organization, Location
      *
      * @param _sentence
-     * @param _model    - Stanford model names out of the three models
      * @return _results
      */
-    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence, String _model) {
+    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence) {
         LinkedHashMap<String, LinkedHashSet<String>> _results = new <String, LinkedHashSet<String>>LinkedHashMap();
-        CRFClassifier<CoreLabel> _classifier = CRFClassifier.getClassifierNoExceptions(_model);
+        CRFClassifier<CoreLabel> _classifier = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
         List<List<CoreLabel>> _classify = _classifier.classify(_sentence);
 
         for (List<CoreLabel> _tokens : _classify) {
