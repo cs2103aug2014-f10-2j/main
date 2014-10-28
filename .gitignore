@@ -6,6 +6,10 @@
 ### Java ###
 *.class
 
+### NLP Classifiers Resource ###
+*.crf.ser.gz
+*.prop
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -80,8 +84,6 @@ local.properties
 .loadpath
 .classpath
 .project
-*.crf.ser.gz
-*.prop
 
 # External tool builders
 .externalToolBuilders/
