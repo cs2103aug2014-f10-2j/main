@@ -57,7 +57,7 @@ public class SentenceAnalysis {
      * @return _results
      */
     public Map<String, String> dateTimeAnalyzer(String _sentence) throws ParseException {
-        Map<String, String> _results = new HashMap<>();
+        Map<String, String> _results = new TreeMap<>();
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         String _prev;
         String _current = "";

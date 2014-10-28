@@ -167,7 +167,7 @@ public class SentenceStructure {
     /**
      * This method checks on the given string if it's in the time format based on Regex matches
      * Time format must be strictly be kept to hhmmh / hhmmhr / hhmmhrs
-     * 
+     *
      * Example:
      * 0900h, 1030hr, 1330hrs (PASSED)
      * 0900, 1030 h, 1330pm (FAILED)
