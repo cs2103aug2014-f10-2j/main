@@ -34,10 +34,7 @@ import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.util.CoreMap;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,8 +59,8 @@ public class SentenceStructure {
      * @param dependency_reln
      * @return dependency_obj
      */
-    public List<String> sentenceDependencies(String _sentence, String dependency_reln) {
-        List<String> dependency_obj = new LinkedList<>();
+    public Map<String, String> sentenceDependencies(String _sentence) {
+        Map<String, String> dependency_obj = new HashMap<>();
         // Create an empty Annotation with the sentence
         Annotation annotate_sentence = new Annotation(_sentence);
 
@@ -94,10 +91,11 @@ public class SentenceStructure {
 
             for (Object _object : _list) {
                 type_dependency = (TypedDependency) _object;
-//                System.out.println("Dependency Name: " + type_dependency.dep().nodeString() + " :: " + "Node " + type_dependency.reln());
-                if (type_dependency.reln().equals(dependency_reln)) {
-                    dependency_obj.add(type_dependency.dep().nodeString());
-                }
+
+                dependency_obj.put(type_dependency.reln().toString(), type_dependency.dep().nodeString());
+//                if (type_dependency.reln().equals(dependency_reln)) {
+//                    dependency_obj.put(type_dependency.reln().toString(), type_dependency.dep().nodeString());
+//                }
             }
         }
 
@@ -143,9 +141,7 @@ public class SentenceStructure {
             for (Object _object : _list) {
                 type_dependency = (TypedDependency) _object;
 
-                if (checkDateFormat(type_dependency.dep().nodeString()) == true) {
-                    dependency_obj.add(type_dependency.dep().nodeString());
-                } else if (checkTimeFormat(type_dependency.dep().nodeString()) == true) {
+                if (checkDateFormat(type_dependency.dep().nodeString()) == true || checkTimeFormat(type_dependency.dep().nodeString())) {
                     dependency_obj.add(type_dependency.dep().nodeString());
                 }
             }
@@ -171,7 +167,7 @@ public class SentenceStructure {
     /**
      * This method checks on the given string if it's in the time format based on Regex matches
      * Time format must be strictly be kept to hhmmh / hhmmhr / hhmmhrs
-     *
+     * 
      * Example:
      * 0900h, 1030hr, 1330hrs (PASSED)
      * 0900, 1030 h, 1330pm (FAILED)
