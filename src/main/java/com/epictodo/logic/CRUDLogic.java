@@ -289,14 +289,11 @@ public class CRUDLogic {
 	 */
 	public String displayList(ArrayList<Task> li) {
 		String retStr = "";
-		for (int i = 0; i < size(); i++) {
+		for (int i = 0; i < li.size(); i++) {
 			retStr += String.valueOf(i + 1) + ". " + li.get(i)
 					+ STRING_LINE_BREAK;
 		}
 		return retStr;
 	}
 
-	private void displayMsg(String m) {
-		System.out.print(m);
-	}
 }
