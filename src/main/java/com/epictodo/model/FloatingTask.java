@@ -7,6 +7,9 @@ public class FloatingTask extends Task {
 	public FloatingTask(String taskName, String taskDescription, int priority) {
 		super(taskName, taskDescription, priority);
 	}
+	public FloatingTask(Task t) {
+		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
+	}
 
 	/**************** Accessors ***********************/
 
@@ -20,11 +23,8 @@ public class FloatingTask extends Task {
 	 * taskDescription, priority); return newClone; }
 	 */
 	public FloatingTask clone() {
-		Task cloned = super.clone();
-		if (cloned instanceof FloatingTask) {
-			return (FloatingTask) cloned;
-		} else {
-			throw new ClassCastException("Not an instance of FloatingTask");
-		}
+		Task t = super.clone();
+		FloatingTask cloned = new FloatingTask(t);
+		return cloned;
 	}
 }
