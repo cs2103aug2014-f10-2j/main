@@ -23,8 +23,7 @@ public class CRUDLogic {
 	private static final String PATH_DATA_FILE = "storage.txt";
 	private static final int CONFIG_PRIORITY_MIN = 1;
 	private static final int CONFIG_PRIORITY_MAX = 3;
-	private static final long CONFIG_STARTING_NEXTUID = 1;
-
+	
 	/*
 	 * Private Attributes
 	 */
@@ -36,8 +35,8 @@ public class CRUDLogic {
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		_nextUid = CONFIG_STARTING_NEXTUID;
 		_items = new ArrayList<Task>();
+		_nextUid = 1;
 	}
 
 	/*
@@ -269,6 +268,7 @@ public class CRUDLogic {
 	 */
 	public boolean loadFromFile() throws IOException {
 		_items = Storage.loadDbFile(PATH_DATA_FILE);
+		_nextUid = getMaxuID();
 		return true;
 	}
 
@@ -277,8 +277,7 @@ public class CRUDLogic {
 	 */
 	public void saveToFile() throws IOException {
 		String filename = PATH_DATA_FILE;
-		Storage s = new Storage();
-		s.saveToJson(filename, _items);
+		Storage.saveToJson(filename, _items);
 	}
 
 	/**
@@ -294,6 +293,18 @@ public class CRUDLogic {
 					+ STRING_LINE_BREAK;
 		}
 		return retStr;
+	}
+	
+	private long getMaxuID(){
+		long max =0;
+		if (_items!=null){
+			for (int i =0; i<_items.size();i++){
+				if (_items.get(i).getUid()>max){
+					max = _items.get(i).getUid();
+				}
+			}
+		}
+		return max+1;
 	}
 
 }
