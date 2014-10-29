@@ -19,6 +19,7 @@ public class MenuWorker {
 	private static String _defaultTime = "09:00";
 	static Scanner s = null;
 	
+	// KW please study this and apply SLAP
 	public static Task addMenu() {
 		s =new Scanner(System.in);
 		String taskName = "";
@@ -26,7 +27,6 @@ public class MenuWorker {
 		String taskTime = "";
 		double taskDuration = -1;
 		String taskDesc="";
-		
 	    Display("Enter Task Name: ");
 	    taskName = s.nextLine();
 	    
