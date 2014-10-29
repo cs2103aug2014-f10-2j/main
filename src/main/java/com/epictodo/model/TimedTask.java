@@ -35,16 +35,33 @@ public class TimedTask extends Task {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	public TimedTask(Task t,
+			long startDateTime, long EndDateTime) {
+		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
+		// This checks whether date and time entered are of correct length
+		this.startDateTime = startDateTime;
+		this.endDateTime =EndDateTime;
+	}
 
 	/**************** Accessors ***********************/
+	
+	public long getStartDateTime(){
+		return this.startDateTime;
+	}
+	
+	public long getEndDateTime(){
+		return this.endDateTime;
+	}
+	
 	// This method converts the stored unixTimeStamp into "ddMMyy HH:mm"
-	public String getStartDateTime() {
+	public String getStartDateTimeAsString() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(startDateTime * 1000));
 		return dateTime;
 	}
 
-	public String getEndDateTime() {
+	public String getEndDateTimeAsString() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		return dateTime;
@@ -102,8 +119,8 @@ public class TimedTask extends Task {
 
 	/**************** Class methods ************************/
 	public String toString() {
-		return super.toString() + " from " + this.getStartDateTime() + " to "
-				+ this.getEndDateTime();
+		return super.toString() + " from " + this.getStartDateTimeAsString() + " to "
+				+ this.getEndDateTimeAsString();
 	}
 
 	/*
@@ -118,18 +135,7 @@ public class TimedTask extends Task {
 	public TimedTask clone() {
 		Task t = super.clone();
 		TimedTask cloned;
-		try {
-			if (t instanceof TimedTask) {
-				cloned = (TimedTask) t;
-				cloned.setDateTime(getStartDate(), getStartTime());
-				cloned.setDuration(getDuration());
-			} else {
-				throw new ClassCastException("Not an instance of TimedTask");
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
+		cloned = new TimedTask(t,getStartDateTime(), getEndDateTime());
 		return cloned;
 	}
 }

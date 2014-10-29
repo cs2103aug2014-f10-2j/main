@@ -49,13 +49,13 @@ public class TimedTaskTest {
     @Test
     public void checkSetDuration() {
         timed_task.setDuration(4.0);
-        assertEquals(timed_task.getEndDateTime(), "251014 00:00");
+        assertEquals(timed_task.getEndDateTimeAsString(), "251014 00:00");
     }
 
     @Test
     public void checkTimedTaskSetDateTime() throws ParseException {
         timed_task.setDateTime("261014", "19:00");
-        assertEquals(timed_task.getStartDateTime(), "261014 19:00");
+        assertEquals(timed_task.getStartDateTimeAsString(), "261014 19:00");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class TimedTaskTest {
     public void checkTimedTaskCloneMethod() {
         TimedTask temp_ttask;
         temp_ttask = timed_task.clone();
-        assertEquals(temp_ttask.getStartDateTime(), "241014 20:00");
-        assertEquals(temp_ttask.getEndDateTime(), "241014 22:00");
+        assertEquals(temp_ttask.getStartDateTimeAsString(), "241014 20:00");
+        assertEquals(temp_ttask.getEndDateTimeAsString(), "241014 22:00");
     }
 }
