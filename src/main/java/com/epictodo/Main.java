@@ -9,8 +9,7 @@ public class Main {
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
-
-		
+		WorkDistributor.loadData();
 		bannerDisplay();
 		while(true){
 			menuDisplay();
