@@ -56,6 +56,7 @@ public class WorkDistributor {
 			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
+			
 			// todo: delete task t in memory and storage return successful
 			// message in String
 			return result;
@@ -131,6 +132,14 @@ public class WorkDistributor {
 			return CommandType.INVALID;
 	}
 
+	public static boolean loadData(){
+		try{
+			return logic.loadFromFile();
+		}
+		catch(Exception ex){
+			return false;
+		}
+	}
 	private static boolean compareString(String text, String text2) {
 		return (text.equalsIgnoreCase(text2));
 	}

@@ -267,10 +267,9 @@ public class CRUDLogic {
 	/**
 	 * This method loads all tasks from the text file
 	 */
-	public String loadFromFile() throws IOException {
-		ArrayList<Task> tasks = new ArrayList<Task>();
-		tasks = Storage.loadDbFile(PATH_DATA_FILE);
-		return "data loaded";
+	public boolean loadFromFile() throws IOException {
+		_items = Storage.loadDbFile(PATH_DATA_FILE);
+		return true;
 	}
 
 	/**
