@@ -49,7 +49,7 @@ public class DeadlineTaskTest {
     @Test
     public void checkDeadlineTaskSetDateTime() throws ParseException {
         deadline_task.setDateTime("251014", "23:59");
-        assertEquals(deadline_task.getEndDateTime(), "251014 23:59");
+        assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
     }
 
     @Test

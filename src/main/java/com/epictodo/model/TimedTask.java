@@ -37,11 +37,10 @@ public class TimedTask extends Task {
 	}
 	
 	public TimedTask(Task t,
-			long startDateTime, long EndDateTime) {
+			long startDateTime, long endDateTime) {
 		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
-		// This checks whether date and time entered are of correct length
 		this.startDateTime = startDateTime;
-		this.endDateTime =EndDateTime;
+		this.endDateTime =endDateTime;
 	}
 
 	/**************** Accessors ***********************/

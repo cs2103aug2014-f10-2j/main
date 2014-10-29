@@ -27,10 +27,19 @@ public class DeadlineTask extends Task {
 		} catch (Exception e) {
 		}
 	}
+	
+	public DeadlineTask(Task t, long endDateTime) {
+			super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
+			this.endDateTime =endDateTime;
+	}
 
 	/**************** Accessors ***********************/
+	public long getEndDateTime(){
+		return this.endDateTime;
+	}
+	
 	// This method converts the unixTimeStamp to readable date time format
-	public String getEndDateTime() {
+	public String getEndDateTimeAsString() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		return dateTime;
@@ -78,47 +87,14 @@ public class DeadlineTask extends Task {
 
 	/**************** Class methods ************************/
 	public String toString() {
-		return super.toString() + " by " + this.getEndDateTime();
+		return super.toString() + " by " + this.getEndDateTimeAsString();
 	}
 
 	public DeadlineTask clone() {
-
-		/*
-		 * The following code is not efficient
-		 */
-		// String taskName = super.getTaskName();
-		// String taskDescription = super.getTaskDescription();
-		// int priority = super.getPriority();
-
-		/*
-		 * Use super class method to begin with instead
-		 */
-		Task t = super.clone();
-		DeadlineTask cloned;
-		/*
-		 * Then use setters to initialize the additional attributes Try-catch
-		 * block to handle the ParseException thrown by .setDateTime()
-		 */
-		try {
-			if (t instanceof DeadlineTask) {
-				cloned = (DeadlineTask) t;
-				cloned.setDateTime(getDate(), getTime());
-			} else {
-				throw new ClassCastException("Not an instance of DeadlineTask");
-			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-
-		/*
-		 * Not needed any more
-		 */
-		// String date = getDate();
-		// String time = getTime();
-		// DeadlineTask newClone = new DeadlineTask(taskName, taskDescription,
-		// priority, date, time);
-		return cloned;
+	
+			Task t = super.clone();
+			DeadlineTask cloned;
+			cloned = new DeadlineTask(t, getEndDateTime());
+			return cloned;
 	}
 }
