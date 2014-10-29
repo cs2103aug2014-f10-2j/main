@@ -1,7 +1,10 @@
 package com.epictodo.engine;
 
 import com.epictodo.engine.WorkDistributor.CommandType;
+import com.epictodo.model.DeadlineTask;
+import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
+import com.epictodo.model.TimedTask;
 import com.epictodo.util.TaskBuilder;
 
 import java.util.ArrayList;
@@ -92,5 +95,16 @@ public class MenuWorker {
 	
 	private static void Display(String a){
 		System.out.print(a);
+	}
+
+	public static Task updateTask(Task t) {
+		if (t instanceof TimedTask){
+			TimedTask tt = (TimedTask) t;
+		}else if (t instanceof DeadlineTask){
+			DeadlineTask tt = (DeadlineTask) t;
+		}else if (t instanceof FloatingTask){ 
+			FloatingTask tt = (FloatingTask) t;
+		}
+		return null;
 	}
 }

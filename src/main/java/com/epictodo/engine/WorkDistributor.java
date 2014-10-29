@@ -56,7 +56,7 @@ public class WorkDistributor {
 			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
-			// todo: delete task t in memory and storage return successful
+			Task t1 = MenuWorker.updateTask(t);
 			// message in String
 			return result;
 
