@@ -22,7 +22,7 @@ public class CommandWorker {
 		double taskDuration = getTaskDurationThroughInstruction(s);
 		String taskDesc="";
 
-			if (taskName == null){
+			if (taskName.equals("")){
 				logger.info("invalid command!");
 				return null;
 			}
@@ -109,6 +109,6 @@ public class CommandWorker {
 			else
 				taskName += next;
 		}
-		return null;
+		return taskName;
 	}
 }

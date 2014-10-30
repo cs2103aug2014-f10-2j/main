@@ -139,6 +139,7 @@ public class MenuWorker {
 	}
 
 	public static Task updateTask(Task t) {
+		Task result =null;
 		s = new Scanner(System.in);
 		DisplayLine("please enter the updated info or press enter to remain unchange");
 		Display(String.format("Name ( %s ):",t.getTaskName()));
@@ -152,21 +153,28 @@ public class MenuWorker {
 			Display(String.format("start Date ( %s ):",((TimedTask) t).getStartDate()));
 			String startDate = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
 			Display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
-			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
+			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartTime());
 			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
 			String d = getUpdatedInfo(s, ((TimedTask) t).getEndDateTimeAsString());
 			double duration = Double.valueOf(d);
-			return new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
+			result =  new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
+			result.setUid(t.getUid());
+			return result;
 		}else if (t instanceof DeadlineTask){
 			Display(String.format("end Date ( %s ):",((DeadlineTask) t).getDate()));
 			String endDate = getUpdatedInfo(s, ((DeadlineTask) t).getDate());
 			Display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
 			String endTime = getUpdatedInfo(s, ((DeadlineTask) t).getTime());
-			return new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);
+			result =  new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);
+			result.setUid(t.getUid());
+			return result;
 		}else if (t instanceof FloatingTask){ 
-			return (FloatingTask)t;
+			result = new FloatingTask(taskName, taskDesc, taskPriority);
+			result.setUid(t.getUid());
+			return result;
 		}
-		return null;
+		result = new Task(taskName, taskDesc, taskPriority);
+		return result;
 	}
 	
 	private static String getUpdatedInfo(Scanner s, String unchanged){

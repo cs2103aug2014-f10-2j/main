@@ -204,10 +204,28 @@ public class CRUDLogic {
 	public String deleteTask(Task t) {
 		Task found = getTaskByUid(t.getUid());
 		if (found != null && _items.remove(found)) {
-			return "task removed";
+			try {
+				saveToFile();
+				return "task removed";
+			} catch (IOException ioe) {
+				_items.remove(t);
+				return "Failed to create task due to File IO error";
+			}
 		} else {
 			return "can't remove task";
 		}
+	}
+	
+	
+	public String updateTask(Task unchanged, Task updated){
+		
+		if (deleteTask(unchanged).equals("task removed")){
+			if (createTask(updated).equals("task added")){
+				return "task updated";
+			}
+		};
+		
+		return "can't update task";
 	}
 
 	/**
@@ -268,6 +286,9 @@ public class CRUDLogic {
 	 */
 	public boolean loadFromFile() throws IOException {
 		_items = Storage.loadDbFile(PATH_DATA_FILE);
+		if (_items == null){
+			_items = new ArrayList<Task>();
+		}
 		_nextUid = getMaxuID();
 		return true;
 	}

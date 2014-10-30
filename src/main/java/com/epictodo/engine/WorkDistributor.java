@@ -57,7 +57,7 @@ public class WorkDistributor {
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			Task updatedTask = MenuWorker.updateTask(t);
-			// message in String
+			result = logic.updateTask(t, updatedTask); 
 			return result;
 
 		case SEARCH:
