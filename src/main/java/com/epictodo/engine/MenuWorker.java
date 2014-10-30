@@ -30,20 +30,15 @@ public class MenuWorker {
 		String taskTime = "";
 		double taskDuration = -1;
 		String taskDesc="";
-	    Display("Enter Task Name: ");
-	    taskName = s.nextLine();
+	   
+	    taskName = getTaskName();
+	    taskDesc = getTaskDescription();
+	    taskDate = getTaskDate();
 	    
-	    Display("Enter Description(Optional): ");
-	    taskDesc = s.nextLine();
-	    
-	    Display("Enter Task Date (DDMMYY): ");
-	    taskDate = s.nextLine();
 	    if (taskDate.equals("")){
-			logger.info("floating task is created!");
-	    	return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
+	    	return createFloatingTask(taskName, taskDesc, _defaultPriority);
 	    }
-	    Display("Enter Task Time: ");
-		    taskTime = s.nextLine();
+		    taskTime = getTaskTime();
 		    if (!taskTime.equals("")){
 		    	Display("Enter Task Duration in hours(Optional)");
 		    	String durationTemp = s.nextLine();
@@ -60,6 +55,30 @@ public class MenuWorker {
 		    return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,_defaultTime);
 	}
 	
+	public static String getTaskName() {
+		Display("Enter Task Name: ");
+		String taskName = s.nextLine();
+		return taskName;
+	}
+	
+	public static String getTaskDescription() {
+		 Display("Enter Description(Optional): ");
+		    String taskDesc = s.nextLine();
+		    return taskDesc;
+	}
+	
+	public static String getTaskDate() {
+		Display("Enter Task Date (DDMMYY): ");
+	    String taskDate = s.nextLine();
+	    return taskDate;
+	}
+	
+	public static String getTaskTime() {
+		Display("Enter Task Time: ");
+	    String taskTime = s.nextLine();
+	    return taskTime;
+	}
+	
 	public static String findMenu(){
 		String result = "";
 		s= new Scanner(System.in);
@@ -68,7 +87,29 @@ public class MenuWorker {
 		return result;
 	}
 	
+	public static Task createFloatingTask(String taskName, String taskDesc, int priority) {
+		logger.info("floating task is created!");
+		return TaskBuilder.buildTask(taskName, taskDesc, priority);
+	}
+	/*
+	public static Task createTimedTask(String taskName, String taskDesc, int priority, String taskDate, String taskTime, double taskDuration) {
+		Display("Enter Task Duration in hours(Optional)");
+		String durationTemp = s.nextLine();
+		if (!durationTemp.equals("")){
+    		taskDuration = Double.valueOf(durationTemp);
+			logger.info("timed task is created!");
+    		return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime, taskDuration);
+    	} else {
+				logger.info("deadline task is created!");
+				createDeadlineTask(taskName, taskDesc, priority, taskDate, taskTime);
+		    	return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime);
+		}
+	}
 	
+	public static Task createDeadlineTask(String taskName, String taskDesc, int priority, String taskDate, String taskTime); {
+		return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime);
+	}
+	*/
 	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
 		
 		s = new Scanner(System.in);
