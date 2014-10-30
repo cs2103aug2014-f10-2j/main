@@ -25,6 +25,7 @@
 package com.epictodo.controller.json;
 
 import com.epictodo.model.Task;
+import com.epictodo.model.Task.TaskType;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,7 +34,8 @@ import com.google.gson.reflect.TypeToken;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,23 +62,23 @@ public class Storage {
     }
 
     /**
-     * This method saves ArrayList<Task> from memory object to Json file.
+     * This method saves Map<TaskType, List<Task>> from memory object to Json file.
      *
      * @param file_name
-     * @param array_list
+     * @param _map
      * @return true
      */
-    public static boolean saveToJson(String file_name, ArrayList<Task> array_list) {
+    public static boolean saveToJson(String file_name, Map<TaskType, List<Task>> _map) {
         assert file_name.equalsIgnoreCase(file_name);
         _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
 
         try {
             FileWriter file_writer = new FileWriter(file_name);
             Gson _gson = instantiateObject();
-            String json_result = _gson.toJson(array_list);
+            String json_result = _gson.toJson(_map);
 
-            if (array_list.isEmpty() || array_list == null) {
-                _logger.log(Level.WARNING, "ArrayList<Task> is empty.");
+            if (_map == null || _map.isEmpty()) {
+                _logger.log(Level.WARNING, "Map<TaskType, List<Task>> is empty.");
                 file_writer.write("");
             } else {
                 file_writer.write(json_result);
@@ -93,20 +95,20 @@ public class Storage {
     }
 
     /**
-     * This method loads the Json file to ArrayList<Task> of memory objects
+     * This method loads the Json file to Map<TaskType, List<Task>> of memory objects
      *
      * @param file_name
      * @return _result
      */
-    public static ArrayList<Task> loadDbFile(String file_name) {
-        ArrayList<Task> _result = new ArrayList<Task>();
+    public static Map<TaskType, List<Task>> loadDbFile(String file_name) {
+        Map<TaskType, List<Task>> _result;
         assert file_name.equalsIgnoreCase(file_name);
         _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
 
         try {
             FileReader _reader = new FileReader(file_name);
             Gson _gson = instantiateObject();
-            TypeToken<ArrayList<Task>> type_token = new TypeToken<ArrayList<Task>>(){};
+            TypeToken<Map<TaskType, List<Task>>> type_token = new TypeToken<Map<TaskType, List<Task>>>(){};
 
             _result = _gson.fromJson(_reader, type_token.getType());
         } catch(IOException ex) {
