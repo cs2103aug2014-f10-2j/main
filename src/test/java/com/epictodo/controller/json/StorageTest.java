@@ -28,6 +28,7 @@ import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
 import com.epictodo.model.Task.TaskType;
+import com.epictodo.model.TimedTask;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,21 +49,26 @@ public class StorageTest {
     private Task deadline_task = new DeadlineTask("CS2103 V0.3", "Complete V0.3 for testing", 4, "301014", "1900");
     private Task floating_task = new FloatingTask("CS2103 Project", "V0.3 incomplete version", 4);
     private Task floating_task2 = new FloatingTask("LAJ2202 Project", "Prepare materials to teach", 4);
+    private Task timed_task = new TimedTask("LAJ2202", "Japanese conversation", 4, "311014", "1900", 2.0);
 
     private ArrayList<Task> floating_list;
     private ArrayList<Task> deadline_list;
+    private ArrayList<Task> timed_list;
 
     @Before
     public void initialize() throws IOException {
         floating_list = new ArrayList<>();
         deadline_list = new ArrayList<>();
+        timed_list = new ArrayList<>();
 
         deadline_list.add(deadline_task);
         floating_list.add(floating_task);
         floating_list.add(floating_task2);
+        timed_list.add(timed_task);
 
         expected_map.put(TaskType.FLOATING, floating_list);
         expected_map.put(TaskType.DEADLINE, deadline_list);
+        expected_map.put(TaskType.TIMED, timed_list);
 
         _storage.saveToJson(file_name, expected_map);
     }
@@ -77,10 +83,12 @@ public class StorageTest {
         deadline_list.add(deadline_task);
         floating_list.add(floating_task);
         floating_list.add(floating_task2);
+        timed_list.add(timed_task);
 
         Map<TaskType, List<Task>> map = new HashMap<>();
         map.put(TaskType.FLOATING, floating_list);
         map.put(TaskType.DEADLINE, deadline_list);
+        map.put(TaskType.TIMED, timed_list);
 
         boolean _result = Storage.saveToJson(file_name, map);
 
@@ -93,6 +101,7 @@ public class StorageTest {
 
         assertEquals(expected_map.get(TaskType.FLOATING).size(), storage_map.get(TaskType.FLOATING).size());
         assertEquals(expected_map.get(TaskType.DEADLINE).size(), storage_map.get(TaskType.DEADLINE).size());
+        assertEquals(expected_map.get(TaskType.TIMED).size(), storage_map.get(TaskType.TIMED).size());
         assertEquals(expected_map.get(floating_list.get(0).getTaskDescription()), storage_map.get(floating_list.get(0).getTaskDescription()));
     }
 }
