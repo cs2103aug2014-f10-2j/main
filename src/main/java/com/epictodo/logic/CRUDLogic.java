@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * 
  */
@@ -63,9 +64,13 @@ public class CRUDLogic {
 		 * the return should only deliver a duplicate of the objects
 		 */
        ArrayList<Task> retList = new ArrayList<>();
-		for (int i = 0; i < _items.size(); i++) {
+		for (int i = 0; i < floating_task.size(); i++) {
 			retList.add(floating_task.get(i).clone());
+		}
+		for (int i = 0; i < deadline_task.size(); i++) {
             retList.add(deadline_task.get(i).clone());
+		}
+		for (int i = 0; i < timed_task.size(); i++) {
             retList.add(timed_task.get(i).clone());
 		}
 		return retList;
@@ -234,8 +239,14 @@ public class CRUDLogic {
 	public String deleteTask(Task t) {
 		Task found = getTaskByUid(t.getUid());
 		if (found != null) {
-            _items.remove(found);
-			return "task removed";
+			try {
+				_items.remove(found);
+				saveToFile();
+				return "task removed";
+			} catch (IOException ioe) {
+				_items.remove(t);
+				return "Failed to create task due to File IO error";
+			}
 		} else {
 			return "can't remove task";
 		}
@@ -307,6 +318,14 @@ public class CRUDLogic {
 		return true;
 	}
 
+	/*
+	private  void testLoadFile() throws IOException{
+		
+		String str = ((TimedTask) _items.get(1)).getStartDateTimeAsString();
+		int i = 0;
+		
+	}
+	*/
 	/**
 	 * This method saves all tasks to the text file
 	 */
@@ -332,12 +351,19 @@ public class CRUDLogic {
 	private long getMaxuID(){
 		long max =0;
 		if (_items!=null){
-			for (int i =0; i<_items.size();i++){
-				if (floating_task.get(i).getUid()>max){
+			//for (int i =0; i<_items.size();i++){
+			for (int i=0; i<floating_task.size();i++)	{
+			if (floating_task.get(i).getUid()>max){
 					max = floating_task.get(i).getUid();
-				} else if (deadline_task.get(i).getUid()>max){
+				}
+			}
+			for (int i=0; i<deadline_task.size();i++){
+				if (deadline_task.get(i).getUid()>max){
                     max = deadline_task.get(i).getUid();
-                } if (timed_task.get(i).getUid()>max){
+                }
+			}
+			for(int i =0; i<timed_task.size();i++){
+			if (timed_task.get(i).getUid()>max){
                     max = timed_task.get(i).getUid();
                 }
 			}

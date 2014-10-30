@@ -152,9 +152,9 @@ public class MenuWorker {
 			Display(String.format("start Date ( %s ):",((TimedTask) t).getStartDate()));
 			String startDate = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
 			Display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
-			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
+			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartTime());
 			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
-			String d = getUpdatedInfo(s, ((TimedTask) t).getEndDateTimeAsString());
+			String d = getUpdatedInfo(s,String.valueOf(((TimedTask) t).getDuration()));
 			double duration = Double.valueOf(d);
 			return new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
 		}else if (t instanceof DeadlineTask){

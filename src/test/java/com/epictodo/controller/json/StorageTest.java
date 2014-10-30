@@ -98,7 +98,8 @@ public class StorageTest {
     @Test
     public void loadDbTest() throws IOException {
         Map<TaskType, List<Task>> storage_map = Storage.loadDbFile(file_name);
-
+        
+        List<Task> tt = storage_map.get(TaskType.TIMED);
         assertEquals(expected_map.get(TaskType.FLOATING).size(), storage_map.get(TaskType.FLOATING).size());
         assertEquals(expected_map.get(TaskType.DEADLINE).size(), storage_map.get(TaskType.DEADLINE).size());
         assertEquals(expected_map.get(TaskType.TIMED).size(), storage_map.get(TaskType.TIMED).size());

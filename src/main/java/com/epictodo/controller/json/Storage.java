@@ -111,6 +111,7 @@ public class Storage {
             TypeToken<Map<TaskType, List<Task>>> type_token = new TypeToken<Map<TaskType, List<Task>>>(){};
 
             _result = _gson.fromJson(_reader, type_token.getType());
+            
         } catch(IOException ex) {
             ex.printStackTrace();
             return null;
