@@ -29,10 +29,6 @@ public class DeadlineTask extends Task {
 	}
 
 	/**************** Accessors ***********************/
-	public long getEndDateTimeLong() {
-		return this.endDateTime;
-	}
-
 	// This method converts the unixTimeStamp to readable date time format
 	public String getEndDateTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
@@ -41,14 +37,14 @@ public class DeadlineTask extends Task {
 	}
 
 	/**************** Accessors for local class only ***********************/
-	protected String getDate() {
+	private String getDate() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		String date = dateTime.substring(0, 6);
 		return date;
 	}
 
-	protected String getTime() {
+	private String getTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		// Index 9 is the colon
@@ -98,11 +94,31 @@ public class DeadlineTask extends Task {
 		 * Use super class method to begin with instead
 		 */
 		Task t = super.clone();
-
-		if (t instanceof DeadlineTask) {
-			return (DeadlineTask) t;
-		} else {
-			throw new ClassCastException("Not an instance of DeadlineTask");
+		DeadlineTask cloned;
+		/*
+		 * Then use setters to initialize the additional attributes Try-catch
+		 * block to handle the ParseException thrown by .setDateTime()
+		 */
+		try {
+			if (t instanceof DeadlineTask) {
+				cloned = (DeadlineTask) t;
+				cloned.setDateTime(getDate(), getTime());
+			} else {
+				throw new ClassCastException("Not an instance of DeadlineTask");
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
+
+		/*
+		 * Not needed any more
+		 */
+		// String date = getDate();
+		// String time = getTime();
+		// DeadlineTask newClone = new DeadlineTask(taskName, taskDescription,
+		// priority, date, time);
+		return cloned;
 	}
 }

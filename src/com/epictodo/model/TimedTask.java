@@ -51,14 +51,14 @@ public class TimedTask extends Task {
 	}
 
 	/**************** Accessors for local class only ****/
-	protected String getStartDate() {
+	private String getStartDate() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(startDateTime * 1000));
 		String date = dateTime.substring(0, 6);
 		return date;
 	}
 
-	protected String getStartTime() {
+	private String getStartTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(startDateTime * 1000));
 		// Index 9 is the colon
@@ -67,7 +67,7 @@ public class TimedTask extends Task {
 		return timeHour + timeMinute;
 	}
 
-	protected double getDuration() {
+	private double getDuration() {
 		long hoursInSeconds = endDateTime - startDateTime;
 		double hour = (int) hoursInSeconds / 60 / 60;
 		return hour;
@@ -106,12 +106,30 @@ public class TimedTask extends Task {
 				+ this.getEndDateTime();
 	}
 
+	/*
+	 * public TimedTask clone() { String taskName = super.getTaskName(); String
+	 * taskDescription = super.getTaskDescription(); int priority =
+	 * super.getPriority(); String date = getStartDate(); String time =
+	 * getStartTime(); int duration = getDuration(); TimedTask newClone = new
+	 * TimedTask(taskName, taskDescription, priority, date, time, duration);
+	 * return newClone; }
+	 */
+
 	public TimedTask clone() {
 		Task t = super.clone();
-		if (t instanceof TimedTask) {
-			return (TimedTask) t;
-		} else {
-			throw new ClassCastException("Not an instance of TimedTask");
+		TimedTask cloned;
+		try {
+			if (t instanceof TimedTask) {
+				cloned = (TimedTask) t;
+				cloned.setDateTime(getStartDate(), getStartTime());
+				cloned.setDuration(getDuration());
+			} else {
+				throw new ClassCastException("Not an instance of TimedTask");
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
 		}
+		return cloned;
 	}
 }
