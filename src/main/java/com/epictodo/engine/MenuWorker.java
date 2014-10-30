@@ -139,8 +139,13 @@ public class MenuWorker {
 	}
 
 	public static Task updateTask(Task t) {
+		
+		Display(String.format("Name ( %s ):\n",t.getTaskName()));
+		Display(String.format("Description ( %s ):",t.getTaskDescription()));
+		Display(String.format("priority ( %s ):",t.getPriority()));
 		if (t instanceof TimedTask){
-			TimedTask tt = (TimedTask) t;
+			Display(String.format("start Datetime ( %s ):",((TimedTask) t).getStartDateTimeAsString()));
+			Display(String.format("end Datetime ( %s ):",((TimedTask) t).getEndDateTimeAsString()));
 		}else if (t instanceof DeadlineTask){
 			DeadlineTask tt = (DeadlineTask) t;
 		}else if (t instanceof FloatingTask){ 

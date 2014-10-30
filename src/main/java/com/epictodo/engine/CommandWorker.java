@@ -45,7 +45,7 @@ public class CommandWorker {
 			return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime); 
 			
 	}
-	//redoing
+	
 	public static Task updateTask(String instruc) {
 		Logger logger = Logger.getLogger("System Log");
 		Scanner s = new Scanner(instruc);

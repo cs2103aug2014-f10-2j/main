@@ -40,7 +40,7 @@ public class WorkDistributor {
 		case DISPLAY:
 			return logic.displayAllTaskList();
 
-		case ADD:
+		case ADD: 
 			t = CommandWorker.createTask(instruc);
 			result = logic.createTask(t);
 			return result;
