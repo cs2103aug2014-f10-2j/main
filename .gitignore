@@ -6,6 +6,10 @@
 ### Java ###
 *.class
 
+### NLP Classifiers Resource ###
+*.crf.ser.gz
+*.prop
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -108,3 +112,4 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
+/target/
