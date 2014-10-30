@@ -2,6 +2,10 @@ package com.epictodo.model;
 
 public class Task {
 
+    public enum TaskType {
+        FLOATING, DEADLINE, TIMED
+    };
+
 	/************** Data members **********************/
 	private long uid;
 	private String taskName;
