@@ -1,16 +1,10 @@
 package com.epictodo.logic;
 
-import com.epictodo.model.Task.TaskType;
 import com.epictodo.controller.json.Storage;
 import com.epictodo.model.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * 
@@ -34,20 +28,14 @@ public class CRUDLogic {
 	 * Private Attributes
 	 */
 	private long _nextUid; // to track the next available uid for new Task
-	private Map<TaskType, List<Task>> _items; // to store all tasks
-    private ArrayList<Task> floating_task;
-    private ArrayList<Task> deadline_task;
-    private ArrayList<Task> timed_task;
+	private ArrayList<Task> _items; // to store all tasks
 	private ArrayList<Undoable> _commands; // to store undoable commands
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
-		_items = new HashMap<>();
-        floating_task = new ArrayList<>();
-        deadline_task = new ArrayList<>();
-        timed_task = new ArrayList<>();
+		_items = new ArrayList<Task>();
 		_nextUid = 1;
 	}
 
@@ -63,15 +51,9 @@ public class CRUDLogic {
 		/*
 		 * the return should only deliver a duplicate of the objects
 		 */
-       ArrayList<Task> retList = new ArrayList<>();
-		for (int i = 0; i < floating_task.size(); i++) {
-			retList.add(floating_task.get(i).clone());
-		}
-		for (int i = 0; i < deadline_task.size(); i++) {
-            retList.add(deadline_task.get(i).clone());
-		}
-		for (int i = 0; i < timed_task.size(); i++) {
-            retList.add(timed_task.get(i).clone());
+		ArrayList<Task> retList = new ArrayList<Task>();
+		for (int i = 0; i < _items.size(); i++) {
+			retList.add(_items.get(i).clone());
 		}
 		return retList;
 	}
@@ -83,29 +65,23 @@ public class CRUDLogic {
 	 */
 	public ArrayList<Task> getTasksByName(String keyword)
 			throws NullPointerException {
-        ArrayList<Task> list = new ArrayList<>();
+		ArrayList<Task> list = new ArrayList<Task>();
 
 		/*
 		 * Exception handling to make sure param is not null
 		 */
-        if (keyword == null) {
-            throw new NullPointerException("Keyword must not be <null>");
-        }
+		if (keyword == null) {
+			throw new NullPointerException("Keyword must not be <null>");
+		}
 
-        for (int i = 0; i < size(); i++) {
-            if (floating_task.get(i).getTaskName().toLowerCase()
-                    .contains(keyword.trim().toLowerCase())) {
-                list.add(floating_task.get(i).clone());
-            } else if (deadline_task.get(i).getTaskName().toLowerCase()
-                    .contains(keyword.trim().toLowerCase())) {
-                list.add(deadline_task.get(i).clone());
-            } else if (timed_task.get(i).getTaskName().toLowerCase()
-                    .contains(keyword.trim().toLowerCase())) {
-                list.add(timed_task.get(i).clone());
-            }
-        }
-        return list;
-    }
+		for (int i = 0; i < size(); i++) {
+			if (_items.get(i).getTaskName().toLowerCase()
+					.contains(keyword.trim().toLowerCase())) {
+				list.add(_items.get(i).clone());
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * This method returns tasks based on whether it has been marked as done
@@ -114,16 +90,12 @@ public class CRUDLogic {
 	 * @param boolean when true = Marked as done
 	 */
 	public ArrayList<Task> getTasksByStatus(boolean done) {
-		ArrayList<Task> list = new ArrayList<>();
+		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
-			if (floating_task.get(i).getIsDone() == done) {
-				list.add(floating_task.get(i).clone());
-			} else if (deadline_task.get(i).getIsDone() == done) {
-                list.add(deadline_task.get(i).clone());
-            }  else if (timed_task.get(i).getIsDone() == done) {
-                list.add(timed_task.get(i).clone());
-            }
-        }
+			if (_items.get(i).getIsDone() == done) {
+				list.add(_items.get(i).clone());
+			}
+		}
 		return list;
 	}
 
@@ -145,13 +117,9 @@ public class CRUDLogic {
 			throw new IllegalArgumentException("Illegal priority");
 		}
 		for (int i = 0; i < size(); i++) {
-			if (floating_task.get(i).getPriority() == p) {
-				list.add(floating_task.get(i).clone());
-			} else if (deadline_task.get(i).getPriority() == p) {
-                list.add(deadline_task.get(i).clone());
-            } else if (timed_task.get(i).getPriority() == p) {
-                list.add(timed_task.get(i).clone());
-            }
+			if (_items.get(i).getPriority() == p) {
+				list.add(_items.get(i).clone());
+			}
 		}
 		return list;
 	}
@@ -168,10 +136,7 @@ public class CRUDLogic {
 	 */
 	private void addToItems(Task t) {
 		t.setUid(_nextUid);
-        _items.put(TaskType.FLOATING, floating_task);
-        _items.put(TaskType.FLOATING, deadline_task);
-        _items.put(TaskType.FLOATING, timed_task);
-//		_items.add(t);
+		_items.add(t);
 		_nextUid++;
 	}
 
@@ -238,15 +203,8 @@ public class CRUDLogic {
 	 */
 	public String deleteTask(Task t) {
 		Task found = getTaskByUid(t.getUid());
-		if (found != null) {
-			try {
-				_items.remove(found);
-				saveToFile();
-				return "task removed";
-			} catch (IOException ioe) {
-				_items.remove(t);
-				return "Failed to create task due to File IO error";
-			}
+		if (found != null && _items.remove(found)) {
+			return "task removed";
 		} else {
 			return "can't remove task";
 		}
@@ -261,13 +219,9 @@ public class CRUDLogic {
 	 */
 	private Task getTaskByUid(long uid) {
 		for (int i = 0; i < _items.size(); i++) {
-			if (floating_task.get(i).getUid() == uid) {
-				return floating_task.get(i);
-			} else if (deadline_task.get(i).getUid() == uid) {
-                return deadline_task.get(i);
-            } if (timed_task.get(i).getUid() == uid) {
-                return timed_task.get(i);
-            }
+			if (_items.get(i).getUid() == uid) {
+				return _items.get(i);
+			}
 		}
 		return null;
 	}
@@ -318,19 +272,12 @@ public class CRUDLogic {
 		return true;
 	}
 
-	/*
-	private  void testLoadFile() throws IOException{
-		
-		String str = ((TimedTask) _items.get(1)).getStartDateTimeAsString();
-		int i = 0;
-		
-	}
-	*/
 	/**
 	 * This method saves all tasks to the text file
 	 */
 	public void saveToFile() throws IOException {
-		Storage.saveToJson(PATH_DATA_FILE, _items);
+		String filename = PATH_DATA_FILE;
+		Storage.saveToJson(filename, _items);
 	}
 
 	/**
@@ -351,21 +298,10 @@ public class CRUDLogic {
 	private long getMaxuID(){
 		long max =0;
 		if (_items!=null){
-			//for (int i =0; i<_items.size();i++){
-			for (int i=0; i<floating_task.size();i++)	{
-			if (floating_task.get(i).getUid()>max){
-					max = floating_task.get(i).getUid();
+			for (int i =0; i<_items.size();i++){
+				if (_items.get(i).getUid()>max){
+					max = _items.get(i).getUid();
 				}
-			}
-			for (int i=0; i<deadline_task.size();i++){
-				if (deadline_task.get(i).getUid()>max){
-                    max = deadline_task.get(i).getUid();
-                }
-			}
-			for(int i =0; i<timed_task.size();i++){
-			if (timed_task.get(i).getUid()>max){
-                    max = timed_task.get(i).getUid();
-                }
 			}
 		}
 		return max+1;

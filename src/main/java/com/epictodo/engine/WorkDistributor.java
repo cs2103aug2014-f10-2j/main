@@ -65,14 +65,6 @@ public class WorkDistributor {
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			// todo: display task in a proper format return successful message
-			/*
-			 * Name:
-			 * Description:
-			 * Date:
-			 * Time:
-			 * Duration(if necessary):
-			 * <Press enter to continue>
-			 */
 			// in String
 			return result;
 
@@ -147,7 +139,6 @@ public class WorkDistributor {
 			return false;
 		}
 	}
-	
 	private static boolean compareString(String text, String text2) {
 		return (text.equalsIgnoreCase(text2));
 	}
