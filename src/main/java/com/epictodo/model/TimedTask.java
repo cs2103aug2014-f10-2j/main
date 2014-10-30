@@ -67,14 +67,14 @@ public class TimedTask extends Task {
 	}
 
 	/**************** Accessors for local class only ****/
-	private String getStartDate() {
+	public String getStartDate() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(startDateTime * 1000));
 		String date = dateTime.substring(0, 6);
 		return date;
 	}
 
-	private String getStartTime() {
+	public String getStartTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(startDateTime * 1000));
 		// Index 9 is the colon
@@ -83,7 +83,7 @@ public class TimedTask extends Task {
 		return timeHour + timeMinute;
 	}
 
-	private double getDuration() {
+	public double getDuration() {
 		long hoursInSeconds = endDateTime - startDateTime;
 		double hour = (int) hoursInSeconds / 60 / 60;
 		return hour;

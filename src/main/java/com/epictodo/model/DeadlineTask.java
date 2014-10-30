@@ -46,14 +46,14 @@ public class DeadlineTask extends Task {
 	}
 
 	/**************** Accessors for local class only ***********************/
-	private String getDate() {
+	public String getDate() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		String date = dateTime.substring(0, 6);
 		return date;
 	}
 
-	private String getTime() {
+	public String getTime() {
 		String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
 				.format(new java.util.Date(endDateTime * 1000));
 		// Index 9 is the colon

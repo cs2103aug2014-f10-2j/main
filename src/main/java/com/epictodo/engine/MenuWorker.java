@@ -139,18 +139,41 @@ public class MenuWorker {
 	}
 
 	public static Task updateTask(Task t) {
-		
-		Display(String.format("Name ( %s ):\n",t.getTaskName()));
+		s = new Scanner(System.in);
+		DisplayLine("please enter the updated info or press enter to remain unchange");
+		Display(String.format("Name ( %s ):",t.getTaskName()));
+		String taskName = getUpdatedInfo(s,t.getTaskName());
 		Display(String.format("Description ( %s ):",t.getTaskDescription()));
+		String taskDesc = getUpdatedInfo(s,t.getTaskDescription());
 		Display(String.format("priority ( %s ):",t.getPriority()));
+		String p = getUpdatedInfo(s, String.valueOf(t.getPriority()));
+		int taskPriority = Integer.valueOf(p);
 		if (t instanceof TimedTask){
-			Display(String.format("start Datetime ( %s ):",((TimedTask) t).getStartDateTimeAsString()));
-			Display(String.format("end Datetime ( %s ):",((TimedTask) t).getEndDateTimeAsString()));
+			Display(String.format("start Date ( %s ):",((TimedTask) t).getStartDate()));
+			String startDate = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
+			Display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
+			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
+			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
+			String d = getUpdatedInfo(s, ((TimedTask) t).getEndDateTimeAsString());
+			double duration = Double.valueOf(d);
+			return new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
 		}else if (t instanceof DeadlineTask){
-			DeadlineTask tt = (DeadlineTask) t;
+			Display(String.format("end Date ( %s ):",((DeadlineTask) t).getDate()));
+			String endDate = getUpdatedInfo(s, ((DeadlineTask) t).getDate());
+			Display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
+			String endTime = getUpdatedInfo(s, ((DeadlineTask) t).getTime());
+			return new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);
 		}else if (t instanceof FloatingTask){ 
-			FloatingTask tt = (FloatingTask) t;
+			return (FloatingTask)t;
 		}
 		return null;
+	}
+	
+	private static String getUpdatedInfo(Scanner s, String unchanged){
+		String update = s.nextLine();
+		if (update == null || update.equals("")){
+			update =unchanged;
+		}
+		return update;
 	}
 }

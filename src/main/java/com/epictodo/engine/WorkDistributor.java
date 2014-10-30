@@ -56,7 +56,7 @@ public class WorkDistributor {
 			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
-			Task t1 = MenuWorker.updateTask(t);
+			Task updatedTask = MenuWorker.updateTask(t);
 			// message in String
 			return result;
 
