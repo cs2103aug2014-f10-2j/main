@@ -51,9 +51,10 @@ public class Main {
 	
 	public static void menuDisplay(){
 		DisplayLine("\n1. Add");
-		DisplayLine("2. Find/Update/Delete");
-		DisplayLine("3. Display");
-		DisplayLine("4. Undo");
+		DisplayLine("2. Find");
+		DisplayLine("3. Delete");
+		DisplayLine("4. Update");
+		DisplayLine("5. Display");
 	//	DisplayLine("5. Others");
 		DisplayLine("6. Exit");
 		System.out.print("Insert Your option or command: ");
@@ -67,7 +68,14 @@ public class Main {
 	
 
 
-
+/*
+ * 	private final static String OPTION_ADD = "1";
+	private final static String OPTION_FIND = "2";
+	private final static String OPTION_DELETE = "3";
+	private final static String OPTION_UPDATE = "4";
+	private final static String OPTION_DISPLAY = "5";
+	private final static String OPTION_EXIT = "6";
+ */
 
 
 

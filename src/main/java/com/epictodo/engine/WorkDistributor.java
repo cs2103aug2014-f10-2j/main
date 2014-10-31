@@ -17,13 +17,13 @@ public class WorkDistributor {
 	private final static String COMMAND_UNDO = "undo";
 	private final static String OPTION_ADD = "1";
 	private final static String OPTION_FIND = "2";
-	private final static String OPTION_DISPLAY = "3";
-	private final static String OPTION_UNDO = "4";
-	private final static String OPTION_OTHERS = "5";
+	private final static String OPTION_DELETE = "3";
+	private final static String OPTION_UPDATE = "4";
+	private final static String OPTION_DISPLAY = "5";
 	private final static String OPTION_EXIT = "6";
 
 	enum CommandType {
-		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND, O_DISPLAY, UNDO, O_OTHERS
+		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND,O_UPDATE,O_DELETE, O_DISPLAY, UNDO, O_OTHERS
 	};
 
 	public static String proceedInstruc(String instruc) {
@@ -59,14 +59,22 @@ public class WorkDistributor {
 			Task updatedTask = MenuWorker.updateTask(t);
 			result = logic.updateTask(t, updatedTask); 
 			return result;
-
+			
+		case O_UPDATE:
+			list = logic.getTasksByName(instruc);
+			t = MenuWorker.selectItemFromList(command, list,
+					logic.displayList(list));
+			updatedTask = MenuWorker.updateTask(t);
+			result = logic.updateTask(t, updatedTask); 
+			return result;
+			
 		case SEARCH:
 			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			// todo: display task in a proper format return successful message
 			// in String
-			return result;
+			return "";
 
 		case EXIT:
 			System.exit(0);
@@ -119,10 +127,10 @@ public class WorkDistributor {
 			return CommandType.O_ADD;
 		else if (compareString(command, OPTION_FIND))
 			return CommandType.O_FIND;
-		else if (compareString(command, OPTION_UNDO))
-			return CommandType.UNDO;
-		else if (compareString(command, OPTION_OTHERS))
-			return CommandType.O_OTHERS;
+		else if (compareString(command, OPTION_UPDATE))
+			return CommandType.UPDATE;
+		else if (compareString(command, OPTION_DELETE))
+			return CommandType.DELETE;
 		else if (compareString(command, OPTION_EXIT))
 			return CommandType.EXIT;
 		else if (compareString(command, OPTION_DISPLAY))
@@ -144,9 +152,13 @@ public class WorkDistributor {
 	}
 
 	private static String removeCommand(String instruc) {
-		return instruc.replace(getCommand(instruc), "").trim();
+		return instruc.substring(getCommand(instruc,true), instruc.length());
 	}
 
+	private static int getCommand(String instruc, boolean findLength) {
+		String commandTypeString = instruc.trim().split("\\s+")[0];
+		return commandTypeString.length();
+	}	
 	private static String getCommand(String instruc) {
 		String commandTypeString = instruc.trim().split("\\s+")[0];
 		return commandTypeString;

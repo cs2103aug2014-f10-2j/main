@@ -113,18 +113,25 @@ public class MenuWorker {
 	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
 		
 		s = new Scanner(System.in);
+		int option = 0;
 		DisplayLine(items);
-		if(type== CommandType.DELETE){
+		if(type== CommandType.DELETE || type == CommandType.O_DELETE){
 			Display(MENU_SELECT_DELETE_OPTION);
 		}else if(type ==CommandType.UPDATE){
 			Display(MENU_SELECT_UPDATE_OPTION);
 		}else if(type ==CommandType.SEARCH || type == CommandType.O_FIND){
 			Display(MENU_SELECT_SEARCH_OPTION);
 		}
-		int option = s.nextInt();
-		if (option== 0){
-			return null;
+		try{
+			option = s.nextInt();
+			if (option== 0){
+				return null;
+			}
 		}
+		catch(Exception e){
+			return null;
+		};
+
 		logger.info(list.get(option-1).getTaskName()+" is selected");
 		return list.get(option-1);
 	}

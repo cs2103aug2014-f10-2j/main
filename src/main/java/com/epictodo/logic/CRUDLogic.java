@@ -202,6 +202,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String deleteTask(Task t) {
+		if(t == null) return "invalid input";
 		Task found = getTaskByUid(t.getUid());
 		if (found != null && _items.remove(found)) {
 			try {
@@ -230,7 +231,7 @@ public class CRUDLogic {
 			}
 		};
 		
-		return "can't update task";
+		return "invalid input";
 	}
 
 	/**
