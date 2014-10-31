@@ -8,22 +8,15 @@ import java.util.ArrayList;
 // user input = { command + instruction }
 public class WorkDistributor {
 	static CRUDLogic logic = new CRUDLogic();
-	private final static String COMMAND_EXIT = "exit";
-	private final static String COMMAND_ADD = "add";
-	private final static String COMMAND_UPDATE = "update";
-	private final static String COMMAND_DELETE = "delete";
-	private final static String COMMAND_SEARCH = "search";
-	private final static String COMMAND_DISPLAY = "display";
-	private final static String COMMAND_UNDO = "undo";
-	private final static String OPTION_ADD = "1";
-	private final static String OPTION_FIND = "2";
-	private final static String OPTION_DELETE = "3";
-	private final static String OPTION_UPDATE = "4";
-	private final static String OPTION_DISPLAY = "5";
-	private final static String OPTION_EXIT = "6";
-
+	private final static String[] COMMAND_EXIT = {"exit", "quit"};
+	private final static String[] COMMAND_ADD = {"add", "create"};
+	private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
+	private final static String[] COMMAND_DELETE = {"delete", "remove"};
+	private final static String[] COMMAND_SEARCH = {"search","find"};
+	private final static String[] COMMAND_DISPLAY = {"display"};	
+	private final static String[] COMMAND_UNDO = {"undo"};
 	enum CommandType {
-		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, O_ADD, O_FIND,O_UPDATE,O_DELETE, O_DISPLAY, UNDO, O_OTHERS
+		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO
 	};
 
 	public static String proceedInstruc(String instruc) {
@@ -60,14 +53,6 @@ public class WorkDistributor {
 			result = logic.updateTask(t, updatedTask); 
 			return result;
 			
-		case O_UPDATE:
-			list = logic.getTasksByName(instruc);
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
-			updatedTask = MenuWorker.updateTask(t);
-			result = logic.updateTask(t, updatedTask); 
-			return result;
-			
 		case SEARCH:
 			list = logic.getTasksByName(instruc);
 			t = MenuWorker.selectItemFromList(command, list,
@@ -79,26 +64,14 @@ public class WorkDistributor {
 		case EXIT:
 			System.exit(0);
 			break;
+			
 		case INVALID:
 			// todo: defined all invalid cases
 			return "This is invalid";
-		case O_ADD:
-			t = MenuWorker.addMenu();
-			result = logic.createTask(t);
-			return result;
-
-		case O_FIND:
-			list = logic.getTasksByName(MenuWorker.findMenu());
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
-			// todo prepare to display them in details as "result"
-			return result;
-
+			
 		case UNDO:
 			return result;
 
-		case O_OTHERS:
-			return result;
 		}
 
 		// todo handle invalid input here
@@ -109,34 +82,31 @@ public class WorkDistributor {
 		String command = getCommand(instruc);
 		if (compareString(command, ""))
 			return CommandType.NULL;
-		else if (compareString(command, COMMAND_ADD))
+		else if (identifyCommand(command, COMMAND_ADD)){
 			return CommandType.ADD;
-		else if (compareString(command, COMMAND_DELETE))
+		}else if (identifyCommand(command, COMMAND_DELETE)){
 			return CommandType.DELETE;
-		else if (compareString(command, COMMAND_UPDATE))
+		}else if (identifyCommand(command, COMMAND_UPDATE)){
 			return CommandType.UPDATE;
-		else if (compareString(command, COMMAND_SEARCH))
+		}else if (identifyCommand(command, COMMAND_SEARCH)){
 			return CommandType.SEARCH;
-		else if (compareString(command, COMMAND_EXIT))
-			return CommandType.EXIT;
-		else if (compareString(command, COMMAND_DISPLAY))
+		}else if (identifyCommand(command, COMMAND_DISPLAY)){
 			return CommandType.DISPLAY;
-		else if (compareString(command, COMMAND_UNDO))
+		}else if (identifyCommand(command, COMMAND_EXIT)){
+			return CommandType.EXIT;
+		}else if (identifyCommand(command, COMMAND_UNDO)){
 			return CommandType.UNDO;
-		else if (compareString(command, OPTION_ADD))
-			return CommandType.O_ADD;
-		else if (compareString(command, OPTION_FIND))
-			return CommandType.O_FIND;
-		else if (compareString(command, OPTION_UPDATE))
-			return CommandType.UPDATE;
-		else if (compareString(command, OPTION_DELETE))
-			return CommandType.DELETE;
-		else if (compareString(command, OPTION_EXIT))
-			return CommandType.EXIT;
-		else if (compareString(command, OPTION_DISPLAY))
-			return CommandType.DISPLAY;
-		else
+		}else
 			return CommandType.INVALID;
+	}
+	
+	private static boolean identifyCommand(String command, final String[] vocabs){
+		for (int i=0; i<vocabs.length; i++){
+			if (compareString(command, vocabs[i])){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean loadData(){

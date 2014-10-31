@@ -120,11 +120,11 @@ public class MenuWorker {
 		s = new Scanner(System.in);
 		int option = 0;
 		DisplayLine(items);
-		if(type== CommandType.DELETE || type == CommandType.O_DELETE){
+		if(type== CommandType.DELETE){
 			Display(MENU_SELECT_DELETE_OPTION);
 		}else if(type ==CommandType.UPDATE){
 			Display(MENU_SELECT_UPDATE_OPTION);
-		}else if(type ==CommandType.SEARCH || type == CommandType.O_FIND){
+		}else if(type ==CommandType.SEARCH){
 			Display(MENU_SELECT_SEARCH_OPTION);
 		}
 		try{
