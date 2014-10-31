@@ -13,7 +13,7 @@ public class Task {
 	 * @throws Exception **********************/
 
 	public Task(String taskName, String taskDescription, int priority) throws Exception {
-		if ( priority >= 0 && priority <= 10){
+		if ( priority < 0 || priority > 10){
 			throw new Exception();
 		}
 		/*

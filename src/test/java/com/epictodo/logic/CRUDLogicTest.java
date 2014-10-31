@@ -25,6 +25,8 @@
 package com.epictodo.logic;
 
 import com.epictodo.model.Task;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,11 +35,19 @@ import static org.junit.Assert.assertEquals;
 
 public class CRUDLogicTest {
     private CRUDLogic crud_logic = new CRUDLogic();
-    private Task task_null = new Task(null, null, 0);
-    private Task _task = new Task("Project Meeting", "2103 project meeting", 2);
-    private Task task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
+    private Task task_null = null;
+    private Task _task = null;
+    private Task task_2 = null;
     private ArrayList<Task> task_list;
 
+    @Before
+    public void ini() throws Exception{
+    	   task_null = new Task(null, null, 0);
+    	   _task = new Task("Project Meeting", "2103 project meeting", 2);
+    	    task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
+    	    
+    }
+    
     @Test
     public void createEmptyTaskTest() {
         String _result = crud_logic.createTask(task_null);

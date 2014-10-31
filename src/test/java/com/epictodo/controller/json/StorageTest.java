@@ -41,15 +41,23 @@ import static org.junit.Assert.assertTrue;
 public class StorageTest {
     private static final String file_name = "storage.txt";
     private Storage _storage = new Storage();
-    private Task _task = new Task("Project Meeting", "2103 project meeting", 2);
-    private Task task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
-    private DeadlineTask deadline_task = new DeadlineTask("CS2103 V0.3", "Complete V0.3 for testing", 4, "301014", "1900");
-    private FloatingTask floating_task = new FloatingTask("CS2103 Project", "V0.3 incomplete version", 4);
-    private ArrayList<Task> task_list;
+   private ArrayList<Task> task_list;
     private ArrayList<Task> expected_task;
+
 
     @Before
     public void initialize() throws IOException {
+    	Task _task = null;
+    	Task task_2 = null;
+    	DeadlineTask deadline_task= null;
+    	FloatingTask floating_task= null;
+    	try{
+          _task = new Task("Project Meeting", "2103 project meeting", 2);
+          task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
+          deadline_task = new DeadlineTask("CS2103 V0.3", "Complete V0.3 for testing", 4, "301014", "1900");
+          floating_task = new FloatingTask("CS2103 Project", "V0.3 incomplete version", 4);
+    	}
+    	catch (Exception e){};
         task_list = new ArrayList<Task>();
         expected_task = Storage.loadDbFile(file_name);
 

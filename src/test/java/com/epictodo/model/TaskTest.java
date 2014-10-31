@@ -25,6 +25,7 @@
 package com.epictodo.model;
 
 import com.epictodo.model.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class TaskTest {
     private Task _task;
 
     @Before
-    public void initialise() {
+    public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
     }
 

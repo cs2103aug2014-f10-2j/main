@@ -26,6 +26,7 @@ package com.epictodo.model;
 
 import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,13 +42,13 @@ public class DeadlineTaskTest {
     private DeadlineTask deadline_task;
 
     @Before
-    public void initialise() {
+    public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
         deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "241014", "10:00");
     }
 
     @Test
-    public void checkDeadlineTaskSetDateTime() throws ParseException {
+    public void checkDeadlineTaskSetDateTime() throws Exception {
         deadline_task.setDateTime("251014", "23:59");
         assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
     }

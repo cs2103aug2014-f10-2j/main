@@ -49,14 +49,14 @@ public class MenuWorker {
 		    		{
 		    			return null;
 		    		}
-					logger.info("timed task is created!");
+					logger.info("a timed task is creating!");
 		    		return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority,taskDate, taskTime, taskDuration);
 		    	}else{
-					logger.info("deadline task is created!");
+					logger.info("a deadline task is creating!");
 		    		return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,taskTime);
 		    	}
 		    }
-			logger.info("deadline task with default time is created!");
+			logger.info("a deadline task with default time is creatng!");
 		    return TaskBuilder.buildTask(taskName,taskDesc,_defaultPriority,taskDate,_defaultTime);
 	}
 	

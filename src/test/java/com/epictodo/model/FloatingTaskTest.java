@@ -26,6 +26,7 @@ package com.epictodo.model;
 
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class FloatingTaskTest {
     private FloatingTask floating_task;
 
     @Before
-    public void initialise() {
+    public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
         floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
     }

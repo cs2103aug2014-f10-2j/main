@@ -26,6 +26,7 @@ package com.epictodo.model;
 
 import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class TimedTaskTest {
     private TimedTask timed_task;
 
     @Before
-    public void initialise() {
+    public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
         timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
     }
@@ -53,7 +54,7 @@ public class TimedTaskTest {
     }
 
     @Test
-    public void checkTimedTaskSetDateTime() throws ParseException {
+    public void checkTimedTaskSetDateTime() throws Exception {
         timed_task.setDateTime("261014", "19:00");
         assertEquals(timed_task.getStartDateTimeAsString(), "261014 19:00");
     }
