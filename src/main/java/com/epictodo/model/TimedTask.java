@@ -99,7 +99,7 @@ public class TimedTask extends Task {
 			long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(
 					dateTimeTemp).getTime() / 1000;
 			assert epoch != 0;
-			endDateTime = epoch;
+			startDateTime = epoch;
 		}else{
 			throw new Exception();
 		}
