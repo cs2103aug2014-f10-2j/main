@@ -16,17 +16,6 @@ public class TimedTask extends Task {
 	public TimedTask(String taskName, String taskDescription, int priority,
 			String ddmmyy, String time, double duration) {
 		super(taskName, taskDescription, priority);
-		// This checks whether date and time entered are of correct length
-		assert ddmmyy.length() == 6;
-		assert time.length() == 4;
-
-		// This checks whether date and time entered are valid integers or not
-		try {
-			int enteredDate = Integer.parseInt(ddmmyy);
-			int enteredTime = Integer.parseInt(time);
-		} catch (NumberFormatException e) {
-			System.out.println(e.getMessage());
-		}
 
 		try {
 			setDateTime(ddmmyy, time);
@@ -80,7 +69,7 @@ public class TimedTask extends Task {
 		// Index 9 is the colon
 		String timeHour = dateTime.substring(7, 9);
 		String timeMinute = dateTime.substring(10);
-		return timeHour + timeMinute;
+		return timeHour +":"+ timeMinute;
 	}
 
 	public double getDuration() {
@@ -135,6 +124,7 @@ public class TimedTask extends Task {
 		Task t = super.clone();
 		TimedTask cloned;
 		cloned = new TimedTask(t,getStartDateTime(), getEndDateTime());
+		cloned.setUid(t.getUid());
 		return cloned;
 	}
 }

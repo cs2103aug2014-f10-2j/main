@@ -218,9 +218,14 @@ public class CRUDLogic {
 	
 	
 	public String updateTask(Task unchanged, Task updated){
-		
+		// change this 
 		if (deleteTask(unchanged).equals("task removed")){
-			if (createTask(updated).equals("task added")){
+			if (		_items.add(updated)){
+				try {
+					saveToFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				return "task updated";
 			}
 		};

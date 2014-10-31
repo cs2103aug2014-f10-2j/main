@@ -26,7 +26,7 @@ public class Task {
 
 	/**************** Accessors ***********************/
 	public long getUid() {
-		return uid;
+		return this.uid;
 	}
 
 	public String getTaskName() {
@@ -76,7 +76,7 @@ public class Task {
 	public Task clone() {
 		Task cloned = new Task(getTaskName(), getTaskDescription(),
 				getPriority());
-		cloned.setUid(uid);
+		cloned.setUid(getUid());
 		return cloned;
 	}
 }

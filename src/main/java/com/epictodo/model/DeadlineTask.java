@@ -95,6 +95,7 @@ public class DeadlineTask extends Task {
 			Task t = super.clone();
 			DeadlineTask cloned;
 			cloned = new DeadlineTask(t, getEndDateTime());
+			cloned.setUid(t.getUid());
 			return cloned;
 	}
 }

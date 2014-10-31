@@ -139,6 +139,7 @@ public class MenuWorker {
 	}
 
 	public static Task updateTask(Task t) {
+		if (t == null) return null;
 		Task result =null;
 		s = new Scanner(System.in);
 		DisplayLine("please enter the updated info or press enter to remain unchange");
@@ -155,7 +156,7 @@ public class MenuWorker {
 			Display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
 			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartTime());
 			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
-			String d = getUpdatedInfo(s, ((TimedTask) t).getEndDateTimeAsString());
+			String d = getUpdatedInfo(s, String.valueOf(((TimedTask) t).getDuration()));
 			double duration = Double.valueOf(d);
 			result =  new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
 			result.setUid(t.getUid());
@@ -174,6 +175,7 @@ public class MenuWorker {
 			return result;
 		}
 		result = new Task(taskName, taskDesc, taskPriority);
+		result.setUid(t.getUid());
 		return result;
 	}
 	

@@ -25,6 +25,7 @@ public class FloatingTask extends Task {
 	public FloatingTask clone() {
 		Task t = super.clone();
 		FloatingTask cloned = new FloatingTask(t);
+		cloned.setUid(t.getUid());
 		return cloned;
 	}
 }
