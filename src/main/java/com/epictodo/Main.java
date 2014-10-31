@@ -1,5 +1,6 @@
 package com.epictodo;
 
+import com.epictodo.engine.NLPEngine;
 import com.epictodo.engine.WorkDistributor;
 
 import java.util.Scanner;
@@ -9,6 +10,9 @@ public class Main {
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
+        NLPEngine _nlp = new NLPEngine();
+        _nlp.mute();
+
 		WorkDistributor.loadData();
 		bannerDisplay();
 		while(true){
