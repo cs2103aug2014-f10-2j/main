@@ -149,7 +149,7 @@ public class CRUDLogic {
 	 */
 	public String createTask(Task t) throws NullPointerException {
 		if (t == null) {
-			throw new NullPointerException("Cannot create <null> into CRUD");
+			return "invalid input";
 		}
 		addToItems(t);
 

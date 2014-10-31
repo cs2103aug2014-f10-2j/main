@@ -3,11 +3,12 @@ package com.epictodo.model;
 public class FloatingTask extends Task {
 	/************** Data members **********************/
 
-	/************** Constructors **********************/
-	public FloatingTask(String taskName, String taskDescription, int priority) {
+	/************** Constructors 
+	 * @throws Exception **********************/
+	public FloatingTask(String taskName, String taskDescription, int priority) throws Exception {
 		super(taskName, taskDescription, priority);
 	}
-	public FloatingTask(Task t) {
+	public FloatingTask(Task t) throws Exception {
 		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
 	}
 
@@ -24,7 +25,13 @@ public class FloatingTask extends Task {
 	 */
 	public FloatingTask clone() {
 		Task t = super.clone();
-		FloatingTask cloned = new FloatingTask(t);
+		FloatingTask cloned= null;
+		try {
+			cloned = new FloatingTask(t);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		cloned.setUid(t.getUid());
 		return cloned;
 	}

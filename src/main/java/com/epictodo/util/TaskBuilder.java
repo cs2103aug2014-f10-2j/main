@@ -20,17 +20,36 @@ public class TaskBuilder {
 	
 	public static Task buildTask(String taskName, String taskDescription, int priority,
 			String ddmmyy, String time, double duration){
-		Task tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
+		
+		Task tt;
+		try {
+			tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
 		return tt;
 	}
 	
 	public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time){
-		Task dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
+		Task dt;
+		try {
+			dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
 		return dt;
 	}
 	
 	public static Task buildTask(String taskName, String taskDescription, int priority){
-		Task ft = new FloatingTask(taskName, taskDescription, priority);
+		Task ft;
+		try {
+			ft = new FloatingTask(taskName, taskDescription, priority);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
 		return ft;
 	}
 	

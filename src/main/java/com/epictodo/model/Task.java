@@ -9,10 +9,13 @@ public class Task {
 	private int priority;
 	private boolean isDone;
 
-	/************** Constructors **********************/
+	/************** Constructors 
+	 * @throws Exception **********************/
 
-	public Task(String taskName, String taskDescription, int priority) {
-		assert priority >= 0 && priority <= 10;
+	public Task(String taskName, String taskDescription, int priority) throws Exception {
+		if ( priority >= 0 && priority <= 10){
+			throw new Exception();
+		}
 		/*
 		 * New member: long uid
 		 */
@@ -74,8 +77,14 @@ public class Task {
 	}
 
 	public Task clone() {
-		Task cloned = new Task(getTaskName(), getTaskDescription(),
-				getPriority());
+		Task cloned= null;
+		try {
+			cloned = new Task(getTaskName(), getTaskDescription(),
+					getPriority());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		cloned.setUid(getUid());
 		return cloned;
 	}

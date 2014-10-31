@@ -9,22 +9,19 @@ public class DeadlineTask extends Task {
 	/************** Data members **********************/
 	private long endDateTime;
 
-	/************** Constructors **********************/
+	/************** Constructors 
+	 * @throws Exception **********************/
 	public DeadlineTask(String taskName, String taskDescription, int priority,
-			String ddmmyy, String time) {
+			String ddmmyy, String time) throws Exception {
 		super(taskName, taskDescription, priority);
 		// This checks whether date and time entered are of correct length
 		assert ddmmyy.length() == 6;
 		assert time.length() == 5;
 
-		try {
 			setDateTime(ddmmyy, time);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 	}
 	
-	public DeadlineTask(Task t, long endDateTime) {
+	public DeadlineTask(Task t, long endDateTime) throws Exception {
 			super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
 			this.endDateTime =endDateTime;
 	}
@@ -59,7 +56,7 @@ public class DeadlineTask extends Task {
 	}
 
 	/**************** Mutators ************************/
-	public void setDateTime(String date, String time) throws ParseException {
+	public void setDateTime(String date, String time) throws Exception {
 		// This checks whether date and time entered are of correct length
 		assert date.length() == 6;
 		assert time.length() == 5;
@@ -73,6 +70,8 @@ public class DeadlineTask extends Task {
 					dateTimeTemp).getTime() / 1000;
 			assert epoch != 0;
 			endDateTime = epoch;
+		}else{
+			throw new Exception();
 		}
 	}
 
@@ -84,8 +83,13 @@ public class DeadlineTask extends Task {
 	public DeadlineTask clone() {
 	
 			Task t = super.clone();
-			DeadlineTask cloned;
-			cloned = new DeadlineTask(t, getEndDateTime());
+			DeadlineTask cloned = null;
+			try {
+				cloned = new DeadlineTask(t, getEndDateTime());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			cloned.setUid(t.getUid());
 			return cloned;
 	}
@@ -93,6 +97,7 @@ public class DeadlineTask extends Task {
 /**************** Class methods(For local class only) ************************/
 	
 	private boolean checkTimeIsValid(String time) {
+		try{
 		String regex = "[0-9]+";
 		String hour = time.substring(0, 2);
 		assertTrue(hour.matches(regex));
@@ -108,9 +113,13 @@ public class DeadlineTask extends Task {
 		assert newTime.length() == 4;
 		assertTrue(newTime.matches(regex));
 		return true;
+		}catch(Error r){
+			return false;
+		}
 	}
 	
 	private boolean checkDateIsValid(String date) throws ParseException {
+		try{
 		assert date.length() == 6;
 		String regex = "[0-9]+";
 		
@@ -154,6 +163,9 @@ public class DeadlineTask extends Task {
 		Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
 		assert (enteredDate.after(currDate));
 		return true;
+		}catch(Error e){
+			return false;
+		}
 	}
 	
 	private boolean isLeapYear(int year) {

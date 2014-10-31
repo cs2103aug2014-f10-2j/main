@@ -43,7 +43,12 @@ public class MenuWorker {
 		    	Display("Enter Task Duration in hours(Optional)");
 		    	String durationTemp = s.nextLine();
 		    	if (!durationTemp.equals("")){
+		    		try{
 		    		taskDuration = Double.valueOf(durationTemp);
+		    		} catch(Exception e) 
+		    		{
+		    			return null;
+		    		}
 					logger.info("timed task is created!");
 		    		return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority,taskDate, taskTime, taskDuration);
 		    	}else{
@@ -165,7 +170,12 @@ public class MenuWorker {
 			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
 			String d = getUpdatedInfo(s, String.valueOf(((TimedTask) t).getDuration()));
 			double duration = Double.valueOf(d);
-			result =  new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
+			try {
+				result =  new TimedTask(taskName,taskDesc,taskPriority,startDate,startTime,duration);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				return null;
+			}
 			result.setUid(t.getUid());
 			return result;
 		}else if (t instanceof DeadlineTask){
@@ -173,15 +183,30 @@ public class MenuWorker {
 			String endDate = getUpdatedInfo(s, ((DeadlineTask) t).getDate());
 			Display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
 			String endTime = getUpdatedInfo(s, ((DeadlineTask) t).getTime());
-			result =  new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);
+			try {
+				result =  new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				return null;
+			}
 			result.setUid(t.getUid());
 			return result;
 		}else if (t instanceof FloatingTask){ 
-			result = new FloatingTask(taskName, taskDesc, taskPriority);
+			try {
+				result = new FloatingTask(taskName, taskDesc, taskPriority);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				return null;
+		}
 			result.setUid(t.getUid());
 			return result;
 		}
-		result = new Task(taskName, taskDesc, taskPriority);
+		try {
+			result = new Task(taskName, taskDesc, taskPriority);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		return null;
+		}
 		result.setUid(t.getUid());
 		return result;
 	}
