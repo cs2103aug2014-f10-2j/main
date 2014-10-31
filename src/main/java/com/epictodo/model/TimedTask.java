@@ -191,7 +191,6 @@ public class TimedTask extends Task {
 			
 			// Step 5: Check months with max 31 days
 			assert (dayInt > 00) && (dayInt < 32);
-			System.out.println("Code is run");
 		} else {
 			
 			// Step 6: The rest of the months should have max 30 days
