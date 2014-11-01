@@ -27,6 +27,8 @@ package com.epictodo.controller.json;
 import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
+import com.epictodo.model.TimedTask;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,31 +43,49 @@ import static org.junit.Assert.assertTrue;
 public class StorageTest {
     private static final String file_name = "storage.txt";
     private Storage _storage = new Storage();
-   private ArrayList<Task> task_list;
+    private ArrayList<Task> task_list;
     private ArrayList<Task> expected_task;
-
-
+    private String ttEndDateTime ="";
+    private String dt2EndDateTime ="";
+    /*  
+     * There will be 
+     * 2 Floating Task, 
+     * 2 deadLined Task
+     * 2 Timed Task
+     */
     @Before
     public void initialize() throws IOException {
-    	Task _task = null;
-    	Task task_2 = null;
+    	FloatingTask _task = null;
+    	FloatingTask task_2 = null;
     	DeadlineTask deadline_task= null;
-    	FloatingTask floating_task= null;
+    	DeadlineTask deadline_task2= null;
+    	TimedTask timedTask= null;
+    	TimedTask timedTask2= null;
+
     	try{
-          _task = new Task("Project Meeting", "2103 project meeting", 2);
-          task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
-          deadline_task = new DeadlineTask("CS2103 V0.3", "Complete V0.3 for testing", 4, "301014", "1900");
-          floating_task = new FloatingTask("CS2103 Project", "V0.3 incomplete version", 4);
+          _task = new FloatingTask("Project Meeting", "2103 project meeting", 2);          
+          task_2 = new FloatingTask("Board Meeting", "Board of directors meeting", 2);
+          deadline_task = new DeadlineTask("CS2103 V0.3", "Complete V0.3 for testing", 4, "301014", "19:00");
+          deadline_task2 = new DeadlineTask("CS2103 V0.4", "DT2 Desc", 4, "301114", "19:00");
+          timedTask = new TimedTask("TimedTask 1","TimedTask1Desc",2,"121214","10:00",3);
+          timedTask2 = new TimedTask("TimedTask 2","TimedTask2Desc",3,"131214","10:00",2);
+          ttEndDateTime =  timedTask.getEndDateTimeAsString();
+          dt2EndDateTime = deadline_task2.getEndDateTimeAsString();
+         
     	}
     	catch (Exception e){};
         task_list = new ArrayList<Task>();
-        expected_task = Storage.loadDbFile(file_name);
-
+        
+        // load all tasks into task_list
         task_list.add(_task);
         task_list.add(task_2);
         task_list.add(deadline_task);
-        task_list.add(floating_task);
-
+        task_list.add(deadline_task2);
+        task_list.add(timedTask);
+        task_list.add(timedTask2);
+        
+        // save them into json format
+        // You can modify this if you are changing the method of saving them into Json
         _storage.saveToJson(file_name, task_list);
     }
 
@@ -75,14 +95,36 @@ public class StorageTest {
         _file.delete();
     }
 
+    /*
+     * Here is what you need to acheieve.
+     * Since the file is already created over initialize().
+     * Now try to load them here.
+     * check them using assertEquals()
+     */
+    
     @Test
-    public void saveToJsonTest() throws IOException {
-        boolean _result = _storage.saveToJson(file_name, task_list);
-        assertTrue(_result);
-    }
-
+    public void timedTaskTest() throws IOException {
+    	// new loadDBTest
+    	ArrayList<Task> listOfTasks = new ArrayList<Task>();
+    	
+    		// load the Json and deserilized them as an ArrayList<Task> and return it in listOfTasks
+    	//listOfTasks = load()
+    	
+    		//grab the first time Task and compare it's endDateTimeAsString
+    	//TimedTask tt = (TimedTask) listOfTasks.get(x);
+    	//assertEquals(ttEndDateTime, tt.getEndDateTimeAsString());
+       }
+    
     @Test
-    public void loadDbTest() throws IOException {
-        assertEquals(expected_task.get(0).getTaskName(), task_list.get(0).getTaskName());
-    }
+    public void deadLineTaskTest() throws IOException {
+    	// new loadDBTest
+    	ArrayList<Task> listOfTasks = new ArrayList<Task>();
+    	
+    		// load the Json and deserilized them as an ArrayList<Task> and return it in listOfTasks
+    	//listOfTasks = load()
+    	
+    		//grab the second deadline Task and compare it's endDateTimeAsString
+    	//DeadlineTask tt = (DeadlineTask) listOfTasks.get(x);
+    	//assertEquals(dt2EndDateTime, tt.getEndDateTimeAsString());
+       }
 }
