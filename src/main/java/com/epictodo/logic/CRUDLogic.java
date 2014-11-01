@@ -23,7 +23,7 @@ public class CRUDLogic {
 	private static final String PATH_DATA_FILE = "storage.txt";
 	private static final int CONFIG_PRIORITY_MIN = 1;
 	private static final int CONFIG_PRIORITY_MAX = 3;
-	
+
 	/*
 	 * Private Attributes
 	 */
@@ -36,6 +36,7 @@ public class CRUDLogic {
 	 */
 	public CRUDLogic() {
 		_items = new ArrayList<Task>();
+		_commands = new ArrayList<Undoable>();
 		_nextUid = 1;
 	}
 
@@ -153,6 +154,11 @@ public class CRUDLogic {
 		}
 		addToItems(t);
 
+		/*
+		 * Create an undoable command object
+		 */
+		addCommand(Undoable.CommandType.ADD, t);
+
 		try {
 			saveToFile();
 		} catch (IOException ioe) {
@@ -202,10 +208,16 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String deleteTask(Task t) {
-		if(t == null) return "invalid input";
+		if (t == null)
+			return "invalid input";
 		Task found = getTaskByUid(t.getUid());
 		if (found != null && _items.remove(found)) {
 			try {
+				/*
+				 * create an undoable command
+				 */
+				addCommand(Undoable.CommandType.DELETE, found);
+
 				saveToFile();
 				return "task removed";
 			} catch (IOException ioe) {
@@ -216,22 +228,48 @@ public class CRUDLogic {
 			return "can't remove task";
 		}
 	}
-	
-	
-	public String updateTask(Task unchanged, Task updated){
-		// change this 
-		if (deleteTask(unchanged).equals("task removed")){
-			if (		_items.add(updated)){
+
+	public String updateTask(Task unchanged, Task updated) {
+		// change this
+		if (deleteTask(unchanged).equals("task removed")) {
+			if (_items.add(updated)) {
 				try {
+					/*
+					 * create an undoable command
+					 */
+					addCommand(Undoable.CommandType.UPDATE, unchanged, updated);
+
 					saveToFile();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				return "task updated";
 			}
-		};
-		
+		}
+		;
+
 		return "invalid input";
+	}
+
+	/**
+	 * This method invokes the undo operation on the most recent undoable action
+	 * 
+	 * @return The result in a string
+	 */
+	public String undoMostRecent() {
+		String result = "no more actions to be undone.";
+
+		if (_commands.size() > 0) {
+			Undoable comm = _commands.get(_commands.size() - 1);
+			result = comm.undo();
+
+			/*
+			 * assuming no REDO is allowed
+			 */
+			_commands.remove(_commands.size() - 1);
+		}
+
+		return result;
 	}
 
 	/**
@@ -292,7 +330,7 @@ public class CRUDLogic {
 	 */
 	public boolean loadFromFile() throws IOException {
 		_items = Storage.loadDbFile(PATH_DATA_FILE);
-		if (_items == null){
+		if (_items == null) {
 			_items = new ArrayList<Task>();
 		}
 		_nextUid = getMaxuID();
@@ -321,17 +359,34 @@ public class CRUDLogic {
 		}
 		return retStr;
 	}
-	
-	private long getMaxuID(){
-		long max =0;
-		if (_items!=null){
-			for (int i =0; i<_items.size();i++){
-				if (_items.get(i).getUid()>max){
+
+	private long getMaxuID() {
+		long max = 0;
+		if (_items != null) {
+			for (int i = 0; i < _items.size(); i++) {
+				if (_items.get(i).getUid() > max) {
 					max = _items.get(i).getUid();
 				}
 			}
 		}
-		return max+1;
+		return max + 1;
+	}
+
+	/**
+	 * This method creates an undoable command in the stack
+	 * 
+	 * @param type
+	 * @param target
+	 */
+	private void addCommand(Undoable.CommandType type, Task target) {
+		Undoable comm = new Undoable(_items, type, target);
+		_commands.add(comm);
+	}
+
+	private void addCommand(Undoable.CommandType type, Task target,
+			Task replacement) {
+		Undoable comm = new Undoable(_items, type, target, replacement);
+		_commands.add(comm);
 	}
 
 }
