@@ -32,16 +32,16 @@ import edu.stanford.nlp.util.CoreMap;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 public class Lemmatizer {
     protected StanfordCoreNLP _pipeline;
 
-    public Lemmatizer() {
-        Properties _properties = new Properties();
-        _properties.put("annotators", "tokenize, ssplit, pos, lemma");
-
-        this._pipeline = new StanfordCoreNLP(_properties);
+    public Lemmatizer(StanfordCoreNLP _pipeline) {
+        this._pipeline = _pipeline;
+//        Properties _properties = new Properties();
+//        _properties.put("annotators", "tokenize, ssplit, pos, lemma");
+//
+//        this._pipeline = new StanfordCoreNLP(_properties);
     }
 
     /**
