@@ -30,28 +30,28 @@ import java.util.regex.Pattern;
 public class TimeValidator {
     private Pattern _pattern;
     private Matcher _matcher;
-    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3])[0-5][0-9]\\S+";
+    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]"; //"([01]?[0-9]|2[0-3]):[0-5][0-9]\\S+";
 
     public TimeValidator() {
         _pattern = Pattern.compile(TIME24HOURS_PATTERN);
     }
 
     public boolean validate(final String _time) {
-        assert _time.length() >= 4;
+        assert _time.length() == 5;
         _matcher = _pattern.matcher(_time);
 
-        String time = _time;
-        time = time.replaceAll("[^-?0-9]+", "");
-
-        /**
-         * Algorithm to provide a natural response when a negative input was entered.
-         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
-         */
-        if (_matcher.matches() == true) {
-            return _matcher.matches();
-        } else if (!_time.matches("[^-?0-9]+")) {
-            System.out.println("Did you meant " + time + "hrs?");
-        }
+//        String time = _time;
+//        time = time.replaceAll(TIME24HOURS_PATTERN, "");
+//
+//        /**
+//         * Algorithm to provide a natural response when a negative input was entered.
+//         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
+//         */
+//        if (_matcher.matches() == true) {
+//            return _matcher.matches();
+//        } else if (!_time.matches(TIME24HOURS_PATTERN)) {
+//            System.out.println("Did you meant " + time + "hrs?");
+//        }
 
         return _matcher.matches();
     }
