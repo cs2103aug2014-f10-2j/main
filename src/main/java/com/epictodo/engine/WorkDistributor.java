@@ -70,6 +70,7 @@ public class WorkDistributor {
 			return "This is invalid";
 			
 		case UNDO:
+			result = logic.undoMostRecent();
 			return result;
 
 		}
