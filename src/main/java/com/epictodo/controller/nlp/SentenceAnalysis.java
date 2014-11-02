@@ -30,7 +30,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.time.TimeAnnotations;
-import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -40,13 +39,13 @@ import java.util.*;
 
 public class SentenceAnalysis {
     protected StanfordCoreNLP _pipeline;
-    private final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
 
-    public SentenceAnalysis() {
-        Properties _properties = new Properties();
-        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
-        _pipeline = new StanfordCoreNLP(_properties);
-        _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
+    public SentenceAnalysis(StanfordCoreNLP _pipeline) {
+        this._pipeline = _pipeline;
+//        Properties _properties = new Properties();
+//        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+//        _pipeline = new StanfordCoreNLP(_properties);
+//        _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
     }
 
     /**
@@ -142,9 +141,9 @@ public class SentenceAnalysis {
      * @param _sentence
      * @return _results
      */
-    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence) {
+    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence, CRFClassifier<CoreLabel> _classifier) {
         LinkedHashMap<String, LinkedHashSet<String>> _results = new <String, LinkedHashSet<String>>LinkedHashMap();
-        CRFClassifier<CoreLabel> _classifier = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+//        CRFClassifier<CoreLabel> _classifier = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
         List<List<CoreLabel>> _classify = _classifier.classify(_sentence);
 
         for (List<CoreLabel> _tokens : _classify) {
