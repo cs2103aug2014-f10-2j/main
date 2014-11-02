@@ -129,10 +129,12 @@ public class Storage {
             };
             Map<TaskType, List<Task>> timed_result = _gson.fromJson(_reader, t_token.getType());
 
+            _reader = new FileReader(file_name);
             TypeToken<Map<TaskType, List<DeadlineTask>>> dd_token = new TypeToken<Map<TaskType, List<DeadlineTask>>>() {
             };
             Map<TaskType, List<Task>> deadline_result = _gson.fromJson(_reader, dd_token.getType());
 
+            _reader = new FileReader(file_name);
             TypeToken<Map<TaskType, List<FloatingTask>>> f_token = new TypeToken<Map<TaskType, List<FloatingTask>>>() {
             };
             Map<TaskType, List<Task>> floatingt_result = _gson.fromJson(_reader, f_token.getType());

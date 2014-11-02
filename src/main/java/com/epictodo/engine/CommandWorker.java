@@ -15,6 +15,8 @@ public class CommandWorker {
 	 */
 	public static Task createTask(String instruc) {
 		Logger logger = Logger.getLogger("System Log");
+		
+		// NLP can replace the work below
 		Scanner s = new Scanner(instruc);
 		String taskName = getTaskNameThroughInstruction(s);
 		String taskDate = getTaskDateThroughInstruction(s);
@@ -48,6 +50,8 @@ public class CommandWorker {
 	
 	public static Task updateTask(String instruc) {
 		Logger logger = Logger.getLogger("System Log");
+		
+		//NLP take place here!
 		Scanner s = new Scanner(instruc);
 		String taskName = getTaskNameThroughInstruction(s);
 		String taskDate = getTaskDateThroughInstruction(s);

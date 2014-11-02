@@ -15,6 +15,7 @@ public class WorkDistributor {
 	private final static String[] COMMAND_SEARCH = {"search","find"};
 	private final static String[] COMMAND_DISPLAY = {"display"};	
 	private final static String[] COMMAND_UNDO = {"undo"};
+	
 	enum CommandType {
 		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO
 	};
@@ -24,7 +25,11 @@ public class WorkDistributor {
 		// get command
 		CommandType command = defineCommandType(instruc);
 
-		// read instruction
+		/*
+		 * <command> <instruction>
+		 * Since, NLP should handle only instruction
+		 * Therefore, NLP can look into CommandWorker to fill in the attribute for task nicely.  
+		 */
 		instruc = removeCommand(instruc);
 		String result = "";
 		ArrayList<Task> list = null;

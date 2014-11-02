@@ -96,25 +96,7 @@ public class MenuWorker {
 		logger.info("floating task is created!");
 		return TaskBuilder.buildTask(taskName, taskDesc, priority);
 	}
-	/*
-	public static Task createTimedTask(String taskName, String taskDesc, int priority, String taskDate, String taskTime, double taskDuration) {
-		Display("Enter Task Duration in hours(Optional)");
-		String durationTemp = s.nextLine();
-		if (!durationTemp.equals("")){
-    		taskDuration = Double.valueOf(durationTemp);
-			logger.info("timed task is created!");
-    		return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime, taskDuration);
-    	} else {
-				logger.info("deadline task is created!");
-				createDeadlineTask(taskName, taskDesc, priority, taskDate, taskTime);
-		    	return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime);
-		}
-	}
-	
-	public static Task createDeadlineTask(String taskName, String taskDesc, int priority, String taskDate, String taskTime); {
-		return TaskBuilder.buildTask(taskName, taskDesc, priority, taskDate, taskTime);
-	}
-	*/
+
 	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
 		
 		s = new Scanner(System.in);
