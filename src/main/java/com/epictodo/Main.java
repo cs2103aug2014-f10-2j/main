@@ -16,14 +16,14 @@ public class Main {
 		WorkDistributor.loadData();
 		bannerDisplay();
 		while(true){
-			Display("\nEnter your command:");
+			display("\nEnter your command:");
 			String instruc = sc.nextLine();
-			Display(WorkDistributor.proceedInstruc(instruc));
+			display(WorkDistributor.proceedInstruc(instruc));
 		}
 	}
 	
 	public static void helpmenu(){
-		DisplayLine("Add:\tAdd, ++, F1 <TaskName> <Date> <Time> <Duration>\n"
+		displayLine("Add:\tAdd, ++, F1 <TaskName> <Date> <Time> <Duration>\n"
 		+"Find:\tFind, Search, F2 <Keywords>\n"
 		+"Update:\tUpdate, Change, F3 <TaskName>.....\n"
 		+"Delete:\tDelete, --, Remove, F4<TaskName>\n"
@@ -35,7 +35,7 @@ public class Main {
 	}
 	
 	public static void bannerDisplay(){
-		DisplayLine("___________      .__         ___________        ___     \n"+
+		displayLine("___________      .__         ___________        ___     \n"+
 		"\\_   _____/_____ |__| ____   \\__    ___/___   __| _/____ \n"+
 		" |  ____)_\\____ \\|  |/ ___\\    |    | /  _ \\ / __ |/  _ \\\n"+
 		" |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n"+
@@ -44,10 +44,10 @@ public class Main {
 		"");
 	}
 	
-	public static void DisplayLine(String a){
+	public static void displayLine(String a){
 		System.out.println(a);
 	}
-	public static void Display(String a){
+	public static void display(String a){
 		System.out.print(a);
 	}
 
