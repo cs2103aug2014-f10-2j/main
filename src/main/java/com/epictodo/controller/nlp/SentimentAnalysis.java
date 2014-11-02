@@ -34,15 +34,15 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.List;
-import java.util.Properties;
 
 public class SentimentAnalysis {
     protected StanfordCoreNLP _pipeline;
 
-    public SentimentAnalysis() {
-        Properties _properties = new Properties();
-        _properties.put("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
-        _pipeline = new StanfordCoreNLP(_properties);
+    public SentimentAnalysis(StanfordCoreNLP _pipeline) {
+        this._pipeline = _pipeline;
+//        Properties _properties = new Properties();
+//        _properties.put("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
+//        _pipeline = new StanfordCoreNLP(_properties);
     }
 
     /**
