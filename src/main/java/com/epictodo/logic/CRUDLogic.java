@@ -211,12 +211,15 @@ public class CRUDLogic {
 		if (t == null)
 			return "invalid input";
 		Task found = getTaskByUid(t.getUid());
+
 		if (found != null && _items.remove(found)) {
+			int index = _items.indexOf(getTaskByUid(found.getUid()));
+
 			try {
 				/*
 				 * create an undoable command
 				 */
-				addCommand(Undoable.CommandType.DELETE, found);
+				addCommand(Undoable.CommandType.DELETE, found, index);
 
 				saveToFile();
 				return "task removed";
@@ -388,6 +391,11 @@ public class CRUDLogic {
 	private void addCommand(Undoable.CommandType type, Task target,
 			Task replacement) {
 		Undoable comm = new Undoable(_items, type, target, replacement);
+		_commands.add(comm);
+	}
+
+	private void addCommand(Undoable.CommandType type, Task target, int index) {
+		Undoable comm = new Undoable(_items, type, target, index);
 		_commands.add(comm);
 	}
 
