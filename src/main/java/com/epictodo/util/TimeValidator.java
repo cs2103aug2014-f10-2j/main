@@ -40,6 +40,19 @@ public class TimeValidator {
         assert _time.length() >= 4;
         _matcher = _pattern.matcher(_time);
 
+        String time = _time;
+        time = time.replaceAll("[^-?0-9]+", "");
+
+        /**
+         * Algorithm to provide a natural response when a negative input was entered.
+         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
+         */
+        if (_matcher.matches() == true) {
+            return _matcher.matches();
+        } else if (!_time.matches("[^-?0-9]+")) {
+            System.out.println("Did you meant " + time + "hrs?");
+        }
+
         return _matcher.matches();
     }
 }
