@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.json;
 
+import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.FloatingTask;
 import com.epictodo.model.Task;
@@ -108,11 +109,11 @@ public class StorageTest {
     	ArrayList<Task> listOfTasks = new ArrayList<Task>();
     	
     		// load the Json and deserilized them as an ArrayList<Task> and return it in listOfTasks
-    	//listOfTasks = load()
+    	listOfTasks = _storage.loadDbFile(file_name);
     	
     		//grab the first time Task and compare it's endDateTimeAsString
-    	//TimedTask tt = (TimedTask) listOfTasks.get(x);
-    	//assertEquals(ttEndDateTime, tt.getEndDateTimeAsString());
+    	TimedTask tt = (TimedTask) listOfTasks.get(0);
+    	assertEquals(ttEndDateTime, tt.getEndDateTimeAsString());
        }
     
     @Test
@@ -121,10 +122,10 @@ public class StorageTest {
     	ArrayList<Task> listOfTasks = new ArrayList<Task>();
     	
     		// load the Json and deserilized them as an ArrayList<Task> and return it in listOfTasks
-    	//listOfTasks = load()
+    	listOfTasks = _storage.loadDbFile(file_name);
     	
     		//grab the second deadline Task and compare it's endDateTimeAsString
-    	//DeadlineTask tt = (DeadlineTask) listOfTasks.get(x);
-    	//assertEquals(dt2EndDateTime, tt.getEndDateTimeAsString());
+    	DeadlineTask tt = (DeadlineTask) listOfTasks.get(3);
+    	assertEquals(dt2EndDateTime, tt.getEndDateTimeAsString());
        }
 }
