@@ -229,26 +229,28 @@ public class CRUDLogic {
 		}
 	}
 
-	public String updateTask(Task unchanged, Task updated) {
-		// change this
-		if (deleteTask(unchanged).equals("task removed")) {
-			if (_items.add(updated)) {
-				try {
-					/*
-					 * create an undoable command
-					 */
-					addCommand(Undoable.CommandType.UPDATE, unchanged, updated);
+	public String updateTask(Task target, Task replacement) {
+		int index = _items.indexOf(getTaskByUid(target.getUid()));
+		if (index != -1) {
+			_items.set(index, replacement);
+			/*
+			 * create an undoable command
+			 */
+			addCommand(Undoable.CommandType.UPDATE, target, replacement);
 
-					saveToFile();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			/*
+			 * save changes to storage
+			 */
+			try {
+				saveToFile();
 				return "task updated";
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "there was an error saving the update";
 			}
+		} else {
+			return "invalid input";
 		}
-		;
-
-		return "invalid input";
 	}
 
 	/**
