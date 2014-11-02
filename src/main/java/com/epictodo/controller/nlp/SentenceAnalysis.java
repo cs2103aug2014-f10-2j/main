@@ -112,7 +112,7 @@ public class SentenceAnalysis {
      * @return _results
      */
     public Map<String, String> sentenceAnalyzer(String _sentence) {
-        Map<String, String> _results = new HashMap<>();
+        Map<String, String> _results = new TreeMap<>();
         Annotation _document = new Annotation(_sentence);
         _document.set(CoreAnnotations.DocDateAnnotation.class, getTodayDate());
         _pipeline.annotate(_document);
