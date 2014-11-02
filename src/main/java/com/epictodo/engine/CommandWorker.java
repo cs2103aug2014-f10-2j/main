@@ -107,8 +107,8 @@ public class CommandWorker {
 			if (next.equals ("@"))
 				return taskName;
 			else
-				taskName += next;
+				taskName += (next+" ");
 		}
-		return taskName;
+		return taskName.trim();
 	}
 }
