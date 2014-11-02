@@ -18,12 +18,14 @@ public class Undoable {
 	private CommandType _type;
 	private Task _target;
 	private Task _replacement;
+	private int _index;
 
 	public Undoable(ArrayList<Task> container, CommandType type, Task target) {
 		_container = container;
 		_type = type;
 		_target = target;
 		_replacement = null;
+		_index = -1;
 	}
 
 	public Undoable(ArrayList<Task> container, CommandType type, Task target,
@@ -32,6 +34,16 @@ public class Undoable {
 		_type = type;
 		_target = target;
 		_replacement = replacement;
+		_index = -1;
+	}
+
+	public Undoable(ArrayList<Task> container, CommandType type, Task target,
+			int index) {
+		_container = container;
+		_type = type;
+		_target = target;
+		_replacement = null;
+		_index = index;
 	}
 
 	public String undo() {
@@ -44,15 +56,15 @@ public class Undoable {
 			break;
 
 		case DELETE:
-			_container.add(_target);
+			_container.add(_index, _target);
+
 			result = "deleting task \"" + _target.getTaskName()
 					+ "\" is undone";
 			break;
 
 		case UPDATE:
-			Task temp = _replacement;
-			_replacement = _target;
-			_target = temp;
+			_container.set(_container.indexOf(_replacement), _target);
+
 			result = "updating task \"" + _target.getTaskName()
 					+ "\" is undone";
 			break;
