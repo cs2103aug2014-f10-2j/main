@@ -34,9 +34,9 @@ import java.text.ParseException;
 import java.util.*;
 
 public class NLPEngine {
-    protected StanfordCoreNLP _pipeline;
+    protected static StanfordCoreNLP _pipeline;
     private PrintStream _err = System.err;
-    private NLPLoadEngine load_engine = new NLPLoadEngine();
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
 
     public NLPEngine() {
@@ -68,10 +68,10 @@ public class NLPEngine {
      * @throws ParseException
      */
     public void flexiAdd(String _sentence) throws ParseException {
-        SentenceAnalysis sentence_analysis = new SentenceAnalysis(_pipeline);
+        SentenceAnalysis sentence_analysis = new SentenceAnalysis();
         Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer(_sentence);
         Map<String, String> sentence_token_map = sentence_analysis.sentenceAnalyzer(_sentence);
-        LinkedHashMap<String, LinkedHashSet<String>> entities_map = sentence_analysis.nerEntitiesExtractor(_sentence, load_engine.classifierModel());
+        LinkedHashMap<String, LinkedHashSet<String>> entities_map = sentence_analysis.nerEntitiesExtractor(_sentence);
         Map<String, String> analyzed_result = new TreeMap<>();
         List<String> _temp = new ArrayList<>();
         List<Object> _items = new ArrayList<>();
