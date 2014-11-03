@@ -1,9 +1,10 @@
 package com.epictodo.model;
 
-import static org.junit.Assert.*;
-
-import java.util.*;
 import java.text.ParseException;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DeadlineTask extends Task {
 	/************** Data members **********************/
@@ -106,7 +107,7 @@ public class DeadlineTask extends Task {
 		String minute = time.substring(3, 5);
 		assertTrue(minute.matches(regex));
 		int minuteInt = Integer.parseInt(minute);
-		assert (minuteInt <= 59) && (minuteInt > 00);
+		assert (minuteInt <= 59) && (minuteInt >= 00);
 		String colon = time.substring(2, 3);
 		assertEquals(colon, ":");
 		String newTime = hour + minute;
