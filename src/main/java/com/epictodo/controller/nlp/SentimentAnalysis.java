@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.nlp;
 
+import com.epictodo.engine.NLPLoadEngine;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -37,9 +38,10 @@ import java.util.List;
 
 public class SentimentAnalysis {
     protected StanfordCoreNLP _pipeline;
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
-    public SentimentAnalysis(StanfordCoreNLP _pipeline) {
-        this._pipeline = _pipeline;
+    public SentimentAnalysis() {
+        this._pipeline = load_engine._pipeline;
 //        Properties _properties = new Properties();
 //        _properties.put("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
 //        _pipeline = new StanfordCoreNLP(_properties);
@@ -100,6 +102,7 @@ public class SentimentAnalysis {
     /**
      * This method displays the sentiment score ratings of each sentiment
      * The sentiment score is mapped to an individual sentiment
+     *
      * @param _sentiment
      * @return
      */

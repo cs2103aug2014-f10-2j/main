@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.nlp;
 
+import com.epictodo.engine.NLPLoadEngine;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -35,9 +36,10 @@ import java.util.List;
 
 public class Lemmatizer {
     protected StanfordCoreNLP _pipeline;
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
-    public Lemmatizer(StanfordCoreNLP _pipeline) {
-        this._pipeline = _pipeline;
+    public Lemmatizer() {
+        this._pipeline = load_engine._pipeline;
 //        Properties _properties = new Properties();
 //        _properties.put("annotators", "tokenize, ssplit, pos, lemma");
 //
@@ -46,13 +48,14 @@ public class Lemmatizer {
 
     /**
      * This method will lemmatize the sentence into individual lemmatized tokens before storing into List<String>
+     *
      * @param _sentence
      * @return _lemmas
      */
     public List<String> lemmatize(String _sentence) {
         List<String> _lemmas = new LinkedList<>();
         Annotation annotate_sentence = new Annotation(_sentence);
-        this._pipeline.annotate(annotate_sentence);
+        _pipeline.annotate(annotate_sentence);
 
         // Iterate over all of the sentences found
         List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);

@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.nlp;
 
+import com.epictodo.engine.NLPLoadEngine;
 import com.epictodo.util.TimeValidator;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -40,14 +41,15 @@ import java.util.logging.Logger;
 
 public class SentenceStructure {
     protected StanfordCoreNLP _pipeline;
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private static Logger _logger = Logger.getLogger("--- SentenceStructure Log ---");
     private TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
     private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
     private GrammaticalStructure grammartical_structure;
     private TypedDependency type_dependency;
 
-    public SentenceStructure(StanfordCoreNLP _pipeline) {
-        this._pipeline = _pipeline;
+    public SentenceStructure() {
+        this._pipeline = load_engine._pipeline;
 //        Properties _properties = new Properties();
 //        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
 //        _pipeline = new StanfordCoreNLP(_properties);
@@ -168,7 +170,7 @@ public class SentenceStructure {
     /**
      * This method checks on the given string if it's in the time format based on Regex matches
      * Time format must be strictly be kept to hhmmh / hhmmhr / hhmmhrs
-     * 
+     * <p/>
      * Example:
      * 0900h, 1030hr, 1330hrs (PASSED)
      * 0900, 1030 h, 1330pm (FAILED)

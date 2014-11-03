@@ -24,6 +24,7 @@
 
 package com.epictodo.controller.nlp;
 
+import com.epictodo.engine.NLPLoadEngine;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -39,9 +40,10 @@ import java.util.*;
 
 public class SentenceAnalysis {
     protected StanfordCoreNLP _pipeline;
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
-    public SentenceAnalysis(StanfordCoreNLP _pipeline) {
-        this._pipeline = _pipeline;
+    public SentenceAnalysis() {
+        this._pipeline = load_engine._pipeline;
 //        Properties _properties = new Properties();
 //        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
 //        _pipeline = new StanfordCoreNLP(_properties);
@@ -141,9 +143,9 @@ public class SentenceAnalysis {
      * @param _sentence
      * @return _results
      */
-    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence, CRFClassifier<CoreLabel> _classifier) {
+    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence) {
         LinkedHashMap<String, LinkedHashSet<String>> _results = new <String, LinkedHashSet<String>>LinkedHashMap();
-//        CRFClassifier<CoreLabel> _classifier = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+        CRFClassifier<CoreLabel> _classifier = load_engine.CLASSIFIER; //CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
         List<List<CoreLabel>> _classify = _classifier.classify(_sentence);
 
         for (List<CoreLabel> _tokens : _classify) {
