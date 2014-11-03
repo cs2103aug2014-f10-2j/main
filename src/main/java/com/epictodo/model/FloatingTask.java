@@ -1,7 +1,5 @@
 package com.epictodo.model;
 
-import java.text.ParseException;
-
 public class FloatingTask extends Task {
 	/************** Data members **********************/
 
@@ -25,9 +23,9 @@ public class FloatingTask extends Task {
 	 * super.getPriority(); FloatingTask newClone = new FloatingTask(taskName,
 	 * taskDescription, priority); return newClone; }
 	 */
-	public FloatingTask copy() throws ParseException, InvalidDateException, InvalidTimeException {
+	public FloatingTask copy() {
 		Task t = super.copy();
-		FloatingTask cloned = null;
+		FloatingTask cloned= null;
 		try {
 			cloned = new FloatingTask(t);
 		} catch (Exception e) {

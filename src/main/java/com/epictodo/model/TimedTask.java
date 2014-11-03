@@ -14,7 +14,8 @@ public class TimedTask extends Task {
 	/*************** Constructors
 	 * @throws Exception **********************/
 
-	public TimedTask(String taskName, String taskDescription, int priority, String ddmmyy, String time, double duration) throws Exception {
+	public TimedTask(String taskName, String taskDescription, int priority,
+			String ddmmyy, String time, double duration) throws Exception {
 		super(taskName, taskDescription, priority);
 		// This checks whether date and time entered are of correct length
 		assert ddmmyy.length() == 6;
@@ -25,10 +26,11 @@ public class TimedTask extends Task {
 
 	}
 	
-	public TimedTask(Task t, long startDateTime, long endDateTime) throws Exception {
+	public TimedTask(Task t,
+			long startDateTime, long endDateTime) throws Exception {
 		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
 		this.startDateTime = startDateTime;
-		this.endDateTime = endDateTime;
+		this.endDateTime =endDateTime;
 	}
 
 	/**************** Accessors ***********************/
@@ -84,7 +86,7 @@ public class TimedTask extends Task {
 		endDateTime = temp;
 	}
 
-	public void setDateTime(String date, String time) throws ParseException, InvalidTimeException, InvalidDateException {
+	public void setDateTime(String date, String time) throws Exception {
 		// This checks whether date and time entered are of correct length
 		assert date.length() == 6;
 		assert time.length() == 5;
@@ -98,7 +100,9 @@ public class TimedTask extends Task {
 					dateTimeTemp).getTime() / 1000;
 			assert epoch != 0;
 			startDateTime = epoch;
-		} 
+		}else{
+			throw new Exception();
+		}
 		
 	}
 
@@ -117,7 +121,7 @@ public class TimedTask extends Task {
 	 * return newClone; }
 	 */
 
-	public TimedTask copy() throws ParseException, InvalidDateException, InvalidTimeException {
+	public TimedTask copy() {
 		Task t = super.copy();
 		TimedTask cloned=null;
 		try {
@@ -132,107 +136,71 @@ public class TimedTask extends Task {
 	
 /**************** Class methods(For local class only) ************************/
 	
-	private boolean checkTimeIsValid(String time) throws InvalidTimeException{
+	private boolean checkTimeIsValid(String time) throws Exception{
+		try{
 		String regex = "[0-9]+";
 		String hour = time.substring(0, 2);
-		// Check whether hour is made up of digits
-		if (!hour.matches(regex)) {
-			throw new InvalidTimeException(time);
-		}
-
+		assertTrue(hour.matches(regex));
 		int hourInt = Integer.parseInt(hour);
-		// Check whether hour is between 00 and 24
-		if ((hourInt >= 25) || (hourInt < 00)) {
-			throw new InvalidTimeException(time);
-		}
-
+		assert (hourInt < 24) && (hourInt >= 00);
 		String minute = time.substring(3, 5);
-		// Check whether minute is made up of digits
-		if (!minute.matches(regex)) {
-			throw new InvalidTimeException(time);
-		}
-
+		assertTrue(minute.matches(regex));
 		int minuteInt = Integer.parseInt(minute);
-		// Check whether minute is between 00 and 59
-		if ((minuteInt >= 60) || (minuteInt < 00)) {
-			throw new InvalidTimeException(time);
-		}
-
-		// Check whether 3rd character is a colon
+		assert (minuteInt <= 59) && (minuteInt > 00);
 		String colon = time.substring(2, 3);
-		if (!colon.equals(":")) {
-			throw new InvalidTimeException(time);
-		}
-		
-		// Check whether final time has 4 digits
+		assertEquals(colon, ":");
 		String newTime = hour + minute;
-		if ((newTime.length() != 4) || (!newTime.matches(regex))) {
-			throw new InvalidTimeException(time);
-		}
+		assert newTime.length() == 4;
+		assertTrue(newTime.matches(regex));
 		return true;
+		}
+		catch(Error e){
+			return false;
+		}
 	}
 	
-	private boolean checkDateIsValid(String date) throws InvalidDateException {
-		
-		if (date.length() != 6) {
-			throw new InvalidDateException(date);
-		}
-
+	private boolean checkDateIsValid(String date) throws Exception {
+		assert date.length() == 6;
 		String regex = "[0-9]+";
 		
 		// Step 1: Check if date entered consists of digits
-		if (!date.matches(regex)) {
-			throw new InvalidDateException(date);
-		}
-
+		assertTrue(date.matches(regex));
 		String month = date.substring(2, 4);
 		int monthInt = Integer.parseInt(month);
 		
 		// Step 2: Check if month entered is between Jan to Dec
-		if ((monthInt > 13) || (monthInt < 00)) {
-			throw new InvalidDateException(date);
-		}
-
+		assert (monthInt < 13) && (monthInt > 00);
 		String day = date.substring(0, 2);
 		int dayInt = Integer.parseInt(day);
 		String year = date.substring(4, 6);
 		int yearInt = Integer.parseInt(year);
 		
 		// We accept years from 2014 up to 2038 since unixtimestamp max is year 2038
-		if ((yearInt < 14) || (yearInt > 38)) {
-			throw new InvalidDateException(date);
-		}
-		
+		assert (yearInt > 13) && (yearInt < 39);
 		String yyyy = "20" + year;
 		int yyyyInt = Integer.parseInt(yyyy);
 		if (isLeapYear(yyyyInt) && monthInt == 02) {
+			
 			// Step 3: Check if year entered is leap year and month is Feb 
-			if ((dayInt <= 00) || (dayInt >= 30)) {
-				throw new InvalidDateException(date);
-			}
+			assert (dayInt > 00) && (dayInt < 30);
 		} else if (!isLeapYear(yyyyInt) && monthInt == 02) {
+			
 			// Step 4: If not leap year, check is Feb has 28 days
-			if ((dayInt <= 00) || (dayInt >= 29)) {
-				throw new InvalidDateException(date);
-			}
+			assert (dayInt > 00) && (dayInt < 29);
 		} else if (month.equals("01") || month.equals("03") || month.equals("05") || month.equals("07") || month.equals("08") || month.equals("10") || month.equals("12")) {
+			
 			// Step 5: Check months with max 31 days
-			if ((dayInt <= 00) || (dayInt >= 32)) {
-				throw new InvalidDateException(date);
-			}
+			assert (dayInt > 00) && (dayInt < 32);
 		} else {
+			
 			// Step 6: The rest of the months should have max 30 days
-			if ((dayInt <= 00) || (dayInt >= 31)) {
-				throw new InvalidDateException(date);
-			}
+			assert (dayInt > 00) && (dayInt < 31);
 		}
 		
 		//Step 7: Check whether date entered is in the future
 		Date currDate = new Date();
 		Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
-		if (!enteredDate.after(currDate)) {
-			throw new InvalidDateException(date);
-		}
+		assert (enteredDate.after(currDate));
 		return true;
 	}
 	
