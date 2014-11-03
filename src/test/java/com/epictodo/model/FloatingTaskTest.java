@@ -48,7 +48,7 @@ public class FloatingTaskTest {
     @Test
     public void checkFloatingTaskCloneMethod() {
         FloatingTask temp_ftask;
-        temp_ftask = floating_task.clone();
+        temp_ftask = floating_task.copy();
         assertEquals(temp_ftask.getTaskName(), "Meeting at CLB");
         assertEquals(temp_ftask.getTaskDescription(), "Group Project");
         assertEquals(temp_ftask.getPriority(), 2);

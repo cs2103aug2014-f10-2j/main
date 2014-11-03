@@ -69,7 +69,7 @@ public class TaskTest {
     @Test
     public void checkTaskCloneMethod() {
         Task tempTask;
-        tempTask = _task.clone();
+        tempTask = _task.copy();
         assertEquals(tempTask.getTaskName(), "Meeting at CLB");
         assertEquals(tempTask.getTaskDescription(), "Group Project");
         assertEquals(tempTask.getPriority(), 2);

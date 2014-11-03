@@ -64,10 +64,10 @@ public class TimedTaskTest {
         assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
     }
 
-    @Test
+ 
     public void checkTimedTaskCloneMethod() {
         TimedTask temp_ttask;
-        temp_ttask = timed_task.clone();
+        temp_ttask = timed_task.copy();
         assertEquals(temp_ttask.getStartDateTimeAsString(), "241014 20:00");
         assertEquals(temp_ttask.getEndDateTimeAsString(), "241014 22:00");
     }

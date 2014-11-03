@@ -54,7 +54,7 @@ public class CRUDLogic {
 		 */
 		ArrayList<Task> retList = new ArrayList<Task>();
 		for (int i = 0; i < _items.size(); i++) {
-			retList.add(_items.get(i).clone());
+			retList.add(_items.get(i).copy());
 		}
 		return retList;
 	}
@@ -78,7 +78,7 @@ public class CRUDLogic {
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getTaskName().toLowerCase()
 					.contains(keyword.trim().toLowerCase())) {
-				list.add(_items.get(i).clone());
+				list.add(_items.get(i).copy());
 			}
 		}
 		return list;
@@ -94,7 +94,7 @@ public class CRUDLogic {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getIsDone() == done) {
-				list.add(_items.get(i).clone());
+				list.add(_items.get(i).copy());
 			}
 		}
 		return list;
@@ -119,7 +119,7 @@ public class CRUDLogic {
 		}
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getPriority() == p) {
-				list.add(_items.get(i).clone());
+				list.add(_items.get(i).copy());
 			}
 		}
 		return list;

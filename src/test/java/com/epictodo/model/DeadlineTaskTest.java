@@ -56,7 +56,7 @@ public class DeadlineTaskTest {
     @Test
     public void checkDeadlineTaskCloneMethod() {
         DeadlineTask tempDeadlineTask;
-        tempDeadlineTask = deadline_task.clone();
+        tempDeadlineTask = deadline_task.copy();
         assertEquals(tempDeadlineTask.getTaskName(), "Do CS2103 homework");
         assertEquals(tempDeadlineTask.getTaskDescription(), "Homework on testing");
         assertEquals(tempDeadlineTask.getPriority(), 5);
