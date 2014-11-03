@@ -26,6 +26,7 @@ package com.epictodo.engine;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.time.TimeAnnotator;
 
@@ -35,8 +36,10 @@ import java.util.logging.Logger;
 
 public class NLPLoadEngine {
     public StanfordCoreNLP _pipeline;
-    private final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
-    private final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+    private static NLPLoadEngine instance = null;
+    private static final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
+    public final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+    public final LexicalizedParser LEXICAL_MODEL = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
 
     public NLPLoadEngine() {
@@ -48,10 +51,18 @@ public class NLPLoadEngine {
             _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
 
             _logger.log(Level.INFO, "Successfully loaded models.");
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             _logger.log(Level.SEVERE, "Error loading models.");
             throw ex;
         }
+    }
+
+    public static NLPLoadEngine getInstance() {
+        if (instance == null) {
+            instance = new NLPLoadEngine();
+        }
+
+        return instance;
     }
 
     public CRFClassifier<CoreLabel> classifierModel() {
