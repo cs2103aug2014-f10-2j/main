@@ -76,7 +76,7 @@ public class Task {
 		return getTaskName();
 	}
 
-	public Task clone() {
+	public Task copy() {
 		Task cloned= null;
 		try {
 			cloned = new Task(getTaskName(), getTaskDescription(),

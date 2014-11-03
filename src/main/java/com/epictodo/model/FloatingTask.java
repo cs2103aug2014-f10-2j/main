@@ -23,8 +23,8 @@ public class FloatingTask extends Task {
 	 * super.getPriority(); FloatingTask newClone = new FloatingTask(taskName,
 	 * taskDescription, priority); return newClone; }
 	 */
-	public FloatingTask clone() {
-		Task t = super.clone();
+	public FloatingTask copy() {
+		Task t = super.copy();
 		FloatingTask cloned= null;
 		try {
 			cloned = new FloatingTask(t);

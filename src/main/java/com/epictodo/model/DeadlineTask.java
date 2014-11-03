@@ -80,9 +80,9 @@ public class DeadlineTask extends Task {
 		return super.toString() + " by " + this.getEndDateTimeAsString();
 	}
 
-	public DeadlineTask clone() {
+	public DeadlineTask copy() {
 	
-			Task t = super.clone();
+			Task t = super.copy();
 			DeadlineTask cloned = null;
 			try {
 				cloned = new DeadlineTask(t, getEndDateTime());

@@ -121,8 +121,8 @@ public class TimedTask extends Task {
 	 * return newClone; }
 	 */
 
-	public TimedTask clone() {
-		Task t = super.clone();
+	public TimedTask copy() {
+		Task t = super.copy();
 		TimedTask cloned=null;
 		try {
 			cloned = new TimedTask(t,getStartDateTime(), getEndDateTime());
