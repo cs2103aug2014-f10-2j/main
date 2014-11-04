@@ -36,6 +36,11 @@ public class DateValidator {
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
     private static DateValidator instance = null;
 
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
     public static DateValidator getInstance() {
         if (instance == null) {
             instance = new DateValidator();
@@ -44,6 +49,32 @@ public class DateValidator {
         return instance;
     }
 
+    /**
+     * This method validates the date and parse to the following format (yyyy-MM-dd)
+     *
+     * @param _date
+     * @return
+     */
+    public String getDateInFormat(String _date) {
+        String _result;
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return null;
+        }
+
+        _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
+
+        return _result;
+    }
+
+    /**
+     * This method validates the date and parse to the following format (ddMMyy)
+     *
+     * @param _date
+     * @return
+     */
     public String validateDate(String _date) {
         String _result;
         Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
@@ -58,6 +89,12 @@ public class DateValidator {
         return _result;
     }
 
+    /**
+     * This validates the token from NLP SUTIME Annotation and is parsed to get the time only
+     *
+     * @param _time
+     * @return
+     */
     public String validateTime(String _time) {
         String _result;
         Pattern date_pattern = Pattern.compile(TIME_PATTERN);
@@ -72,7 +109,19 @@ public class DateValidator {
         return _result;
     }
 
-    public int determinePriority(String _date) throws ParseException {
+    /**
+     * This method determines the priority of a task based on natural processing
+     * This artificial natural processing calculates the days difference
+     * The priority is determined by the number of weeks apart from today's date
+     * The current rule of this determiner is increasing each week
+     *
+     * The default priority is set to '2'
+     *
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public String determinePriority(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
 
@@ -82,31 +131,36 @@ public class DateValidator {
 
         if (next_date.after(today_date)) {
             if (num_days >= 1 && num_days <= 7) {
-                return 1;
+                return "1";
             } else if (num_days > 7 && num_days <= 14) {
-                return 2;
+                return "2";
             } else if (num_days > 14 && num_days <= 21) {
-                return 3;
+                return "3";
             } else if (num_days > 21 && num_days <= 28) {
-                return 4;
+                return "4";
             } else if (num_days > 28 && num_days <= 35) {
-                return 5;
+                return "5";
             } else if (num_days > 35 && num_days <= 42) {
-                return 6;
+                return "6";
             } else if (num_days > 42 && num_days <= 49) {
-                return 7;
+                return "7";
             } else if (num_days > 49 && num_days <= 56) {
-                return 8;
+                return "8";
             } else if (num_days > 56) {
-                return 9;
+                return "9";
             }
         } else if (next_date.before(today_date)) {
-            System.out.println("Date is invalid!");
+            return "Date is invalid!";
         }
 
-        return 2;
+        return "2";
     }
 
+    /**
+     * This method returns today's date
+     *
+     * @return
+     */
     public String getTodayDate() {
         Date _date = new Date();
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
@@ -114,7 +168,15 @@ public class DateValidator {
         return date_format.format(_date);
     }
 
-    public int calculateDays(Date today_date, Date next_date) {
+    /**
+     * This method calculates the number of days difference from today's date
+     * This method is the core algorithm of the day calculation which is used in determinePriority() method
+     *
+     * @param today_date
+     * @param next_date
+     * @return
+     */
+    private int calculateDays(Date today_date, Date next_date) {
         return (int) ((next_date.getTime() - today_date.getTime()) / (1000 * 60 * 60 * 24));
     }
 }
