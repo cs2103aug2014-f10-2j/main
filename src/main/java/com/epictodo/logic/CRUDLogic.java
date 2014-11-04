@@ -386,7 +386,22 @@ public class CRUDLogic {
 		}
 
 	}
+	
+	/**
+	 * This method returns a string that represent all incomplete tasks
+	 * list in RAM
+	 * 
+	 * @return
+	 */
+	public String displayIncompleteTaskList() {
+		try {
+			return displayList(getIncompleteTasks());
+		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
+			e.printStackTrace();
+			return "error!";
+		}
 
+	}
 	/**
 	 * This method displays the content of all the tasks that matches the
 	 * keyword in names
