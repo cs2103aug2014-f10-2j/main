@@ -32,8 +32,11 @@ import java.util.regex.Pattern;
 
 public class DateValidator {
     private static final String FIX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
+    private static final String REGULAR_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
     private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
+    private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
+    private static final String TIME_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
     private static DateValidator instance = null;
 
     /**
@@ -49,22 +52,120 @@ public class DateValidator {
         return instance;
     }
 
+
+    /**
+     * This method is the same as getDateInFormat except it's parsed format is different
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public String getDateToCompare(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String _result;
+
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
+
+                    return _result;
+                }
+            }
+        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
+        }
+
+        return _result;
+    }
+
     /**
      * This method validates the date and parse to the following format (yyyy-MM-dd)
+     *
+     * Issues:
+     *  3 cases:
+     *      1. yyyy-MM-dd --> to fix
+     *      2. yyyy-MM-dd-WXX-dT-hh:mm
+     *      3. yyyy-MM-ddT-hh:mm --> causing error
      *
      * @param _date
      * @return
      */
-    public String getDateInFormat(String _date) {
+    public String getDateInFormat(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
         String _result;
-        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
+
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
         Matcher date_matcher = date_pattern.matcher(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+
+                    return _result;
+                }
+            }
+        }
 
         if (!date_matcher.matches()) {
             return null;
+        } else {
+            _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
         }
 
-        _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
+        return _result;
+    }
+
+    /**
+     * This method validates the time and parse to the following format (hh:mm)
+     * @param _time
+     * @return
+     * @throws ParseException
+     */
+    public String getTimeInFormat(String _time) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String _result;
+
+        Pattern date_pattern = Pattern.compile(TIME_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(_time);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_time);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(7);
+
+                    return _result;
+                }
+            }
+        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(7);
+        }
 
         return _result;
     }
@@ -135,7 +236,7 @@ public class DateValidator {
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date)) {
-            if (num_days >= 1 && num_days <= 7) {
+            if (num_days >= 0 && num_days <= 7) {
                 return "9";
             } else if (num_days > 7 && num_days <= 14) {
                 return "8";
@@ -182,6 +283,17 @@ public class DateValidator {
      * @return
      */
     private int calculateDays(Date today_date, Date next_date) {
-        return (int) ((next_date.getTime() - today_date.getTime()) / (1000 * 60 * 60 * 24));
+        return (int) ((next_date.getTime() - today_date.getTime()) / (24 * 60 * 60 * 1000));
+    }
+
+    public int compareDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        return num_days;
     }
 }
