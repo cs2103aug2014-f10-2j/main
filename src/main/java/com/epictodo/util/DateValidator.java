@@ -113,8 +113,13 @@ public class DateValidator {
      * This method determines the priority of a task based on natural processing
      * This artificial natural processing calculates the days difference
      * The priority is determined by the number of weeks apart from today's date
-     * The current rule of this determiner is increasing each week
-     *
+     * The current rule of this determiner decreases each week from today's date
+     * The closer the date to today's date holds the highest priority and decreases each week
+     * <p/>
+     * Assumptions:
+     * 1. User can override the priority based on their preferred choice
+     * 2. Priority is set based on this determiner algorithm, may not accurately reflect user's intentions
+     * <p/>
      * The default priority is set to '2'
      *
      * @param _date
@@ -131,23 +136,23 @@ public class DateValidator {
 
         if (next_date.after(today_date)) {
             if (num_days >= 1 && num_days <= 7) {
-                return "1";
+                return "9";
             } else if (num_days > 7 && num_days <= 14) {
-                return "2";
+                return "8";
             } else if (num_days > 14 && num_days <= 21) {
-                return "3";
+                return "7";
             } else if (num_days > 21 && num_days <= 28) {
-                return "4";
+                return "6";
             } else if (num_days > 28 && num_days <= 35) {
                 return "5";
             } else if (num_days > 35 && num_days <= 42) {
-                return "6";
+                return "5";
             } else if (num_days > 42 && num_days <= 49) {
-                return "7";
+                return "4";
             } else if (num_days > 49 && num_days <= 56) {
-                return "8";
+                return "3";
             } else if (num_days > 56) {
-                return "9";
+                return "2";
             }
         } else if (next_date.before(today_date)) {
             return "Date is invalid!";
