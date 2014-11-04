@@ -267,6 +267,30 @@ public class CRUDLogic {
 		return createTask(tt);
 	}
 
+	public String markAsDone(Task t) {
+		if (t == null)
+			return "invalid input";
+		Task found = getTaskByUid(t.getUid());
+
+		if (found != null) {
+			int index = _items.indexOf(getTaskByUid(found.getUid()));
+			try {
+				found.setIsDone(true);
+				/*
+				 * TODO: create an undoable command
+				 */
+
+				saveToFile();
+				return "task marked as done";
+			} catch (IOException ioe) {
+				found.setIsDone(false);
+				return "failed to mark task as done";
+			}
+		} else {
+			return "failed to mark task as done";
+		}
+	}
+
 	/**
 	 * This method removes a Task by UID
 	 * 
@@ -386,10 +410,10 @@ public class CRUDLogic {
 		}
 
 	}
-	
+
 	/**
-	 * This method returns a string that represent all incomplete tasks
-	 * list in RAM
+	 * This method returns a string that represent all incomplete tasks list in
+	 * RAM
 	 * 
 	 * @return
 	 */
@@ -402,6 +426,7 @@ public class CRUDLogic {
 		}
 
 	}
+
 	/**
 	 * This method displays the content of all the tasks that matches the
 	 * keyword in names
@@ -500,6 +525,9 @@ public class CRUDLogic {
 
 			if (t instanceof TimedTask && !t.getIsDone()
 					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
+				t.setIsDone(true);
+			} else if (t instanceof DeadlineTask && !t.getIsDone()
+					&& ((DeadlineTask) t).getEndDateTime() < dateTimeNow) {
 				t.setIsDone(true);
 			}
 		}
