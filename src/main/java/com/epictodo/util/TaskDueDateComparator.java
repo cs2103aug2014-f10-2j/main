@@ -6,7 +6,7 @@ import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
 
-class TaskDueDateComparator implements Comparator<Task> {
+public class TaskDueDateComparator implements Comparator<Task> {
 
 	@Override
 	public int compare(Task o1, Task o2) {
