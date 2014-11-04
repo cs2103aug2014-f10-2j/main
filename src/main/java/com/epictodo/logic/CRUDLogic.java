@@ -48,11 +48,12 @@ public class CRUDLogic {
 	 * This method returns the whole list of Tasks regardless of their status
 	 * 
 	 * @return the ArrayList containing all the tasks
-	 * @throws InvalidTimeException 
-	 * @throws InvalidDateException 
-	 * @throws ParseException 
+	 * @throws InvalidTimeException
+	 * @throws InvalidDateException
+	 * @throws ParseException
 	 */
-	public ArrayList<Task> getAllTasks() throws ParseException, InvalidDateException, InvalidTimeException {
+	public ArrayList<Task> getAllTasks() throws ParseException,
+			InvalidDateException, InvalidTimeException {
 		/*
 		 * the return should only deliver a duplicate of the objects
 		 */
@@ -67,12 +68,13 @@ public class CRUDLogic {
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
 	 * @return the ArrayList containing selected tasks
-	 * @throws InvalidTimeException 
-	 * @throws InvalidDateException 
-	 * @throws ParseException 
+	 * @throws InvalidTimeException
+	 * @throws InvalidDateException
+	 * @throws ParseException
 	 */
 	public ArrayList<Task> getTasksByName(String keyword)
-			throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
+			throws NullPointerException, ParseException, InvalidDateException,
+			InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 
 		/*
@@ -96,11 +98,12 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing selected tasks
 	 * @param boolean when true = Marked as done
-	 * @throws InvalidTimeException 
-	 * @throws InvalidDateException 
-	 * @throws ParseException 
+	 * @throws InvalidTimeException
+	 * @throws InvalidDateException
+	 * @throws ParseException
 	 */
-	public ArrayList<Task> getTasksByStatus(boolean done) throws ParseException, InvalidDateException, InvalidTimeException {
+	public ArrayList<Task> getTasksByStatus(boolean done)
+			throws ParseException, InvalidDateException, InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getIsDone() == done) {
@@ -116,12 +119,13 @@ public class CRUDLogic {
 	 * @param p
 	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
-	 * @throws InvalidTimeException 
-	 * @throws InvalidDateException 
-	 * @throws ParseException 
+	 * @throws InvalidTimeException
+	 * @throws InvalidDateException
+	 * @throws ParseException
 	 */
 	public ArrayList<Task> getTasksByPriority(int p)
-			throws IllegalArgumentException, ParseException, InvalidDateException, InvalidTimeException {
+			throws IllegalArgumentException, ParseException,
+			InvalidDateException, InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 
 		/*
@@ -225,9 +229,9 @@ public class CRUDLogic {
 			return "invalid input";
 		Task found = getTaskByUid(t.getUid());
 
-		if (found != null && _items.remove(found)) {
-			int index = _items.indexOf(getTaskByUid(found.getUid()));
+		int index = _items.indexOf(getTaskByUid(found.getUid()));
 
+		if (found != null && _items.remove(found)) {
 			try {
 				/*
 				 * create an undoable command
@@ -331,7 +335,7 @@ public class CRUDLogic {
 			e.printStackTrace();
 			return "error!";
 		}
-		
+
 	}
 
 	/**
