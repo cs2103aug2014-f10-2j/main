@@ -25,6 +25,7 @@
 package com.epictodo.controller.nlp;
 
 import com.epictodo.engine.NLPLoadEngine;
+import com.epictodo.util.DateValidator;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -41,6 +42,7 @@ import java.util.*;
 public class SentenceAnalysis {
     protected StanfordCoreNLP _pipeline;
     private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+    private DateValidator date_validator = DateValidator.getInstance();
 
     public SentenceAnalysis() {
         this._pipeline = load_engine._pipeline;
@@ -65,7 +67,7 @@ public class SentenceAnalysis {
         String _latest = "";
 
         Annotation _document = new Annotation(_sentence);
-        _document.set(CoreAnnotations.DocDateAnnotation.class, getTodayDate());
+        _document.set(CoreAnnotations.DocDateAnnotation.class, date_validator.getTodayDate());
         _pipeline.annotate(_document);
         List<CoreMap> timex_annotations = _document.get(TimeAnnotations.TimexAnnotations.class);
 
@@ -116,7 +118,7 @@ public class SentenceAnalysis {
     public Map<String, String> sentenceAnalyzer(String _sentence) {
         Map<String, String> _results = new TreeMap<>();
         Annotation _document = new Annotation(_sentence);
-        _document.set(CoreAnnotations.DocDateAnnotation.class, getTodayDate());
+        _document.set(CoreAnnotations.DocDateAnnotation.class, date_validator.getTodayDate());
         _pipeline.annotate(_document);
         List<CoreMap> _sentences = _document.get(CoreAnnotations.SentencesAnnotation.class);
 
@@ -167,12 +169,5 @@ public class SentenceAnalysis {
         }
 
         return _results;
-    }
-
-    private String getTodayDate() {
-        Date _date = new Date();
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-
-        return date_format.format(_date);
     }
 }
