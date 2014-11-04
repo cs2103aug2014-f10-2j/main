@@ -1,5 +1,7 @@
 package com.epictodo.model;
 
+import java.text.ParseException;
+
 public class Task {
 
 	/************** Data members **********************/
@@ -76,8 +78,9 @@ public class Task {
 		return getTaskName();
 	}
 
-	public Task copy() {
+	public Task copy() throws ParseException, InvalidDateException, InvalidTimeException{
 		Task cloned= null;
+		
 		try {
 			cloned = new Task(getTaskName(), getTaskDescription(),
 					getPriority());
