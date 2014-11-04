@@ -24,11 +24,14 @@
 
 package com.epictodo.logic;
 
+import com.epictodo.model.InvalidDateException;
+import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -83,7 +86,7 @@ public class CRUDLogicTest {
     }
 
     @Test
-    public void searchByTaskNameTest() {
+    public void searchByTaskNameTest() throws ParseException, InvalidDateException, InvalidTimeException {
         crud_logic.createTask(_task);
         task_list = new ArrayList<Task>();
         task_list.add(_task);
