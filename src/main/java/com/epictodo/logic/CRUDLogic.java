@@ -67,6 +67,27 @@ public class CRUDLogic {
 	}
 
 	/**
+	 * This method returns the whole list of incomplete tasks
+	 * 
+	 * @return the ArrayList containing all the tasks
+	 * @throws InvalidTimeException
+	 * @throws InvalidDateException
+	 * @throws ParseException
+	 */
+	public ArrayList<Task> getIncompleteTasks() throws ParseException,
+			InvalidDateException, InvalidTimeException {
+		/*
+		 * the return should only deliver a duplicate of the objects
+		 */
+		ArrayList<Task> retList = new ArrayList<Task>();
+		for (int i = 0; i < _items.size(); i++) {
+			if (!retList.get(i).getIsDone())
+				retList.add(_items.get(i).copy());
+		}
+		return retList;
+	}
+
+	/**
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
 	 * @return the ArrayList containing selected tasks
@@ -460,13 +481,17 @@ public class CRUDLogic {
 		for (int i = 0; i < size(); i++) {
 			Task t = _items.get(i);
 
-			// TODO: change the code to get current unix datetime
 			long dateTimeNow = System.currentTimeMillis() / 1000L;
 
 			if (t instanceof TimedTask && !t.getIsDone()
 					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
 				t.setIsDone(true);
 			}
+		}
+		try {
+			saveToFile();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
