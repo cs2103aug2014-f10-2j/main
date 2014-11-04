@@ -4,6 +4,7 @@ import com.epictodo.controller.json.Storage;
 import com.epictodo.model.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -47,8 +48,11 @@ public class CRUDLogic {
 	 * This method returns the whole list of Tasks regardless of their status
 	 * 
 	 * @return the ArrayList containing all the tasks
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException 
+	 * @throws ParseException 
 	 */
-	public ArrayList<Task> getAllTasks() {
+	public ArrayList<Task> getAllTasks() throws ParseException, InvalidDateException, InvalidTimeException {
 		/*
 		 * the return should only deliver a duplicate of the objects
 		 */
@@ -63,9 +67,12 @@ public class CRUDLogic {
 	 * This method returns tasks based on whether it has been marked as done
 	 * 
 	 * @return the ArrayList containing selected tasks
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException 
+	 * @throws ParseException 
 	 */
 	public ArrayList<Task> getTasksByName(String keyword)
-			throws NullPointerException {
+			throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 
 		/*
@@ -89,8 +96,11 @@ public class CRUDLogic {
 	 * 
 	 * @return the ArrayList containing selected tasks
 	 * @param boolean when true = Marked as done
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException 
+	 * @throws ParseException 
 	 */
-	public ArrayList<Task> getTasksByStatus(boolean done) {
+	public ArrayList<Task> getTasksByStatus(boolean done) throws ParseException, InvalidDateException, InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getIsDone() == done) {
@@ -106,9 +116,12 @@ public class CRUDLogic {
 	 * @param p
 	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException 
+	 * @throws ParseException 
 	 */
 	public ArrayList<Task> getTasksByPriority(int p)
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, ParseException, InvalidDateException, InvalidTimeException {
 		ArrayList<Task> list = new ArrayList<Task>();
 
 		/*
@@ -312,7 +325,13 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		return displayList(getAllTasks());
+		try {
+			return displayList(getAllTasks());
+		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
+			e.printStackTrace();
+			return "error!";
+		}
+		
 	}
 
 	/**
@@ -322,8 +341,14 @@ public class CRUDLogic {
 	 * @param keyword
 	 * @return
 	 */
-	public String searchForTasks(String keyword) throws NullPointerException {
-		return displayList(getTasksByName(keyword));
+	public String searchForTasks(String keyword) {
+		try {
+			return displayList(getTasksByName(keyword));
+		} catch (NullPointerException | ParseException | InvalidDateException
+				| InvalidTimeException e) {
+			e.printStackTrace();
+			return "error!";
+		}
 	}
 
 	/*
