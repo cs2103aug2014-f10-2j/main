@@ -461,7 +461,7 @@ public class CRUDLogic {
 			Task t = _items.get(i);
 
 			// TODO: change the code to get current unix datetime
-			long dateTimeNow = -1;
+			long dateTimeNow = System.currentTimeMillis() / 1000L;
 
 			if (t instanceof TimedTask && !t.getIsDone()
 					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
