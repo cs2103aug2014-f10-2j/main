@@ -81,7 +81,7 @@ public class CRUDLogic {
 		 */
 		ArrayList<Task> retList = new ArrayList<Task>();
 		for (int i = 0; i < _items.size(); i++) {
-			if (!retList.get(i).getIsDone())
+			if (!_items.get(i).getIsDone())
 				retList.add(_items.get(i).copy());
 		}
 		return retList;
