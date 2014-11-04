@@ -2,10 +2,12 @@ package com.epictodo.logic;
 
 import com.epictodo.controller.json.Storage;
 import com.epictodo.model.*;
+import com.epictodo.util.TaskDueDateComparator;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * 
@@ -86,7 +88,8 @@ public class CRUDLogic {
 
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getTaskName().toLowerCase()
-					.contains(keyword.trim().toLowerCase())) {
+					.contains(keyword.trim().toLowerCase())
+					&& !_items.get(i).getIsDone()) {
 				list.add(_items.get(i).copy());
 			}
 		}
@@ -135,10 +138,35 @@ public class CRUDLogic {
 			throw new IllegalArgumentException("Illegal priority");
 		}
 		for (int i = 0; i < size(); i++) {
-			if (_items.get(i).getPriority() == p) {
+			if (_items.get(i).getPriority() == p && !_items.get(i).getIsDone()) {
 				list.add(_items.get(i).copy());
 			}
 		}
+		return list;
+	}
+
+	public ArrayList<Task> getTasksOrderedByDueDate()
+			throws IllegalArgumentException, ParseException,
+			InvalidDateException, InvalidTimeException {
+		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<Task> temp = new ArrayList<Task>();
+
+		for (int i = 0; i < size(); i++) {
+			if (_items.get(i) instanceof FloatingTask) {
+				// Add floating tasks to list first
+				list.add(_items.get(i).copy());
+			} else {
+				// Dump all other tasks into a temp list
+				temp.add(_items.get(i).copy());
+			}
+		}
+
+		// sort the temp list
+		Collections.sort(temp, new TaskDueDateComparator());
+
+		// add the ordered temp list to the final list
+		list.addAll(temp);
+
 		return list;
 	}
 
@@ -426,6 +454,20 @@ public class CRUDLogic {
 	private void addCommand(Undoable.CommandType type, Task target, int index) {
 		Undoable comm = new Undoable(_items, type, target, index);
 		_commands.add(comm);
+	}
+
+	public void clearExpiredTask() {
+		for (int i = 0; i < size(); i++) {
+			Task t = _items.get(i);
+
+			// TODO: change the code to get current unix datetime
+			long dateTimeNow = -1;
+
+			if (t instanceof TimedTask && !t.getIsDone()
+					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
+				t.setIsDone(true);
+			}
+		}
 	}
 
 }
