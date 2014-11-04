@@ -1,8 +1,11 @@
 package com.epictodo.engine;
 
 import com.epictodo.logic.CRUDLogic;
+import com.epictodo.model.InvalidDateException;
+import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 // user input = { command + instruction }
@@ -44,14 +47,26 @@ public class WorkDistributor {
 			return result;
 
 		case DELETE:
-			list = logic.getTasksByName(instruc);
+			try {
+				list = logic.getTasksByName(instruc);
+			} catch (NullPointerException | ParseException
+					| InvalidDateException | InvalidTimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			result = logic.deleteTask(t);
 			return result;
 
 		case UPDATE:
-			list = logic.getTasksByName(instruc);
+			try {
+				list = logic.getTasksByName(instruc);
+			} catch (NullPointerException | ParseException
+					| InvalidDateException | InvalidTimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			Task updatedTask = MenuWorker.updateTask(t);
@@ -59,7 +74,13 @@ public class WorkDistributor {
 			return result;
 			
 		case SEARCH:
-			list = logic.getTasksByName(instruc);
+			try {
+				list = logic.getTasksByName(instruc);
+			} catch (NullPointerException | ParseException
+					| InvalidDateException | InvalidTimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			t = MenuWorker.selectItemFromList(command, list,
 					logic.displayList(list));
 			// todo: display task in a proper format return successful message

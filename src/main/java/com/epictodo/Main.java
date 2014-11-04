@@ -10,8 +10,8 @@ public class Main {
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
-        NLPEngine _nlp = new NLPEngine();
-        _nlp.mute();
+        //NLPEngine _nlp = new NLPEngine();
+        //_nlp.mute();
 
 		WorkDistributor.loadData();
 		bannerDisplay();
