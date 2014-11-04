@@ -42,7 +42,7 @@ public class WorkDistributor {
 		Task t = null;
 		switch (command) {
 		case DISPLAY:
-			return logic.displayAllTaskList();
+			return logic.displayIncompleteTaskList();
 
 		case ADD:
 			t = CommandWorker.createTask(instruc);
