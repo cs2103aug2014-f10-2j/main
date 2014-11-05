@@ -39,6 +39,7 @@ import java.util.*;
 public class NLPEngine {
     protected static StanfordCoreNLP _pipeline;
     private PrintStream _err = System.err;
+    private static NLPEngine instance = null;
     private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private DateValidator date_validator = DateValidator.getInstance();
     private TimeValidator time_validator = TimeValidator.getInstance();
@@ -48,6 +49,19 @@ public class NLPEngine {
 
     public NLPEngine() {
         _pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
+    public static NLPEngine getInstance() {
+        if (instance == null) {
+            instance = new NLPEngine();
+        }
+
+        return instance;
     }
 
     /**
