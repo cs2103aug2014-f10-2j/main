@@ -37,6 +37,7 @@ public class DateValidator {
     private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
     private static final String TIME_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
+    private static final String DATE_PATTERN = "(\\d+)";
     private static DateValidator instance = null;
 
     /**
@@ -220,7 +221,10 @@ public class DateValidator {
      * Assumptions:
      * 1. User can override the priority based on their preferred choice
      * 2. Priority is set based on this determiner algorithm, may not accurately reflect user's intentions
+     * 3. Priority range from 1 - 9. 1 represents the least of priority, 9 represents the most urgent of priority
      * <p/>
+     *
+     * The higher the priority the more urgent the task is
      * The default priority is set to '2'
      *
      * @param _date
@@ -263,6 +267,24 @@ public class DateValidator {
     }
 
     /**
+     * This method compares 2 dates, TODAY and FUTURE
+     * This method enables flexiAdd() to determine the number of days between dates to process the result
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public int compareDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        return num_days;
+    }
+
+    /**
      * This method returns today's date
      *
      * @return
@@ -286,14 +308,20 @@ public class DateValidator {
         return (int) ((next_date.getTime() - today_date.getTime()) / (24 * 60 * 60 * 1000));
     }
 
-    public int compareDate(String _date) throws ParseException {
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-        int num_days;
+    /**
+     * This method checks and validates if the integer passed is in the format of ddMMyy
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public boolean checkDateFormat(String _date) throws ParseException {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
 
-        Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_date);
-        num_days = calculateDays(today_date, next_date);
+        if (!date_matcher.matches()) {
+            return false;
+        }
 
-        return num_days;
+        return true;
     }
 }
