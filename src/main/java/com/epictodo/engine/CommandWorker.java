@@ -19,10 +19,16 @@ public class CommandWorker {
      * This is the helper class to retrieve value from instruction
      * This class will call TaskBuilder to return a proper task.
      */
-    public static Task createTask(String instruc) throws ParseException {
+    public static Task createTask(String instruc) {
         boolean is_first = true;
         Logger logger = Logger.getLogger("System Log");
-        _response = nlp_engine.flexiAdd(instruc);
+        
+        try {
+            _response = nlp_engine.flexiAdd(instruc);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
         StringBuilder taskn_builder = new StringBuilder(CAPACITY);
         StringBuilder taskd_builder = new StringBuilder(CAPACITY);
 
