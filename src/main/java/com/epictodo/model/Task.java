@@ -74,6 +74,10 @@ public class Task {
 	}
 
 	/**************** Class methods ************************/
+	public String getDetail() {
+		return "Name: " + this.taskName + '\n' + "Description: " + this.taskDescription + '\n';
+	}
+	
 	public String toString() {
 		return getTaskName();
 	}

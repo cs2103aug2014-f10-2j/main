@@ -99,6 +99,10 @@ public class TimedTask extends Task {
 	}
 
 	/**************** Class methods ************************/
+	public String getDetail() {
+		return super.toString() + "Start Date and Time: " + this.getStartDateTimeAsString() + '\n' + "End Date and Time: " + this.getEndDateTimeAsString() + '\n';
+	}
+	
 	public String toString() {
 		return super.toString() + " from " + this.getStartDateTimeAsString() + " to "
 				+ this.getEndDateTimeAsString();
