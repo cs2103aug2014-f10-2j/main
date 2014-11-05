@@ -1,17 +1,20 @@
 package com.epictodo;
 
 import com.epictodo.engine.NLPEngine;
+import com.epictodo.engine.NLPLoadEngine;
 import com.epictodo.engine.WorkDistributor;
 
 import java.util.Scanner;
 
 
 public class Main {
+    private static NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+    private static NLPEngine nlp_engine = NLPEngine.getInstance();
+
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
-        //NLPEngine _nlp = new NLPEngine();
-        //_nlp.mute();
+        nlp_engine.mute();
 
 		WorkDistributor.loadData();
 		bannerDisplay();
