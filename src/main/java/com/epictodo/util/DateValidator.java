@@ -26,13 +26,13 @@ package com.epictodo.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateValidator {
-    private static final String FIX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
-    private static final String REGULAR_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
     private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
     private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
@@ -53,9 +53,35 @@ public class DateValidator {
         return instance;
     }
 
+    /**
+     * This method extracts the date based on the format of yyyy-MM-dd
+     * This will return an Array of String results containing DAY, MONTH, YEAR
+     *
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public String[] extractDate(String _date) throws ParseException {
+        Calendar _calendar = Calendar.getInstance();
+        String[] _list = new String[3];
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _list[0] = String.valueOf(_day);
+        _list[1] = String.valueOf(_month);
+        _list[2] = String.valueOf(_year);
+
+        return _list;
+    }
 
     /**
      * This method is the same as getDateInFormat except it's parsed format is different
+     * FUTURE Date is parsed from exactDate() which will return exactly the format of yyyy-MM-dd
+     *
      * @param _date
      * @return
      * @throws ParseException
@@ -64,29 +90,21 @@ public class DateValidator {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
         String _result;
-
-        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
-        Matcher date_matcher = date_pattern.matcher(_date);
+        String[] exact_date = extractDate(_date);
 
         Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_date);
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date) || next_date.equals(today_date)) {
             if (num_days >= 0 && num_days <= 1) {
-                while (date_matcher.find()) {
-                    _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
+                _result = exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0];
 
-                    return _result;
-                }
+                return _result;
             }
         }
 
-        if (!date_matcher.matches()) {
-            return null;
-        } else {
-            _result = date_matcher.group(1) + "-" + date_matcher.group(4) + "-" + date_matcher.group(5);
-        }
+        _result = exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0];
 
         return _result;
     }
@@ -95,10 +113,10 @@ public class DateValidator {
      * This method validates the date and parse to the following format (yyyy-MM-dd)
      *
      * Issues:
-     *  3 cases:
-     *      1. yyyy-MM-dd --> to fix
-     *      2. yyyy-MM-dd-WXX-dT-hh:mm
-     *      3. yyyy-MM-ddT-hh:mm --> causing error
+     * 3 cases:
+     * 1. yyyy-MM-dd
+     * 2. yyyy-MM-dd-WXX-dT-hh:mm
+     * 3. yyyy-MM-ddT-hh:mm
      *
      * @param _date
      * @return
@@ -107,12 +125,13 @@ public class DateValidator {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
         String _result;
+        String[] exact_date = extractDate(_date);
 
         Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
         Matcher date_matcher = date_pattern.matcher(_date);
 
         Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_date);
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date) || next_date.equals(today_date)) {
@@ -136,6 +155,7 @@ public class DateValidator {
 
     /**
      * This method validates the time and parse to the following format (hh:mm)
+     *
      * @param _time
      * @return
      * @throws ParseException
@@ -217,12 +237,11 @@ public class DateValidator {
      * The priority is determined by the number of weeks apart from today's date
      * The current rule of this determiner decreases each week from today's date
      * The closer the date to today's date holds the highest priority and decreases each week
-     * <p/>
+     *
      * Assumptions:
      * 1. User can override the priority based on their preferred choice
      * 2. Priority is set based on this determiner algorithm, may not accurately reflect user's intentions
      * 3. Priority range from 1 - 9. 1 represents the least of priority, 9 represents the most urgent of priority
-     * <p/>
      *
      * The higher the priority the more urgent the task is
      * The default priority is set to '2'
@@ -234,9 +253,10 @@ public class DateValidator {
     public String determinePriority(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
+        String[] exact_date = extractDate(_date);
 
         Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_date);
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date)) {
@@ -269,6 +289,7 @@ public class DateValidator {
     /**
      * This method compares 2 dates, TODAY and FUTURE
      * This method enables flexiAdd() to determine the number of days between dates to process the result
+     *
      * @param _date
      * @return
      * @throws ParseException
@@ -310,6 +331,7 @@ public class DateValidator {
 
     /**
      * This method checks and validates if the integer passed is in the format of ddMMyy
+     *
      * @param _date
      * @return
      * @throws ParseException
