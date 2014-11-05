@@ -31,6 +31,7 @@ public class TimeValidator {
     private Pattern _pattern;
     private Matcher _matcher;
     private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]"; //"([01]?[0-9]|2[0-3]):[0-5][0-9]\\S+";
+    private static final String TIME24HOURS_PATTERN2 = "([01]?[0-9]|2[0-3])[0-5][0-9]";
 
     public TimeValidator() {
         _pattern = Pattern.compile(TIME24HOURS_PATTERN);
@@ -42,15 +43,25 @@ public class TimeValidator {
 
 //        String time = _time;
 //        time = time.replaceAll(TIME24HOURS_PATTERN, "");
+
+//        String corrected_time = time;
 //
-//        /**
-//         * Algorithm to provide a natural response when a negative input was entered.
-//         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
-//         */
+//        try {
+//            corrected_time = new StringBuffer(corrected_time).insert(corrected_time.length() - 2, ":").toString();
+//        } catch (StringIndexOutOfBoundsException ex) {
+//            throw ex;
+//        }
+
+        /**
+         * Algorithm to provide a natural response when a negative input was entered.
+         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
+         */
 //        if (_matcher.matches() == true) {
 //            return _matcher.matches();
-//        } else if (!_time.matches(TIME24HOURS_PATTERN)) {
+//        } else if (_matcher.matches() == true && !_time.matches(TIME24HOURS_PATTERN) && _time.matches(TIME24HOURS_PATTERN2)) {
 //            System.out.println("Did you meant " + time + "hrs?");
+//        } else if (_time.matches(TIME24HOURS_PATTERN2)) {
+//            System.out.println("Did you meant " + corrected_time + "hrs?");
 //        }
 
         return _matcher.matches();
