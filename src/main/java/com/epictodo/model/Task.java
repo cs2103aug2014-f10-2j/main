@@ -75,7 +75,7 @@ public class Task {
 
 	/**************** Class methods ************************/
 	public String toString() {
-		return "Name: " + this.taskName + '\n' + "Description: " + this.taskDescription + '\n';
+		return getTaskName();
 	}
 
 	public Task copy() throws ParseException, InvalidDateException, InvalidTimeException{
