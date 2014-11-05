@@ -76,7 +76,7 @@ public class NLPEngine {
      * @param _sentence
      * @throws ParseException
      */
-    public void flexiAdd(String _sentence) throws ParseException {
+    public List<String> flexiAdd(String _sentence) throws ParseException {
         String tomorrow_date;
         String date_value;
         String time_value;
@@ -154,6 +154,6 @@ public class NLPEngine {
             }
         }
 
-        System.out.println(analyzed_results);
+        return analyzed_results;
     }
 }
