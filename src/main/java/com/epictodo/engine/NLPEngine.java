@@ -26,7 +26,9 @@ package com.epictodo.engine;
 
 import com.epictodo.controller.nlp.SentenceAnalysis;
 import com.epictodo.controller.nlp.SentenceStructure;
+import com.epictodo.model.Response;
 import com.epictodo.util.DateValidator;
+import com.epictodo.util.TimeValidator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 import java.io.OutputStream;
@@ -39,8 +41,10 @@ public class NLPEngine {
     private PrintStream _err = System.err;
     private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private DateValidator date_validator = DateValidator.getInstance();
+    private TimeValidator time_validator = TimeValidator.getInstance();
     private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
     private SentenceStructure sentence_struct = new SentenceStructure();
+    private Response _response = new Response();
 
     public NLPEngine() {
         _pipeline = load_engine._pipeline;
@@ -72,11 +76,16 @@ public class NLPEngine {
      * 2. Does not handle complex time such as "From 09:00 to 14:00"
      * 3. Priority is determined by weekly basis from today's date. Priority increases every week.
      * 4. Time has to follow the format (hh:mm)
+     * 5. PERSON name cannot be named after a month (for example, June)
+     * 6. PERSON name cannot be named after a day (for example, Sunday)
+     * 7. Time period: Day cannot be after the time period
+     * 7.1. Tuesday 2 weeks later (PASSED) - gets the Tuesday 2 weeks later
+     * 7.2. 2 weeks later Tuesday (FAILED) - gets 2 weeks later from today's date
      *
      * @param _sentence
      * @throws ParseException
      */
-    public List<String> flexiAdd(String _sentence) throws ParseException {
+    public Response flexiAdd(String _sentence) throws ParseException {
         String tomorrow_date;
         String date_value;
         String time_value;
@@ -89,6 +98,8 @@ public class NLPEngine {
         Map<String, String> sentence_struct_map = sentence_struct.sentenceDependencies(_sentence);
         List<String> analyzed_results = new ArrayList<>();
         List<Object> _items = new ArrayList<>();
+        List<String> task_name = new ArrayList<>();
+        List<String> task_desc = new ArrayList<>();
 
         for (Map.Entry<String, LinkedHashSet<String>> map_result : entities_map.entrySet()) {
             String _key = map_result.getKey();
@@ -104,11 +115,14 @@ public class NLPEngine {
 
             if (_value.equalsIgnoreCase("PERSON")) {
                 if (!_key.equalsIgnoreCase("Prof")) {
+                    task_desc.add(_key);
                     analyzed_results.add(_key);
                 } else {
+                    task_desc.add(_key);
                     analyzed_results.add(_key);
                 }
             } else if (_value.equalsIgnoreCase("LOCATION")) {
+                task_desc.add(_key);
                 analyzed_results.add(_key);
             }
         }
@@ -128,6 +142,11 @@ public class NLPEngine {
                 date_value = date_validator.getDateInFormat(_value);
                 time_value = date_validator.getTimeInFormat(_value);
 
+//                _response.setTaskName(_key);
+                _response.setTaskDate(date_value);
+                _response.setTaskTime(time_value);
+                _response.setPriority(Integer.parseInt(_priority));
+                task_desc.add(_key);
                 analyzed_results.add(_key);
                 analyzed_results.add(date_value);
                 analyzed_results.add(time_value);
@@ -137,6 +156,11 @@ public class NLPEngine {
                 date_value = date_validator.validateDate(_value);
                 time_value = date_validator.validateTime(_value);
 
+//                _response.setTaskName(_key);
+                _response.setTaskDate(date_value);
+                _response.setTaskTime(time_value);
+                _response.setPriority(Integer.parseInt(_priority));
+                task_desc.add(_key);
                 analyzed_results.add(_key);
                 analyzed_results.add(date_value);
                 analyzed_results.add(time_value);
@@ -150,10 +174,14 @@ public class NLPEngine {
 
             if (_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
                     _key.equalsIgnoreCase("prep_on")) {
+                task_name.add(_value);
                 analyzed_results.add(_value);
             }
         }
 
-        return analyzed_results;
+        _response.setTaskName(task_name);
+        _response.setTaskDesc(task_desc);
+
+        return _response;
     }
 }
