@@ -25,6 +25,11 @@ public class FloatingTask extends Task {
 	 * super.getPriority(); FloatingTask newClone = new FloatingTask(taskName,
 	 * taskDescription, priority); return newClone; }
 	 */
+	
+	public String toString() {
+		return super.toString();
+	}
+	
 	public FloatingTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
 		Task t = super.copy();
 		FloatingTask cloned= null;

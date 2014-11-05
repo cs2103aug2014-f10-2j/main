@@ -67,7 +67,7 @@ public class DeadlineTask extends Task {
 
 	/**************** Class methods ************************/
 	public String toString() {
-		return super.toString() + " by " + this.getEndDateTimeAsString();
+		return super.toString() + "End Date and time: " + this.getEndDateTimeAsString();
 	}
 
 	public DeadlineTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
