@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -24,6 +25,9 @@
 
 package com.epictodo.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,8 +58,15 @@ public class TimeValidator {
     /**
      * This method validates the time from a given string
      * If time matches the regex expression, it will return a true.
+     * <p/>
+     * Usage:
+     * validate("10:00"); > true
+     * validate("Friday"); > false
+     * validate("24:10"); > false
+     * validate("00:10"); > true
+     *
      * @param _time
-     * @return
+     * @return boolean
      */
     public boolean validate(final String _time) {
         assert _time.length() == 5;
@@ -85,5 +96,36 @@ public class TimeValidator {
 //        }
 
         return _matcher.matches();
+    }
+
+    /**
+     * This method returns a double value of the duration between two time
+     * <p/>
+     * Usage:
+     * getTimeDuration("08:00", "10:00"); > 2.0
+     * getTimeDuration("10:00", "14:00"); > 4.0
+     *
+     * @param start_time
+     * @param end_time
+     * @return diff_hours
+     * @throws ParseException
+     */
+    public double getTimeDuration(String start_time, String end_time) throws ParseException {
+        SimpleDateFormat time_format = new SimpleDateFormat("HH:mm");
+        Date date_start;
+        Date date_end;
+
+        date_start = time_format.parse(start_time);
+        date_end = time_format.parse(end_time);
+
+        // get time in milliseconds
+        long time_diff = date_end.getTime() - date_start.getTime();
+
+        long diff_seconds = time_diff / 1000 % 60;
+        long diff_minutes = time_diff / (60 * 1000) % 60;
+        long diff_hours = time_diff / (60 * 60 * 1000) % 24;
+        long diff_days = time_diff / (24 * 60 * 60 * 1000);
+
+        return diff_hours;
     }
 }
