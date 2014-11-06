@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -33,12 +34,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateValidator {
+    private Calendar _calendar = Calendar.getInstance();
+    private static DateValidator instance = null;
+    private static final String DATE_PATTERN = "(\\d+)";
     private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
     private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
     private static final String TIME_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
-    private static final String DATE_PATTERN = "(\\d+)";
-    private static DateValidator instance = null;
 
     /**
      * This method ensures that there will only be one running instance
@@ -54,36 +56,18 @@ public class DateValidator {
     }
 
     /**
-     * This method extracts the date based on the format of yyyy-MM-dd
-     * This will return an Array of String results containing DAY, MONTH, YEAR
-     *
-     * @param _date
-     * @return
-     * @throws ParseException
-     */
-    public String[] extractDate(String _date) throws ParseException {
-        Calendar _calendar = Calendar.getInstance();
-        String[] _list = new String[3];
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        _calendar.setTime(date_format.parse(_date));
-
-        int _year = _calendar.get(Calendar.YEAR);
-        int _month = _calendar.get(Calendar.MONTH) + 1;
-        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
-
-        _list[0] = String.valueOf(_day);
-        _list[1] = String.valueOf(_month);
-        _list[2] = String.valueOf(_year);
-
-        return _list;
-    }
-
-    /**
      * This method is the same as getDateInFormat except it's parsed format is different
      * FUTURE Date is parsed from exactDate() which will return exactly the format of yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * getDateToCompare("2014-11-09"); > 2014-11-09
+     * getDateToCompare("2014-11-23T14:30"); > 2014-11-23
+     * getDateToCompare("2014-11-11-WXX-2"); > 2011-11-11
+     * getDateToCompare("2014-11-18-WXX-2T10:00"); > 2014-11-18
      *
      * @param _date
-     * @return
+     * @return _result
      * @throws ParseException
      */
     public String getDateToCompare(String _date) throws ParseException {
@@ -111,15 +95,23 @@ public class DateValidator {
 
     /**
      * This method validates the date and parse to the following format (yyyy-MM-dd)
-     *
+     * This will return with the format of ddMMyy
+     * <p/>
      * Issues:
      * 3 cases:
      * 1. yyyy-MM-dd
      * 2. yyyy-MM-dd-WXX-dT-hh:mm
      * 3. yyyy-MM-ddT-hh:mm
+     * <p/>
+     * Usage:
+     * <p/>
+     * getDateInFormat("2014-11-09"); > 091114
+     * getDateInFormat("2014-11-23T14:30"); > 231114
+     * getDateInFormat("2014-11-11-WXX-2"); > 111114
+     * getDateInFormat("2014-11-18-WXX-2T10:00"); > 181114
      *
      * @param _date
-     * @return
+     * @return _result
      */
     public String getDateInFormat(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
@@ -155,9 +147,16 @@ public class DateValidator {
 
     /**
      * This method validates the time and parse to the following format (hh:mm)
+     * This will return the time from the given string in the format of hh:mm
+     * <p/>
+     * Usage:
+     * <p/>
+     * getTimeInFormat("10:30"); > 10:30
+     * getTimeInFormat("2014-11-23T14:30"); > 14:30
+     * getTimeInFormat("2014-11-18-WXX-2T10:00"); > 10:00
      *
      * @param _time
-     * @return
+     * @return _result
      * @throws ParseException
      */
     public String getTimeInFormat(String _time) throws ParseException {
@@ -193,6 +192,11 @@ public class DateValidator {
 
     /**
      * This method validates the date and parse to the following format (ddMMyy)
+     * This works for general cases where the day difference is more than 2 days.
+     * This method is similar to getDateInFormat
+     * <p/>
+     * Usage:
+     * validateDate("2014-11-18-WXX-2T10:00"); > 181114
      *
      * @param _date
      * @return
@@ -212,7 +216,15 @@ public class DateValidator {
     }
 
     /**
-     * This validates the token from NLP SUTIME Annotation and is parsed to get the time only
+     * This method validates the token from NLP SUTIME Annotation based on our predefined regex expression
+     * This method is parsed to get the time only
+     * <p/>
+     * Usage:
+     * <p/>
+     * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
+     * validateTime("10:30"); > 10:30
+     * validateTime("2014-11-23T14:30"); > 14:30
+     * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
      *
      * @param _time
      * @return
@@ -232,19 +244,58 @@ public class DateValidator {
     }
 
     /**
+     * This method extracts the date based on the format of yyyy-MM-dd
+     * This will return an Array of String results containing DAY, MONTH, YEAR
+     * <p/>
+     * Usage:
+     * <p/>
+     * extractDate("2014-11-09"); > [09, 11, 2014]
+     * extractDate("2014-11-23T14:30"); > [23, 11, 2014]
+     * extractDate("2014-11-11-WXX-2"); > [11, 11, 2014]
+     * extractDate("2014-11-18-WXX-2T10:00"); > [18, 11, 2014]
+     *
+     * @param _date
+     * @return _list
+     * @throws ParseException
+     */
+    public String[] extractDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String[] _list = new String[3];
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _list[0] = String.valueOf(_day);
+        _list[1] = String.valueOf(_month);
+        _list[2] = String.valueOf(_year);
+
+        return _list;
+    }
+
+    /**
      * This method determines the priority of a task based on natural processing
      * This artificial natural processing calculates the days difference
+     * <p/>
      * The priority is determined by the number of weeks apart from today's date
-     * The current rule of this determiner decreases each week from today's date
-     * The closer the date to today's date holds the highest priority and decreases each week
-     *
+     * The current rule of this determiner decreases the priority each week from today's date
+     * The closer the date is to today's date holds the highest priority and decreases each week
+     * <p/>
      * Assumptions:
      * 1. User can override the priority based on their preferred choice
      * 2. Priority is set based on this determiner algorithm, may not accurately reflect user's intentions
      * 3. Priority range from 1 - 9. 1 represents the least of priority, 9 represents the most urgent of priority
-     *
+     * <p/>
      * The higher the priority the more urgent the task is
      * The default priority is set to '2'
+     * <p/>
+     * Usage: (example based on TODAY's Date = 2014-11-01)
+     * <p/>
+     * determinePriority("2014-11-08") > 9
+     * determinePriority("2014-11-20") > 8
+     * determinePriority("2014-11-23") > 7
+     * determinePriority("2014-12-07") > 5
      *
      * @param _date
      * @return
@@ -288,10 +339,15 @@ public class DateValidator {
 
     /**
      * This method compares 2 dates, TODAY and FUTURE
-     * This method enables flexiAdd() to determine the number of days between dates to process the result
+     * This method enables flexiAdd() to determine the number of days between dates in order to process the result
+     * <p/>
+     * Usage: (example based on TODAY's Date = 2014-11-01)
+     * <p/>
+     * compareDate("2014-11-03") > 2
+     * compareDate("2014-11-20") > 19
      *
      * @param _date
-     * @return
+     * @return num_days
      * @throws ParseException
      */
     public int compareDate(String _date) throws ParseException {
@@ -303,6 +359,24 @@ public class DateValidator {
         num_days = calculateDays(today_date, next_date);
 
         return num_days;
+    }
+
+    /**
+     * This method checks and validates if the integer passed is in the format of ddMMyy
+     *
+     * @param _date
+     * @return boolean
+     * @throws ParseException
+     */
+    public boolean checkDateFormat(String _date) throws ParseException {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -320,6 +394,11 @@ public class DateValidator {
     /**
      * This method calculates the number of days difference from today's date
      * This method is the core algorithm of the day calculation which is used in determinePriority() method
+     * <p/>
+     * Usage:
+     * <p/>
+     * calculateDays(2014-11-01, 2014-11-05); > 4
+     * calculateDays(2014-11-01, 2014-11-10); > 9
      *
      * @param today_date
      * @param next_date
@@ -327,23 +406,5 @@ public class DateValidator {
      */
     private int calculateDays(Date today_date, Date next_date) {
         return (int) ((next_date.getTime() - today_date.getTime()) / (24 * 60 * 60 * 1000));
-    }
-
-    /**
-     * This method checks and validates if the integer passed is in the format of ddMMyy
-     *
-     * @param _date
-     * @return
-     * @throws ParseException
-     */
-    public boolean checkDateFormat(String _date) throws ParseException {
-        Pattern date_pattern = Pattern.compile(DATE_PATTERN);
-        Matcher date_matcher = date_pattern.matcher(_date);
-
-        if (!date_matcher.matches()) {
-            return false;
-        }
-
-        return true;
     }
 }
