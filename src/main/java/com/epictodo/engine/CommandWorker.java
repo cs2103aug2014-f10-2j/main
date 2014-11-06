@@ -67,7 +67,7 @@ public class CommandWorker {
         String taskDate = _response.getTaskDate();
         String taskTime = _response.getTaskTime();
         int taskPriority = _response.getPriority();
-        double taskDuration = 0.0;
+        double taskDuration = _response.getTaskDuration();
 
         if (taskName.equals("")) {
             logger.info("invalid command!");
@@ -82,7 +82,7 @@ public class CommandWorker {
             logger.info("DeadLine task with default endtime is created!");
             return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, _defaultTime);
         }
-        if (taskDuration != -1) {
+        if (taskDuration > 0) {
             // Timed Task
             logger.info("Timed task is created!");
             return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime, taskDuration);
