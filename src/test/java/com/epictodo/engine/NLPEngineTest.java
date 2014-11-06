@@ -1,13 +1,12 @@
 package com.epictodo.engine;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.epictodo.logic.CRUDLogic;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class NLPTest {
+public class NLPEngineTest {
 
 	
 	@Before
