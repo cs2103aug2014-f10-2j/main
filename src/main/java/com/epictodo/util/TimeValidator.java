@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 public class TimeValidator {
     private Pattern _pattern;
     private Matcher _matcher;
+    private static TimeValidator instance = null;
     private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]"; //"([01]?[0-9]|2[0-3]):[0-5][0-9]\\S+";
     private static final String TIME24HOURS_PATTERN2 = "([01]?[0-9]|2[0-3])[0-5][0-9]";
 
@@ -37,6 +38,25 @@ public class TimeValidator {
         _pattern = Pattern.compile(TIME24HOURS_PATTERN);
     }
 
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
+    public static TimeValidator getInstance() {
+        if (instance == null) {
+            instance = new TimeValidator();
+        }
+
+        return instance;
+    }
+
+    /**
+     * This method validates the time from a given string
+     * If time matches the regex expression, it will return a true.
+     * @param _time
+     * @return
+     */
     public boolean validate(final String _time) {
         assert _time.length() == 5;
         _matcher = _pattern.matcher(_time);
