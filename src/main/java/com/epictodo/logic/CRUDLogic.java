@@ -276,9 +276,8 @@ public class CRUDLogic {
 			int index = _items.indexOf(getTaskByUid(found.getUid()));
 			try {
 				found.setIsDone(true);
-				/*
-				 * TODO: create an undoable command
-				 */
+
+				addCommand(Undoable.CommandType.MARKDONE, found, index);
 
 				saveToFile();
 				return "task marked as done";
