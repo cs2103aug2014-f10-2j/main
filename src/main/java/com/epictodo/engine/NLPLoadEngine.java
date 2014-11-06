@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -38,8 +39,8 @@ public class NLPLoadEngine {
     public StanfordCoreNLP _pipeline;
     private static NLPLoadEngine instance = null;
     private static final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
-    public final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
-    public final LexicalizedParser LEXICAL_MODEL = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+    public static final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+    public static final LexicalizedParser LEXICAL_MODEL = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
 
     public NLPLoadEngine() {
