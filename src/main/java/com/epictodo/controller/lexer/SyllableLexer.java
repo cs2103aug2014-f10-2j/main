@@ -1,3 +1,4 @@
+//@author A0111875E-unused
 /*
  * The MIT License (MIT)
  *
@@ -32,7 +33,9 @@ public class SyllableLexer {
         int _count = 0;
         boolean is_vowel = false;
 
-        if(word_str.isEmpty()) { return 0; }
+        if (word_str.isEmpty()) {
+            return 0;
+        }
 
         /**
          * Check each word for vowels.

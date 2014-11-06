@@ -1,3 +1,4 @@
+//@author A0111875E-unused
 /*
  * The MIT License (MIT)
  *
@@ -29,6 +30,7 @@ import java.util.HashMap;
 public class WordCount {
     /**
      * Method to add frequency of words into HashMap
+     *
      * @param _word
      * @param freq_map
      * @return freq_map
@@ -36,7 +38,9 @@ public class WordCount {
     private static HashMap<String, Integer> wordFrequency(String _word, HashMap<String, Integer> freq_map) {
         if (freq_map.containsKey(_word)) {
             freq_map.put(_word, freq_map.get(_word) + 1);
-        } else { freq_map.put(_word, 1); }
+        } else {
+            freq_map.put(_word, 1);
+        }
 
         return freq_map;
     }

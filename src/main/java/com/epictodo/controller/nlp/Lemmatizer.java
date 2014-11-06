@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -40,10 +41,6 @@ public class Lemmatizer {
 
     public Lemmatizer() {
         this._pipeline = load_engine._pipeline;
-//        Properties _properties = new Properties();
-//        _properties.put("annotators", "tokenize, ssplit, pos, lemma");
-//
-//        this._pipeline = new StanfordCoreNLP(_properties);
     }
 
     /**

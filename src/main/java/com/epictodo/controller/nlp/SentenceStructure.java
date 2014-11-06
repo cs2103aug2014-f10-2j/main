@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -50,9 +51,6 @@ public class SentenceStructure {
 
     public SentenceStructure() {
         this._pipeline = load_engine._pipeline;
-//        Properties _properties = new Properties();
-//        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
-//        _pipeline = new StanfordCoreNLP(_properties);
     }
 
     /**

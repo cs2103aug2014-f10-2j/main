@@ -1,3 +1,4 @@
+//@author A0111875E-unused
 /*
  * The MIT License (MIT)
  *
@@ -33,6 +34,7 @@ import java.util.List;
 public class WordLexer {
     /**
      * This method tokenize the words into a LinkedList
+     *
      * @param _sentence
      * @return _words
      */

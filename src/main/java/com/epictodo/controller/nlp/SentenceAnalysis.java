@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -46,10 +47,6 @@ public class SentenceAnalysis {
 
     public SentenceAnalysis() {
         this._pipeline = load_engine._pipeline;
-//        Properties _properties = new Properties();
-//        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
-//        _pipeline = new StanfordCoreNLP(_properties);
-//        _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
     }
 
     /**
