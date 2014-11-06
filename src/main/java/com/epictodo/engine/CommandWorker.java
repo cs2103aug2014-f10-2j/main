@@ -22,7 +22,7 @@ public class CommandWorker {
     public static Task createTask(String instruc) {
         boolean is_first = true;
         Logger logger = Logger.getLogger("System Log");
-        
+
         try {
             _response = nlp_engine.flexiAdd(instruc);
         } catch (ParseException ex) {

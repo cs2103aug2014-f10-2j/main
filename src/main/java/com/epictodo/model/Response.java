@@ -1,3 +1,4 @@
+//@author A0111875E generated
 /*
  * The MIT License (MIT)
  *
@@ -31,6 +32,9 @@ public class Response {
     private List<String> taskDesc;
     private String taskDate;
     private String taskTime;
+    private String startTime;
+    private String endTime;
+    private double taskDuration;
     private int priority;
 
     public List<String> getTaskName() {
@@ -63,6 +67,30 @@ public class Response {
 
     public void setTaskTime(String taskTime) {
         this.taskTime = taskTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public double getTaskDuration() {
+        return taskDuration;
+    }
+
+    public void setTaskDuration(double taskDuration) {
+        this.taskDuration = taskDuration;
     }
 
     public int getPriority() {
