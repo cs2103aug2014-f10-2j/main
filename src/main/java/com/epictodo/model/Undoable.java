@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Undoable {
 	public enum CommandType {
-		ADD, DELETE, UPDATE
+		ADD, DELETE, UPDATE, MARKDONE
 	}
 
 	private ArrayList<Task> _container;
@@ -68,6 +68,10 @@ public class Undoable {
 			result = "updating task \"" + _target.getTaskName()
 					+ "\" is undone";
 			break;
+		case MARKDONE:
+			_container.get(_index).setIsDone(false);
+			
+			result = "marking task +\"" + _target.getTaskName() + "\"as done is undone";
 		}
 
 		return result;
