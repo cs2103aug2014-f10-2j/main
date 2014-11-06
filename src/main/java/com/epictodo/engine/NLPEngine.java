@@ -112,7 +112,10 @@ public class NLPEngine {
      * 6.2. 2 weeks later Tuesday (FAILED) - gets 2 weeks later from today's date
      * <p/>
      * 7. There can be only 2 time input which will be allowed to be parsed in. Additional time will be rejected.
-     * 7.1 from 10:00 to 14:00 then 18:00 > reflects only [10:00, 14:00] as start_time and end_time
+     * 7.1. from 10:00 to 14:00 then 18:00 > reflects only [10:00, 14:00] as start_time and end_time
+     * <p/>
+     * 8. If users input date in quick date for example, (01/12/2014 -> dd/MM/yyyy)
+     * 8.1. [Issue] Manual correction of storing through validation
      * <p/>
      * Usage:
      * <p/>
@@ -145,6 +148,8 @@ public class NLPEngine {
      * @throws ParseException
      */
     public Response flexiAdd(String _sentence) throws ParseException {
+        boolean is_set = false;
+        boolean to_check = false;
         String tomorrow_date;
         String date_value;
         String time_value;
@@ -157,6 +162,7 @@ public class NLPEngine {
         List<String> analyzed_results = new ArrayList<>();
         List<String> task_name = new ArrayList<>();
         List<String> task_desc = new ArrayList<>();
+        List<String> task_date = new ArrayList<>();
         List<String> task_time = new ArrayList<>();
 
         // Initialize Sentence Structure & Sentence Analysis to Map
@@ -200,6 +206,17 @@ public class NLPEngine {
             if (_value.equalsIgnoreCase("TIME")) {
                 if (time_validator.validate(_key)) {
                     task_time.add(_key);
+                }
+            }
+
+            if (_value.equalsIgnoreCase("NUMBER")) {
+                if (date_validator.validateDateExpression(_key)) {
+                    date_value = date_validator.checkQuickDate(_key);
+                    task_date.add(date_value);
+                    _response.setTaskDate(task_date.get(0));
+
+                    is_set = true;
+                    to_check = true;
                 }
             }
 
@@ -253,7 +270,11 @@ public class NLPEngine {
                 date_value = date_validator.getDateInFormat(_value);
                 time_value = date_validator.getTimeInFormat(_value);
 
-                _response.setTaskDate(date_value);
+                if (!is_set) { // Check if TaskDate has been set previously, prevent override
+                    _response.setTaskDate(date_value);
+                }
+
+//                _response.setTaskDate(date_value);
                 _response.setTaskTime(time_value);
                 _response.setPriority(Integer.parseInt(_priority));
                 task_desc.add(_key);
@@ -261,12 +282,16 @@ public class NLPEngine {
                 analyzed_results.add(date_value);
                 analyzed_results.add(time_value);
                 analyzed_results.add(_priority);
-            } else {
+            } else { // Check if TaskDate has been set previously, prevent override
                 _priority = date_validator.determinePriority(_value);
                 date_value = date_validator.validateDate(_value);
                 time_value = date_validator.validateTime(_value);
 
-                _response.setTaskDate(date_value);
+                if (!is_set) {
+                    _response.setTaskDate(date_value);
+                }
+
+//                _response.setTaskDate(date_value);
                 _response.setTaskTime(time_value);
                 _response.setPriority(Integer.parseInt(_priority));
                 task_desc.add(_key);
