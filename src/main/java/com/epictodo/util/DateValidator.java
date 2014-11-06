@@ -37,6 +37,7 @@ public class DateValidator {
     private Calendar _calendar = Calendar.getInstance();
     private static DateValidator instance = null;
     private static final String DATE_PATTERN = "(\\d+)";
+    private static final String DATE_PATTERN_2 = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
     private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
     private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
     private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
@@ -239,6 +240,109 @@ public class DateValidator {
         }
 
         _result = date_matcher.group(7);
+
+        return _result;
+    }
+
+    /**
+     * Validate date format with regular expression
+     *
+     * @param date date address for validation
+     * @return true valid date format, false invalid date format
+     */
+    public boolean validateDateExpression(final String date) {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(date);
+
+        if (date_matcher.matches()) {
+            date_matcher.reset();
+
+            if (date_matcher.find()) {
+                String _day = date_matcher.group(1);
+                String _month = date_matcher.group(2);
+                int _year = Integer.parseInt(date_matcher.group(3));
+
+                if (_day.equals("31") &&
+                        (_month.equals("4") || _month.equals("6") || _month.equals("9") ||
+                                _month.equals("11") || _month.equals("04") || _month.equals("06") ||
+                                _month.equals("09"))) {
+                    return false; // only 1,3,5,7,8,10,12 has 31 days
+                } else if (_month.equals("2") || _month.equals("02")) {
+                    // leap year
+                    if (_year % 4 == 0) {
+                        if (_day.equals("30") || _day.equals("31")) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        if (_day.equals("29") || _day.equals("30") || _day.equals("31")) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This method will check if date matches dd/MM/yyyy.
+     * The algorithm converts that into readable date of format yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * checkQuickDate("01/11/2014"); > 2014-11-01
+     * checkQuickDate("32/11/2014"); > 2014-12-2 (Exception case, automatically calculate date forward)
+     *
+     * @param _date
+     * @return _result
+     * @throws ParseException
+     */
+    public String checkQuickDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        SimpleDateFormat parse_date_format = new SimpleDateFormat("yyyy-MM-dd");
+        String _result;
+        int num_days;
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+
+        String[] exact_date = extractDate(_result);
+
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(_result);
+
+        Date today_date = parse_date_format.parse(getTodayDate());
+        Date next_date = parse_date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(5) + date_matcher.group(6) + date_matcher.group(4) + date_matcher.group(3);
+
+                    return _result;
+                }
+            }
+        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(5) + date_matcher.group(6) + date_matcher.group(4) + date_matcher.group(3);
+        }
 
         return _result;
     }
