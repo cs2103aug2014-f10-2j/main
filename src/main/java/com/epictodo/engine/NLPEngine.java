@@ -1,3 +1,4 @@
+//@author A0111875E
 /*
  * The MIT License (MIT)
  *
@@ -38,14 +39,14 @@ import java.util.*;
 
 public class NLPEngine {
     protected static StanfordCoreNLP _pipeline;
-    private PrintStream _err = System.err;
     private static NLPEngine instance = null;
     private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
-    private DateValidator date_validator = DateValidator.getInstance();
     private TimeValidator time_validator = TimeValidator.getInstance();
+    private DateValidator date_validator = DateValidator.getInstance();
     private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
     private SentenceStructure sentence_struct = new SentenceStructure();
     private Response _response = new Response();
+    private PrintStream _err = System.err;
 
     public NLPEngine() {
         _pipeline = load_engine._pipeline;
@@ -66,6 +67,11 @@ public class NLPEngine {
 
     /**
      * This method mutes NLP API Error Messages temporarily
+     * This works for all console messages
+     * <p/>
+     * Usage:
+     * <p/>
+     * mute();
      */
     public void mute() {
         System.setErr(new PrintStream(new OutputStream() {
@@ -76,6 +82,11 @@ public class NLPEngine {
 
     /**
      * This method restores NLP API Error Messages to be displayed
+     * This method works for all console messages.
+     * <p/>
+     * Usage:
+     * <p/>
+     * restore();
      */
     public void restore() {
         System.setErr(_err);
@@ -87,14 +98,48 @@ public class NLPEngine {
      * <p/>
      * Assumptions:
      * 1. PERSON name has to start with a capital letter. For example, "Kenneth"
-     * 2. Does not handle complex time such as "From 09:00 to 14:00"
-     * 3. Priority is determined by weekly basis from today's date. Priority increases every week.
-     * 4. Time has to follow the format (hh:mm)
-     * 5. PERSON name cannot be named after a month (for example, June)
-     * 6. PERSON name cannot be named after a day (for example, Sunday)
-     * 7. Time period: Day cannot be after the time period
-     * 7.1. Tuesday 2 weeks later (PASSED) - gets the Tuesday 2 weeks later
-     * 7.2. 2 weeks later Tuesday (FAILED) - gets 2 weeks later from today's date
+     * 2. Priority is determined by weekly basis from today's date. Priority increases every week.
+     * <p/>
+     * 3. Time has to strictly follow the format (hh:mm)
+     * 3.1 10:00 is accepted
+     * 3.2 1000 is not accepted
+     * <p/>
+     * 4. PERSON name cannot be named after a month (for example, April, May, June) -> Registers as a DATE
+     * 5. PERSON name cannot be named after a day (for example, Sunday) -> Registers as a DATE
+     * <p/>
+     * 6. Time period: Day cannot be placed after the time period
+     * 6.1. Tuesday 2 weeks later (PASSED) - gets the Tuesday 2 weeks later
+     * 6.2. 2 weeks later Tuesday (FAILED) - gets 2 weeks later from today's date
+     * <p/>
+     * 7. There can be only 2 time input which will be allowed to be parsed in. Additional time will be rejected.
+     * 7.1 from 10:00 to 14:00 then 18:00 > reflects only [10:00, 14:00] as start_time and end_time
+     * <p/>
+     * Usage:
+     * <p/>
+     * 1. flexiAdd("meeting with Damith on project submission Tuesday 2 weeks later at 10:34");
+     * 2. flexiAdd("project submission for cs2103 next Tuesday from 10:00 to 14:00 to Damith");
+     * <p/>
+     * Output:
+     * <p/>
+     * 1.
+     * Task Name: meeting submission
+     * Task Desc: Damith Tuesday 2 weeks later at 10:34
+     * Task Date: 181114
+     * Task Time: 10:34
+     * Task Priority: 8
+     * Task Start Time: null
+     * Task End Time: null
+     * Task Duration: 0.0
+     * <p/>
+     * 2.
+     * Task Name: submission cs2103
+     * Task Desc: Damith 10:00 14:00 next Tuesday
+     * Task Date: 111114
+     * Task Time: null
+     * Task Priority: 9
+     * Task Start Time: 10:00
+     * Task End Time: 14:00
+     * Task Duration: 4.0
      *
      * @param _sentence
      * @throws ParseException
@@ -104,28 +149,59 @@ public class NLPEngine {
         String date_value;
         String time_value;
         String _priority;
+        String start_time;
+        String end_time;
+        double _duration;
         int num_days;
 
+        List<String> analyzed_results = new ArrayList<>();
+        List<String> task_name = new ArrayList<>();
+        List<String> task_desc = new ArrayList<>();
+        List<String> task_time = new ArrayList<>();
+
+        // Initialize Sentence Structure & Sentence Analysis to Map
+        Map<String, String> sentence_struct_map = sentence_struct.sentenceDependencies(_sentence);
         Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer(_sentence);
         Map<String, String> sentence_token_map = sentence_analysis.sentenceAnalyzer(_sentence);
         LinkedHashMap<String, LinkedHashSet<String>> entities_map = sentence_analysis.nerEntitiesExtractor(_sentence);
-        Map<String, String> sentence_struct_map = sentence_struct.sentenceDependencies(_sentence);
-        List<String> analyzed_results = new ArrayList<>();
-        List<Object> _items = new ArrayList<>();
-        List<String> task_name = new ArrayList<>();
-        List<String> task_desc = new ArrayList<>();
 
+        /**
+         * Name Entity Recognition (NER) map
+         * For loop to traverse key:value of NER map to retrieve keywords to be processed
+         *
+         * Example: root, nn, dobj, nsubj, aux, xcomp, prep, num, etc.
+         *
+         */
         for (Map.Entry<String, LinkedHashSet<String>> map_result : entities_map.entrySet()) {
             String _key = map_result.getKey();
             LinkedHashSet<String> _value = map_result.getValue();
-
-            _items.add(_key);
-            _items.add(_value);
         }
 
+        /**
+         * Sentence analyzer to analyze the text for keywords
+         * For loop to traverse the following:
+         *
+         * 1. (TIME) - stores TIME's (value) key to check if it's a single or multiple TIME value
+         * 1.1. Checks if key is valid time before storing.
+         * 1.2. "at" maybe classified as a valid TIME but we do not want to register this
+         *
+         * 2. (PERSON) - stores PERSON name to be processed in Task Description
+         * 2.1. PERSON does not accept 'Prof' as an actual person, rather an entity
+         *
+         * 3. (LOCATION) - stores LOCATION name if it exists.
+         * 3.1. TOKYO, SINGAPORE are actual LOCATION
+         * 3.2. COM1, LT15, SR1 are not an actual LOCATION stored in our model (can be implemented using Classifier in future)
+         *
+         */
         for (Map.Entry<String, String> map_result : sentence_token_map.entrySet()) {
             String _key = map_result.getKey();
             String _value = map_result.getValue();
+
+            if (_value.equalsIgnoreCase("TIME")) {
+                if (time_validator.validate(_key)) {
+                    task_time.add(_key);
+                }
+            }
 
             if (_value.equalsIgnoreCase("PERSON")) {
                 if (!_key.equalsIgnoreCase("Prof")) {
@@ -141,22 +217,42 @@ public class NLPEngine {
             }
         }
 
+        /**
+         * This algorithm checks if the time values stored are more than or equals to 2
+         * There can be instances where users input 3 or more time variables, but the first 2 will be registered
+         *
+         * This algorithm will getTimeDuration before storing start_time, end_time & _duration to _response
+         */
+        if (task_time.size() >= 2) {
+            start_time = task_time.get(0);
+            end_time = task_time.get(1);
+
+            _duration = time_validator.getTimeDuration(start_time, end_time);
+            _response.setStartTime(start_time);
+            _response.setEndTime(end_time);
+            _response.setTaskDuration(_duration);
+        }
+
+        /**
+         * Date time analyzer map to analyze date time values to be stored
+         * This algorithm will check for TOMORROW date & time distance.
+         *
+         * If that case happens, the result will be parsed to getDateInFormat & getTimeInFormat to handle such cases
+         * Otherwise, the result will be parsed to validateDate & validateTime to handle the more generic cases
+         */
         for (Map.Entry<String, String> map_result : date_time_map.entrySet()) {
             String _key = map_result.getKey();
             String _value = map_result.getValue();
 
-            _items.add(_key);
-            _items.add(_value);
-
             tomorrow_date = date_validator.getDateToCompare(_value);
             num_days = date_validator.compareDate(tomorrow_date);
 
+            // Checks if date distance is >= 0 or <= 1
             if (num_days >= 0 && num_days <= 1) {
                 _priority = date_validator.determinePriority(tomorrow_date);
                 date_value = date_validator.getDateInFormat(_value);
                 time_value = date_validator.getTimeInFormat(_value);
 
-//                _response.setTaskName(_key);
                 _response.setTaskDate(date_value);
                 _response.setTaskTime(time_value);
                 _response.setPriority(Integer.parseInt(_priority));
@@ -170,7 +266,6 @@ public class NLPEngine {
                 date_value = date_validator.validateDate(_value);
                 time_value = date_validator.validateTime(_value);
 
-//                _response.setTaskName(_key);
                 _response.setTaskDate(date_value);
                 _response.setTaskTime(time_value);
                 _response.setPriority(Integer.parseInt(_priority));
@@ -182,12 +277,16 @@ public class NLPEngine {
             }
         }
 
+        /**
+         * Sentence Dependencies map to analyze and return the dependencies of the sentence structure
+         * This algorithm checks the dependencies relationship in the tree structure, and returns the results
+         */
         for (Map.Entry<String, String> map_result : sentence_struct_map.entrySet()) {
             String _key = map_result.getKey();
             String _value = map_result.getValue();
 
-            if (_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
-                    _key.equalsIgnoreCase("prep_on")) {
+            if ((_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
+                    _key.equalsIgnoreCase("prep_on") || _key.equalsIgnoreCase("prep_for")) && !_value.equalsIgnoreCase("to")) {
                 task_name.add(_value);
                 analyzed_results.add(_value);
             }
