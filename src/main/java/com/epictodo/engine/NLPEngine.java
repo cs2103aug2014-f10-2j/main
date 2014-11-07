@@ -117,6 +117,9 @@ public class NLPEngine {
      * 8. If users input date in quick date for example, (01/12/2014 -> dd/MM/yyyy)
      * 8.1. [Issue] Manual correction of storing through validation
      * <p/>
+     * 9. Chinese names will be read as two different PERSON. For example, Jie Ning will be read as 'Jie', 'Ning'
+     * 10. Supports one short date, for example '14/11/2014'
+     * <p/>
      * Usage:
      * <p/>
      * 1. flexiAdd("meeting with Damith on project submission Tuesday 2 weeks later at 10:34");
@@ -148,7 +151,9 @@ public class NLPEngine {
      * @throws ParseException
      */
     public Response flexiAdd(String _sentence) throws ParseException {
-        boolean is_set = false;
+        boolean is_date_set = false;
+        boolean is_time_set = false;
+        boolean is_priority_set = false;
         boolean to_check = false;
         String tomorrow_date;
         String date_value;
@@ -211,12 +216,28 @@ public class NLPEngine {
 
             if (_value.equalsIgnoreCase("NUMBER")) {
                 if (date_validator.validateDateExpression(_key)) {
-                    date_value = date_validator.checkQuickDate(_key);
+                    date_value = date_validator.fixShortDate(_key);
                     task_date.add(date_value);
-                    _response.setTaskDate(task_date.get(0));
+                    num_days = date_validator.compareDate(date_value);
 
-                    is_set = true;
-                    to_check = true;
+                    // Checks if date distance is >= 0 or <= 1 of 1 day
+                    if (num_days >= 0 && num_days <= 1) {
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        _response.setTaskDate(date_value);
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    } else { // Check if TaskDate has been set previously, prevent override
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        _response.setTaskDate(date_value);
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+                    is_date_set = true;
                 }
             }
 
@@ -231,6 +252,9 @@ public class NLPEngine {
             } else if (_value.equalsIgnoreCase("LOCATION")) {
                 task_desc.add(_key);
                 analyzed_results.add(_key);
+            } else if (_value.equalsIgnoreCase("ORGANIZATION")) {
+                task_desc.add(_key);
+                analyzed_results.add(_key);
             }
         }
 
@@ -240,7 +264,7 @@ public class NLPEngine {
          *
          * This algorithm will getTimeDuration before storing start_time, end_time & _duration to _response
          */
-        if (task_time.size() >= 2) {
+        if (task_time.size() != 0 && task_time.size() >= 2) {
             start_time = task_time.get(0);
             end_time = task_time.get(1);
 
@@ -248,6 +272,12 @@ public class NLPEngine {
             _response.setStartTime(start_time);
             _response.setEndTime(end_time);
             _response.setTaskDuration(_duration);
+
+            is_time_set = true;
+        } else if (task_time.size() != 0 && task_time.size() < 2) {
+            _response.setTaskTime(task_time.get(0));
+
+            is_time_set = true;
         }
 
         /**
@@ -264,19 +294,30 @@ public class NLPEngine {
             tomorrow_date = date_validator.getDateToCompare(_value);
             num_days = date_validator.compareDate(tomorrow_date);
 
-            // Checks if date distance is >= 0 or <= 1
+            // Checks if date distance is >= 0 or <= 1 of 1 day
             if (num_days >= 0 && num_days <= 1) {
                 _priority = date_validator.determinePriority(tomorrow_date);
                 date_value = date_validator.getDateInFormat(_value);
                 time_value = date_validator.getTimeInFormat(_value);
 
-                if (!is_set) { // Check if TaskDate has been set previously, prevent override
+                if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
                     _response.setTaskDate(date_value);
+                    is_date_set = true;
+                }
+
+                if (!is_time_set) {
+                    _response.setTaskTime(time_value);
+                    is_time_set = true;
+                }
+
+                if (!is_priority_set) {
+                    _response.setPriority(Integer.parseInt(_priority));
+                    is_priority_set = true;
                 }
 
 //                _response.setTaskDate(date_value);
-                _response.setTaskTime(time_value);
-                _response.setPriority(Integer.parseInt(_priority));
+//                _response.setTaskTime(time_value);
+//                _response.setPriority(Integer.parseInt(_priority));
                 task_desc.add(_key);
                 analyzed_results.add(_key);
                 analyzed_results.add(date_value);
@@ -287,13 +328,24 @@ public class NLPEngine {
                 date_value = date_validator.validateDate(_value);
                 time_value = date_validator.validateTime(_value);
 
-                if (!is_set) {
+                if (!is_date_set) {
                     _response.setTaskDate(date_value);
+                    is_date_set = true;
+                }
+
+                if (!is_time_set) {
+                    _response.setTaskTime(time_value);
+                    is_time_set = true;
+                }
+
+                if (!is_priority_set) {
+                    _response.setPriority(Integer.parseInt(_priority));
+                    is_priority_set = true;
                 }
 
 //                _response.setTaskDate(date_value);
-                _response.setTaskTime(time_value);
-                _response.setPriority(Integer.parseInt(_priority));
+//                _response.setTaskTime(time_value);
+//                _response.setPriority(Integer.parseInt(_priority));
                 task_desc.add(_key);
                 analyzed_results.add(_key);
                 analyzed_results.add(date_value);
@@ -311,7 +363,9 @@ public class NLPEngine {
             String _value = map_result.getValue();
 
             if ((_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
-                    _key.equalsIgnoreCase("prep_on") || _key.equalsIgnoreCase("prep_for")) && !_value.equalsIgnoreCase("to")) {
+                    _key.equalsIgnoreCase("prep_on") || _key.equalsIgnoreCase("prep_for") || _key.equalsIgnoreCase("nn") ||
+                    _key.equalsIgnoreCase("xcomp")) &&
+                    (!_value.equalsIgnoreCase("to") || _value.equalsIgnoreCase("aux"))) {
                 task_name.add(_value);
                 analyzed_results.add(_value);
             }
