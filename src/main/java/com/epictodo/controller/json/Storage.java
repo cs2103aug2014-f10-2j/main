@@ -92,19 +92,14 @@ public class Storage {
 
         for (int i = 0; i < list.size(); i++) {
             Task _task = list.get(i);
-
-            System.out.println(_task);
             if (_task instanceof TimedTask) {
                 timed_list.add(_task);
-                System.out.println(_task);
             }
             if (_task instanceof DeadlineTask) {
                 deadline_list.add(_task);
-                System.out.println(_task);
             }
             if (_task instanceof FloatingTask) {
                 floating_list.add(_task);
-                System.out.println(_task);
             }
         }
 
