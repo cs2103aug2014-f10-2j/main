@@ -42,6 +42,8 @@
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
+                        <meminitial>512m</meminitial>
+                        <maxmem>1024m</maxmem>
                     </configuration>
                 </plugin>
             </plugins>
