@@ -77,18 +77,18 @@ public class CommandWorker {
             logger.info("floating task is created!");
             return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
         }
-        if (taskTime == null) {
-            //Deadline Task (default end time)
-            logger.info("DeadLine task with default endtime is created!");
-            return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, _defaultTime);
-        }
         if (taskDuration > 0) {
             // Timed Task
             logger.info("Timed task is created!");
             return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime, taskDuration);
         }
+     /*   if (taskTime == null) {
+            //Deadline Task (default end time)
+            logger.info("DeadLine task with default endtime is created!");
+            return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, _defaultTime);
+        }
+     */
         // Deadline Task
-        logger.info("Deadline task is created!");
         return TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime);
 
     }
