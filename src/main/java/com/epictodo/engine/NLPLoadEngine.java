@@ -31,6 +31,8 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.time.TimeAnnotator;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,8 +44,37 @@ public class NLPLoadEngine {
     public static final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
     public static final LexicalizedParser LEXICAL_MODEL = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
+    private PrintStream _err = System.err;
+
+    /**
+     * This method mutes NLP API Error Messages temporarily
+     * This works for all console messages
+     * <p/>
+     * Usage:
+     * <p/>
+     * mute();
+     */
+    public void mute() {
+        System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+            }
+        }));
+    }
+
+    /**
+     * This method restores NLP API Error Messages to be displayed
+     * This method works for all console messages.
+     * <p/>
+     * Usage:
+     * <p/>
+     * restore();
+     */
+    public void restore() {
+        System.setErr(_err);
+    }
 
     public NLPLoadEngine() {
+        this.mute();
         Properties _properties = new Properties();
         _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
 
