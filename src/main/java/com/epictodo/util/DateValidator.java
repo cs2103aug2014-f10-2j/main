@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 public class DateValidator {
     private Calendar _calendar = Calendar.getInstance();
     private static DateValidator instance = null;
+    private static final String GENERIC_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
     private static final String DATE_PATTERN = "(\\d+)";
     private static final String DATE_PATTERN_2 = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
     private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
@@ -114,6 +115,57 @@ public class DateValidator {
      * @param _date
      * @return _result
      */
+    public String genericDateFormat(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String _result;
+
+        Pattern date_pattern = Pattern.compile(GENERIC_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+
+                    return _result;
+                }
+            }
+        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+        }
+
+        return _result;
+    }
+
+    /**
+     * This method validates the date and parse to the following format (yyyy-MM-dd)
+     * This will return with the format of ddMMyy
+     * <p/>
+     * Issues:
+     * 3 cases:
+     * 1. yyyy-MM-dd
+     * 2. yyyy-MM-dd-WXX-dT-hh:mm
+     * 3. yyyy-MM-ddT-hh:mm
+     * <p/>
+     * Usage:
+     * <p/>
+     * getDateInFormat("2014-11-09"); > 091114
+     * getDateInFormat("2014-11-23T14:30"); > 231114
+     * getDateInFormat("2014-11-11-WXX-2"); > 111114
+     * getDateInFormat("2014-11-18-WXX-2T10:00"); > 181114
+     *
+     * @param _date
+     * @return _result
+     */
     public String getDateInFormat(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
@@ -164,12 +216,13 @@ public class DateValidator {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
         String _result;
+        String[] exact_date = extractDate(_time);
 
         Pattern date_pattern = Pattern.compile(TIME_PATTERN_2);
         Matcher date_matcher = date_pattern.matcher(_time);
 
         Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_time);
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date) || next_date.equals(today_date)) {
@@ -299,18 +352,16 @@ public class DateValidator {
      * <p/>
      * Usage:
      * <p/>
-     * checkQuickDate("01/11/2014"); > 2014-11-01
-     * checkQuickDate("32/11/2014"); > 2014-12-2 (Exception case, automatically calculate date forward)
+     * fixShortDate("01/11/2014"); > 2014-11-01
+     * fixShortDate("32/11/2014"); > 2014-12-2 (Exception case, automatically calculate date forward)
      *
      * @param _date
      * @return _result
      * @throws ParseException
      */
-    public String checkQuickDate(String _date) throws ParseException {
+    public String fixShortDate(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        SimpleDateFormat parse_date_format = new SimpleDateFormat("yyyy-MM-dd");
         String _result;
-        int num_days;
         _calendar.setTime(date_format.parse(_date));
 
         int _year = _calendar.get(Calendar.YEAR);
@@ -319,32 +370,42 @@ public class DateValidator {
 
         _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
 
-        String[] exact_date = extractDate(_result);
+        return _result;
+    }
+
+    public String compareDateTime(String date_begin, String date_end) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String result_begin;
+        String result_end;
+        int num_days;
+
+        System.out.print("BEGIN: " + date_begin);
+        System.out.println("END: " + date_end);
 
         Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
-        Matcher date_matcher = date_pattern.matcher(_result);
+        Matcher date_matcher_begin = date_pattern.matcher(date_begin);
 
-        Date today_date = parse_date_format.parse(getTodayDate());
-        Date next_date = parse_date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
+        Date today_date = date_format.parse(date_begin);
+        Date next_date = date_format.parse(date_end);
         num_days = calculateDays(today_date, next_date);
 
         if (next_date.after(today_date) || next_date.equals(today_date)) {
             if (num_days >= 0 && num_days <= 1) {
-                while (date_matcher.find()) {
-                    _result = date_matcher.group(5) + date_matcher.group(6) + date_matcher.group(4) + date_matcher.group(3);
+                while (date_matcher_begin.find()) {
+                    result_begin = date_matcher_begin.group(5) + date_matcher_begin.group(6) + date_matcher_begin.group(4) + date_matcher_begin.group(3);
 
-                    return _result;
+                    return result_begin;
                 }
             }
         }
 
-        if (!date_matcher.matches()) {
+        if (!date_matcher_begin.matches()) {
             return null;
         } else {
-            _result = date_matcher.group(5) + date_matcher.group(6) + date_matcher.group(4) + date_matcher.group(3);
+            result_begin = date_matcher_begin.group(5) + date_matcher_begin.group(6) + date_matcher_begin.group(4) + date_matcher_begin.group(3);
         }
 
-        return _result;
+        return result_begin;
     }
 
     /**
@@ -510,5 +571,36 @@ public class DateValidator {
      */
     private int calculateDays(Date today_date, Date next_date) {
         return (int) ((next_date.getTime() - today_date.getTime()) / (24 * 60 * 60 * 1000));
+    }
+
+    /**
+     * This method returns a double value of the duration between two time
+     * <p/>
+     * Usage:
+     * getTimeDuration("08:00", "10:00"); > 2.0
+     * getTimeDuration("10:00", "14:00"); > 4.0
+     *
+     * @param start_date
+     * @param end_date
+     * @return diff_hours
+     * @throws ParseException
+     */
+    public double getDateDuration(String start_date, String end_date) throws ParseException {
+        SimpleDateFormat time_format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date_start;
+        Date date_end;
+
+        date_start = time_format.parse(start_date);
+        date_end = time_format.parse(end_date);
+
+        // get time in milliseconds
+        long time_diff = date_end.getTime() - date_start.getTime();
+
+        long diff_seconds = time_diff / 1000 % 60;
+        long diff_minutes = time_diff / (60 * 1000) % 60;
+        long diff_hours = time_diff / (60 * 60 * 1000) % 24;
+        long diff_days = time_diff / (24 * 60 * 60 * 1000);
+
+        return diff_days;
     }
 }
