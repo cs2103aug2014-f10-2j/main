@@ -311,10 +311,10 @@ public class CRUDLogic {
 				addCommand(Undoable.CommandType.DELETE, found, index);
 
 				saveToFile();
-				return "task removed";
+				return "task \"" + t.getTaskName() + "\" is removed";
 			} catch (IOException ioe) {
 				_items.remove(t);
-				return "Failed to create task due to File IO error";
+				return "Failed to remove task due to File IO error";
 			}
 		} else {
 			return "can't remove task";
@@ -335,7 +335,7 @@ public class CRUDLogic {
 			 */
 			try {
 				saveToFile();
-				return "task updated";
+				return "task \"" + target.getTaskName() + "\" is updated";
 			} catch (IOException e) {
 				e.printStackTrace();
 				return "there was an error saving the update";
