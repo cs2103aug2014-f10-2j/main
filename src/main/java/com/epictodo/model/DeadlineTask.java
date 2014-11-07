@@ -67,7 +67,7 @@ public class DeadlineTask extends Task {
 
 	/**************** Class methods ************************/
 	public String getDetail() {
-		return super.toString() + "End Date and time: " + this.getEndDateTimeAsString() + '\n';
+		return super.getDetail() + "End Date and time: " + this.getEndDateTimeAsString() + '\n';
 	}
 	
 	public String toString() {
