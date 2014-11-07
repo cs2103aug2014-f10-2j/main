@@ -32,14 +32,16 @@ public class CRUDLogic {
 	 */
 	private long _nextUid; // to track the next available uid for new Task
 	private ArrayList<Task> _items; // to store all tasks
-	private ArrayList<Undoable> _commands; // to store undoable commands
+	private ArrayList<Command> _undoList; // to store undoable commands
+	private ArrayList<Command> _redoList; // to store undone items
 
 	/*
 	 * Constructor
 	 */
 	public CRUDLogic() {
 		_items = new ArrayList<Task>();
-		_commands = new ArrayList<Undoable>();
+		_undoList = new ArrayList<Command>();
+		_redoList = new ArrayList<Command>();
 		_nextUid = 1;
 	}
 
@@ -223,7 +225,7 @@ public class CRUDLogic {
 		/*
 		 * Create an undoable command object
 		 */
-		addCommand(Undoable.CommandType.ADD, t);
+		addCommand(Command.CommandType.ADD, t);
 
 		try {
 			saveToFile();
@@ -277,16 +279,17 @@ public class CRUDLogic {
 			try {
 				found.setIsDone(true);
 
-				addCommand(Undoable.CommandType.MARKDONE, found, index);
+				addCommand(Command.CommandType.MARKDONE, found, index);
 
 				saveToFile();
-				return "task \"" +  t.getTaskName() + "\" is marked as done";
+				return "task \"" + t.getTaskName() + "\" is marked as done";
 			} catch (IOException ioe) {
 				found.setIsDone(false);
-				return "failed to mark task \"" +  t.getTaskName() + "\" as done";
+				return "failed to mark task \"" + t.getTaskName()
+						+ "\" as done";
 			}
 		} else {
-			return "failed to mark task \"" +  t.getTaskName() + "\" as done";
+			return "failed to mark task \"" + t.getTaskName() + "\" as done";
 		}
 	}
 
@@ -308,7 +311,7 @@ public class CRUDLogic {
 				/*
 				 * create an undoable command
 				 */
-				addCommand(Undoable.CommandType.DELETE, found, index);
+				addCommand(Command.CommandType.DELETE, found, index);
 
 				saveToFile();
 				return "task \"" + t.getTaskName() + "\" is removed";
@@ -328,7 +331,7 @@ public class CRUDLogic {
 			/*
 			 * create an undoable command
 			 */
-			addCommand(Undoable.CommandType.UPDATE, target, replacement);
+			addCommand(Command.CommandType.UPDATE, target, replacement);
 
 			/*
 			 * save changes to storage
@@ -353,14 +356,14 @@ public class CRUDLogic {
 	public String undoMostRecent() {
 		String result = "no more actions to be undone.";
 
-		if (_commands.size() > 0) {
-			Undoable comm = _commands.get(_commands.size() - 1);
+		if (_undoList.size() > 0) {
+			Command comm = _undoList.get(_undoList.size() - 1);
 			result = comm.undo();
 
 			/*
-			 * assuming no REDO is allowed
+			 * to enable redo
 			 */
-			_commands.remove(_commands.size() - 1);
+			_redoList.add(_undoList.remove(_undoList.size() - 1));
 		}
 
 		return result;
@@ -500,20 +503,20 @@ public class CRUDLogic {
 	 * @param type
 	 * @param target
 	 */
-	private void addCommand(Undoable.CommandType type, Task target) {
-		Undoable comm = new Undoable(_items, type, target);
-		_commands.add(comm);
+	private void addCommand(Command.CommandType type, Task target) {
+		Command comm = new Command(_items, type, target);
+		_undoList.add(comm);
 	}
 
-	private void addCommand(Undoable.CommandType type, Task target,
+	private void addCommand(Command.CommandType type, Task target,
 			Task replacement) {
-		Undoable comm = new Undoable(_items, type, target, replacement);
-		_commands.add(comm);
+		Command comm = new Command(_items, type, target, replacement);
+		_undoList.add(comm);
 	}
 
-	private void addCommand(Undoable.CommandType type, Task target, int index) {
-		Undoable comm = new Undoable(_items, type, target, index);
-		_commands.add(comm);
+	private void addCommand(Command.CommandType type, Task target, int index) {
+		Command comm = new Command(_items, type, target, index);
+		_undoList.add(comm);
 	}
 
 	public void clearExpiredTask() {
