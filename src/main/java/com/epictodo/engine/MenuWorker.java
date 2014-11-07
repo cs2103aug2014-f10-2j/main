@@ -7,9 +7,13 @@ import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
 import com.epictodo.util.TaskBuilder;
 
+import edu.stanford.nlp.semgraph.semgrex.ParseException;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+import org.apache.xpath.FoundIndex;
 
 public class MenuWorker {
 	private final static String MENU_SELECT_UPDATE_OPTION ="Enter your option to be updated (or 0 to menu): ";	
@@ -97,8 +101,13 @@ public class MenuWorker {
 		return TaskBuilder.buildTask(taskName, taskDesc, priority);
 	}
 
-	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items){
-		
+	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items) throws ParseException{
+		if (list.size()==0){
+			throw new ParseException();
+		}
+		if(list.size()==1){
+			return list.get(0);
+		}
 		s = new Scanner(System.in);
 		int option = 0;
 		DisplayLine(items);
@@ -118,9 +127,14 @@ public class MenuWorker {
 		catch(Exception e){
 			return null;
 		};
-
-		logger.info(list.get(option-1).getTaskName()+" is selected");
+		try{
+		Task t = list.get(option-1);
 		return list.get(option-1);
+		}
+		catch(IndexOutOfBoundsException ioe){
+			return null;
+		}
+		
 	}
 	
 	

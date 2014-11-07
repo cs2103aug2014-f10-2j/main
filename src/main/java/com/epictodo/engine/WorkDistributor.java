@@ -1,12 +1,12 @@
 package com.epictodo.engine;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+
 import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.InvalidDateException;
 import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
-
-import java.text.ParseException;
-import java.util.ArrayList;
 
 // user input = { command + instruction }
 public class WorkDistributor {
@@ -19,9 +19,10 @@ public class WorkDistributor {
 	private final static String[] COMMAND_SEARCH = { "search", "find" };
 	private final static String[] COMMAND_DISPLAY = { "display" };
 	private final static String[] COMMAND_UNDO = { "undo" };
+	private final static String[] COMMAND_DONE = {"done", "mark"};
 
 	enum CommandType {
-		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO
+		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, DONE
 	};
 
 	public static String proceedInstruc(String instruc) {
@@ -57,11 +58,31 @@ public class WorkDistributor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
+			try {
+				t = MenuWorker.selectItemFromList(command, list,
+						logic.displayList(list));
+			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
+				return "task not found";
+			}
 			result = logic.deleteTask(t);
 			return result;
-
+			
+		case DONE:
+			try {
+				list = logic.getTasksByName(instruc);
+			} catch (NullPointerException | ParseException
+					| InvalidDateException | InvalidTimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				t = MenuWorker.selectItemFromList(command, list,
+						logic.displayList(list));
+			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
+				return "task not found";
+			}
+			result = logic.markAsDone(t);
+			return result;
 		case UPDATE:
 			try {
 				list = logic.getTasksByName(instruc);
@@ -70,8 +91,12 @@ public class WorkDistributor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
+			try {
+				t = MenuWorker.selectItemFromList(command, list,
+						logic.displayList(list));
+			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
+				return "task not found";
+			}
 			Task updatedTask = MenuWorker.updateTask(t);
 			result = logic.updateTask(t, updatedTask);
 			return result;
@@ -84,11 +109,14 @@ public class WorkDistributor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
-			// todo: display task in a proper format return successful message
-			// in String
-			return "";
+			try {
+				t = MenuWorker.selectItemFromList(command, list,
+						logic.displayList(list));
+			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
+				return "task not found";
+			}
+			return t.getDetail();
+
 
 		case EXIT:
 			System.exit(0);
@@ -126,6 +154,8 @@ public class WorkDistributor {
 			return CommandType.EXIT;
 		} else if (identifyCommand(command, COMMAND_UNDO)) {
 			return CommandType.UNDO;
+		} else if (identifyCommand(command,COMMAND_DONE)){
+			return CommandType.DONE;
 		} else
 			return CommandType.INVALID;
 	}
