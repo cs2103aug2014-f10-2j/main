@@ -354,7 +354,7 @@ public class CRUDLogic {
 	 * @return The result in a string
 	 */
 	public String undoMostRecent() {
-		String result = "no more actions to be undone.";
+		String result = "no more actions to be undone";
 
 		if (_undoList.size() > 0) {
 			Command comm = _undoList.get(_undoList.size() - 1);
@@ -364,6 +364,23 @@ public class CRUDLogic {
 			 * to enable redo
 			 */
 			_redoList.add(_undoList.remove(_undoList.size() - 1));
+		}
+
+		return result;
+	}
+
+	/**
+	 * This method invokes the redo operation on the most recent undoable action
+	 * 
+	 * @return The result in a string
+	 */
+	public String redoMostRecent() {
+		String result = "no more actions to be redone";
+
+		if (_redoList.size() > 0) {
+			Command comm = _redoList.get(_redoList.size() - 1);
+			result = comm.undo();
+			_undoList.add(_redoList.remove(_redoList.size() - 1));
 		}
 
 		return result;
