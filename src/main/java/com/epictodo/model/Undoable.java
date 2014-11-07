@@ -71,7 +71,7 @@ public class Undoable {
 		case MARKDONE:
 			_container.get(_index).setIsDone(false);
 			
-			result = "marking task +\"" + _target.getTaskName() + "\"as done is undone";
+			result = "marking task \"" + _target.getTaskName() + "\"as done is undone";
 		}
 
 		return result;
