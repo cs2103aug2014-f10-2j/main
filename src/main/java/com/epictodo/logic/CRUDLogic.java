@@ -231,7 +231,7 @@ public class CRUDLogic {
 			_items.remove(t);
 			return "Failed to create task due to File IO error";
 		}
-		return "task added";
+		return "task \"" + t.getTaskName() + "\" is added";
 	}
 
 	/**
@@ -280,13 +280,13 @@ public class CRUDLogic {
 				addCommand(Undoable.CommandType.MARKDONE, found, index);
 
 				saveToFile();
-				return "task marked as done";
+				return "task \"" +  t.getTaskName() + "\" is marked as done";
 			} catch (IOException ioe) {
 				found.setIsDone(false);
-				return "failed to mark task as done";
+				return "failed to mark task \"" +  t.getTaskName() + "\" as done";
 			}
 		} else {
-			return "failed to mark task as done";
+			return "failed to mark task \"" +  t.getTaskName() + "\" as done";
 		}
 	}
 
