@@ -45,6 +45,7 @@ public class FloatingTaskTest {
         floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
     }
 
+    /*
     @Test
     public void checkFloatingTaskCloneMethod() {
         FloatingTask temp_ftask;
@@ -54,4 +55,5 @@ public class FloatingTaskTest {
         assertEquals(temp_ftask.getPriority(), 2);
         assertEquals(temp_ftask.getIsDone(), false);
     }
+    */
 }

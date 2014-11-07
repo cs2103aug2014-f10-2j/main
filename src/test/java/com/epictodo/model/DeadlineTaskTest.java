@@ -53,6 +53,7 @@ public class DeadlineTaskTest {
         assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
     }
 
+    /*
     @Test
     public void checkDeadlineTaskCloneMethod() {
         DeadlineTask tempDeadlineTask;
@@ -62,4 +63,5 @@ public class DeadlineTaskTest {
         assertEquals(tempDeadlineTask.getPriority(), 5);
         assertEquals(tempDeadlineTask.getIsDone(), false);
     }
+    */
 }
