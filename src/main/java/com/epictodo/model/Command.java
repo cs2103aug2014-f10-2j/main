@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Eric
  *
  */
-public class Command implements Undoable{
+public class Command implements Undoable {
 	public enum CommandType {
 		ADD, DELETE, UPDATE, MARKDONE
 	}
@@ -67,15 +67,42 @@ public class Command implements Undoable{
 			break;
 		case MARKDONE:
 			_container.get(_index).setIsDone(false);
-			
-			result = "marking task \"" + _target.getTaskName() + "\"as done is undone";
+
+			result = "marking task \"" + _target.getTaskName()
+					+ "\"as done is undone";
 		}
 
 		return result;
 	}
-	
-	public String redo(){
-		return "";
+
+	public String redo() {
+		String result = "";
+
+		switch (_type) {
+		case ADD:
+			_container.add(_target);
+			result = "adding task \"" + _target.getTaskName() + "\" is redone";
+
+			break;
+
+		case DELETE:
+			_container.remove(_index);
+			result = "deleting task \"" + _target.getTaskName()
+					+ "\" is redone";
+			break;
+
+		case UPDATE:
+			_container.set(_container.indexOf(_target), _replacement);
+			result = "updating task \"" + _target.getTaskName()
+					+ "\" is redone";
+			break;
+		case MARKDONE:
+			_container.get(_index).setIsDone(true);
+			result = "marking task \"" + _target.getTaskName()
+					+ "\"as done is redone";
+		}
+
+		return result;
 	}
 
 	public String toString() {
@@ -90,6 +117,8 @@ public class Command implements Undoable{
 		case UPDATE:
 			desc += "update ";
 			break;
+		case MARKDONE:
+			desc += "mark as done ";
 		}
 		desc += "\"" + _target.toString() + "\"";
 		if (_type == CommandType.UPDATE) {
