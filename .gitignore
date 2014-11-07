@@ -1,5 +1,9 @@
 # Created by https://www.gitignore.io
 
+### META-INF ###
+META-INF/
+resources/
+
 ### DB File ###
 *.txt
 
