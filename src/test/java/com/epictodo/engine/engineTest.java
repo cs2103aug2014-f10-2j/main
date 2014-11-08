@@ -30,5 +30,11 @@ public class engineTest {
 		assertEquals(result,"task added");
 	}
 	
+	@Test
+	public void abc(){
+		Task t = CommandWorker.createTask("meeting @ 121214 10:00 2");
+		String result = logic.createTask(t);
+		assertEquals(result,"task added");
+	}
 
 }
