@@ -25,6 +25,7 @@
 
 package com.epictodo.engine;
 
+import com.epictodo.controller.nlp.GrammaticalParser;
 import com.epictodo.controller.nlp.SentenceAnalysis;
 import com.epictodo.controller.nlp.SentenceStructure;
 import com.epictodo.model.Delta;
@@ -32,6 +33,7 @@ import com.epictodo.model.Response;
 import com.epictodo.util.DateValidator;
 import com.epictodo.util.TimeValidator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.trees.TypedDependency;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -46,6 +48,7 @@ public class NLPEngine {
     private DateValidator date_validator = DateValidator.getInstance();
     private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
     private SentenceStructure sentence_struct = new SentenceStructure();
+    private GrammaticalParser grammartical_parser = new GrammaticalParser();
     private Response _response = new Response();
     private Delta _delta = new Delta();
     private PrintStream _err = System.err;
@@ -178,6 +181,7 @@ public class NLPEngine {
         Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer(_sentence);
         Map<String, String> sentence_token_map = sentence_analysis.sentenceAnalyzer(_sentence);
         LinkedHashMap<String, LinkedHashSet<String>> entities_map = sentence_analysis.nerEntitiesExtractor(_sentence);
+        List<TypedDependency> grammar_struct_map = grammartical_parser.grammarAnalyzer(_sentence);
 
         /**
          * Name Entity Recognition (NER) map
@@ -228,14 +232,20 @@ public class NLPEngine {
                         _priority = date_validator.determinePriority(date_value);
                         date_value = date_validator.genericDateFormat(date_value);
 
-                        _response.setTaskDate(date_value);
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
                         _response.setPriority(Integer.parseInt(_priority));
                         is_priority_set = true;
                     } else { // Check if TaskDate has been set previously, prevent override
                         _priority = date_validator.determinePriority(date_value);
                         date_value = date_validator.genericDateFormat(date_value);
 
-                        _response.setTaskDate(date_value);
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
                         _response.setPriority(Integer.parseInt(_priority));
                         is_priority_set = true;
                     }
@@ -294,66 +304,68 @@ public class NLPEngine {
             String _key = map_result.getKey();
             String _value = map_result.getValue();
 
-            tomorrow_date = date_validator.convertDateFormat(_value);
-            num_days = date_validator.compareDate(tomorrow_date);
+            if (!is_date_set) {
+                tomorrow_date = date_validator.convertDateFormat(_value);
+                num_days = date_validator.compareDate(tomorrow_date);
 
-            // Checks if date distance is >= 0 or <= 1 of 1 day
-            if (num_days >= 0 && num_days <= 1) {
-                _priority = date_validator.determinePriority(tomorrow_date);
-                date_value = date_validator.genericDateFormat(tomorrow_date);
-                time_value = date_validator.getTimeInFormat(_value);
+                // Checks if date distance is >= 0 or <= 1 of 1 day
+                if (num_days >= 0 && num_days <= 1) {
+                    _priority = date_validator.determinePriority(tomorrow_date);
+                    date_value = date_validator.genericDateFormat(tomorrow_date);
+                    time_value = date_validator.getTimeInFormat(_value);
 
-                if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
-                    _response.setTaskDate(date_value);
-                    is_date_set = true;
-                }
+                    if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
+                        _response.setTaskDate(date_value);
+                        is_date_set = true;
+                    }
 
-                if (!is_time_set) {
-                    _response.setTaskTime(time_value);
-                    is_time_set = true;
-                }
+                    if (!is_time_set) {
+                        _response.setTaskTime(time_value);
+                        is_time_set = true;
+                    }
 
-                if (!is_priority_set) {
-                    _response.setPriority(Integer.parseInt(_priority));
-                    is_priority_set = true;
-                }
-
-//                _response.setTaskDate(date_value);
-//                _response.setTaskTime(time_value);
-//                _response.setPriority(Integer.parseInt(_priority));
-                task_desc.add(_key);
-                analyzed_results.add(_key);
-                analyzed_results.add(date_value);
-                analyzed_results.add(time_value);
-                analyzed_results.add(_priority);
-            } else { // Check if TaskDate has been set previously, prevent override
-                _priority = date_validator.determinePriority(_value);
-                date_value = date_validator.genericDateFormat(tomorrow_date);
-                time_value = date_validator.validateTime(_value);
-
-                if (!is_date_set) {
-                    _response.setTaskDate(date_value);
-                    is_date_set = true;
-                }
-
-                if (!is_time_set) {
-                    _response.setTaskTime(time_value);
-                    is_time_set = true;
-                }
-
-                if (!is_priority_set) {
-                    _response.setPriority(Integer.parseInt(_priority));
-                    is_priority_set = true;
-                }
+                    if (!is_priority_set) {
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
 
 //                _response.setTaskDate(date_value);
 //                _response.setTaskTime(time_value);
 //                _response.setPriority(Integer.parseInt(_priority));
-                task_desc.add(_key);
-                analyzed_results.add(_key);
-                analyzed_results.add(date_value);
-                analyzed_results.add(time_value);
-                analyzed_results.add(_priority);
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                    analyzed_results.add(date_value);
+                    analyzed_results.add(time_value);
+                    analyzed_results.add(_priority);
+                } else { // Check if TaskDate has been set previously, prevent override
+                    _priority = date_validator.determinePriority(_value);
+                    date_value = date_validator.genericDateFormat(tomorrow_date);
+                    time_value = date_validator.validateTime(_value);
+
+                    if (!is_date_set) {
+                        _response.setTaskDate(date_value);
+                        is_date_set = true;
+                    }
+
+                    if (!is_time_set) {
+                        _response.setTaskTime(time_value);
+                        is_time_set = true;
+                    }
+
+                    if (!is_priority_set) {
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+//                _response.setTaskDate(date_value);
+//                _response.setTaskTime(time_value);
+//                _response.setPriority(Integer.parseInt(_priority));
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                    analyzed_results.add(date_value);
+                    analyzed_results.add(time_value);
+                    analyzed_results.add(_priority);
+                }
             }
         }
 
@@ -368,9 +380,106 @@ public class NLPEngine {
             if ((_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
                     _key.equalsIgnoreCase("prep_on") || _key.equalsIgnoreCase("prep_for") || _key.equalsIgnoreCase("nn") ||
                     _key.equalsIgnoreCase("xcomp")) &&
-                    (!_value.equalsIgnoreCase("to") || _value.equalsIgnoreCase("aux"))) {
+                    (_value.equalsIgnoreCase("aux"))) {
                 task_name.add(_value);
                 analyzed_results.add(_value);
+            }
+        }
+
+        /**
+         * Grammartical Struct map analyzes and return the relationship and dependencies of the grammartical structure
+         * This algorithm checks for
+         *
+         * 1. root: the grammatical relation that points to the root of the sentence
+         * 1.1. Remove words like 'be'
+         * 1.2. Remove words that are already added into the list
+         * 2. nn: noun compound modifier is any noun that serves to modify the head noun
+         * 2.1. Remove words that is stored already in Task Description
+         * 3. nsubj: nominal subject is a noun phrase which is the syntactic subject of a clause
+         *    aux: auxiliary is a non-main verb of the clause
+         *    xcomp: open clausal complement  is a clausal complement without
+         *           its own subject, whose reference is determined by an external subject
+         *    dobj: direct object is the noun phrase which is the (accusative) object of the verb
+         * 3.1. Add words that does not already exist in Task Name
+         * 4. amod: adjectival modifier is any adjectival phrase that serves to modify the meaning of the NP
+         * 4.1. Remove words like 'next'
+         * 5. prep:  prepositional modifier of a verb, adjective, or noun is any prepositional phrase that serves to
+         *           modify the meaning of the verb, adjective, noun, or even another prepositon
+         * 5.1. Check Task Time size is more than 1 or less than 2
+         * 5.2. Remove Task Time accordingly
+         * 6. dep: dependent is when the system is unable to determine a more precise
+         *         dependency relation between two words
+         * 6.1. Remove words like 'regarding'
+         * 7. aux: is a non-main verb of the clause, e.g., a modal auxiliary, or a form of
+         *         "be", "do" or "have" in a periphrastic tense
+         * 7.1. Remove words like 'to'
+         *
+         * This algorithm ensures that NLP maintains a certain integrity to making sense while parsing the sentence
+         *
+         */
+        for (TypedDependency type_dependency : grammar_struct_map) {
+            String reln_key = type_dependency.reln().getShortName();
+            String dep_value = type_dependency.dep().nodeString();
+
+            if (reln_key.equalsIgnoreCase("root")) {
+                if (task_name.contains("Be") || task_name.contains("be")) {
+                    task_name.remove(dep_value);
+                } else if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                } else {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("nn")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+
+                if (task_desc.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("nsubj") || reln_key.equalsIgnoreCase("aux") ||
+                    reln_key.equalsIgnoreCase("xcomp") || reln_key.equalsIgnoreCase("dobj")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("amod") && !dep_value.equalsIgnoreCase("next")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("prep")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+
+                if (task_time.size() < 2) {
+                    if (dep_value.contains(task_time.get(0))) {
+                        task_name.remove(dep_value);
+                    }
+                } else if (task_time.size() >= 2 && task_time.size() < 3) {
+                    if (dep_value.contains(task_time.get(0)) || dep_value.contains(task_time.get(1))) {
+                        task_name.remove(dep_value);
+                    }
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("dep") && dep_value.equalsIgnoreCase("regarding")) {
+                if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("aux") && dep_value.equalsIgnoreCase("to")) {
+                if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
             }
         }
 
@@ -427,6 +536,11 @@ public class NLPEngine {
         }
         _scanner.close();
 
+        /**
+         * This algorithm removes words like 'edit' or 'change' which suggests editing of Task
+         * The algorithm gets the index of 'to' and stores that index in order to identify ORIGINAL_TASK & DELTA
+         *
+         */
         for (int i = 0; i < sentence_list.size(); i++) {
             if (sentence_list.get(i).equalsIgnoreCase("edit") || sentence_list.get(i).equalsIgnoreCase("change")) {
                 sentence_list.remove(i);
@@ -439,11 +553,19 @@ public class NLPEngine {
             }
         }
 
+        /**
+         * Removes ORIGINAL_TASK & adds to delta_list
+         *
+         */
         for (int i = 0; i < _index; i++) {
             delta_list.add(sentence_list.get(0));
             sentence_list.remove(0);
         }
 
+        /**
+         * Concatenate sentence List into a String before storing DELTA
+         *
+         */
         for (String word : sentence_list) {
             if (is_first) {
                 is_first = false;
