@@ -1,22 +1,43 @@
+// @author A0112725N
+
 package com.epictodo.model;
 
 import java.util.ArrayList;
 
 /**
- * @author Eric
- *
+ * This class represents a undoable command
  */
 public class Command implements Undoable {
+
+	/**
+	 * The types of commands that are undoable
+	 */
 	public enum CommandType {
 		ADD, DELETE, UPDATE, MARKDONE
 	}
 
-	private ArrayList<Task> _container;
-	private CommandType _type;
-	private Task _target;
-	private Task _replacement;
-	private int _index;
+	/*
+	 * Private attributes
+	 */
+	private ArrayList<Task> _container; // the list of tasks to operate on
+	private CommandType _type; // the type of command
+	private Task _target; // the original task object
+	private Task _replacement; // the updated task object to replace the
+								// original in the list
+	private int _index; // the index where the original item resides in the list
+						// of tasks
 
+	/*
+	 * Constructors
+	 */
+
+	/**
+	 * Constructor
+	 * 
+	 * @param container
+	 * @param type
+	 * @param target
+	 */
 	public Command(ArrayList<Task> container, CommandType type, Task target) {
 		_container = container;
 		_type = type;
@@ -25,6 +46,14 @@ public class Command implements Undoable {
 		_index = -1;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param container
+	 * @param type
+	 * @param target
+	 * @param replacement
+	 */
 	public Command(ArrayList<Task> container, CommandType type, Task target,
 			Task replacement) {
 		_container = container;
@@ -34,6 +63,14 @@ public class Command implements Undoable {
 		_index = -1;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param container
+	 * @param type
+	 * @param target
+	 * @param index
+	 */
 	public Command(ArrayList<Task> container, CommandType type, Task target,
 			int index) {
 		_container = container;
@@ -43,6 +80,13 @@ public class Command implements Undoable {
 		_index = index;
 	}
 
+	/*
+	 * Interface requirements
+	 */
+
+	/**
+	 * This method invokes the undo action on the list of tasks
+	 */
 	public String undo() {
 		String result = "";
 
@@ -75,6 +119,9 @@ public class Command implements Undoable {
 		return result;
 	}
 
+	/**
+	 * This method invokes the redo action
+	 */
 	public String redo() {
 		String result = "";
 
@@ -105,6 +152,9 @@ public class Command implements Undoable {
 		return result;
 	}
 
+	/**
+	 * This is a overriding toString method
+	 */
 	public String toString() {
 		String desc = "command: ";
 		switch (_type) {

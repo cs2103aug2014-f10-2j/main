@@ -1,3 +1,5 @@
+// @author A0112725N
+
 package com.epictodo.logic;
 
 import com.epictodo.controller.json.Storage;
@@ -9,10 +11,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * @author Liu Longyin - A0112725N
- *
- */
 public class CRUDLogic {
 
 	/*

@@ -1,3 +1,5 @@
+// @author A0112725N
+
 package com.epictodo.util;
 
 import java.util.Comparator;
@@ -6,6 +8,9 @@ import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
 
+/**
+ * This class is a comparator for comparing task object by due date
+ */
 public class TaskDueDateComparator implements Comparator<Task> {
 
 	@Override
