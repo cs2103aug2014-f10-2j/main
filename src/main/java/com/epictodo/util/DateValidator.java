@@ -63,16 +63,16 @@ public class DateValidator {
      * <p/>
      * Usage:
      * <p/>
-     * getDateToCompare("2014-11-09"); > 2014-11-09
-     * getDateToCompare("2014-11-23T14:30"); > 2014-11-23
-     * getDateToCompare("2014-11-11-WXX-2"); > 2011-11-11
-     * getDateToCompare("2014-11-18-WXX-2T10:00"); > 2014-11-18
+     * convertDateFormat("2014-11-09"); > 2014-11-09
+     * convertDateFormat("2014-11-23T14:30"); > 2014-11-23
+     * convertDateFormat("2014-11-11-WXX-2"); > 2011-11-11
+     * convertDateFormat("2014-11-18-WXX-2T10:00"); > 2014-11-18
      *
      * @param _date
      * @return _result
      * @throws ParseException
      */
-    public String getDateToCompare(String _date) throws ParseException {
+    public String convertDateFormat(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         int num_days;
         String _result;
@@ -99,18 +99,9 @@ public class DateValidator {
      * This method validates the date and parse to the following format (yyyy-MM-dd)
      * This will return with the format of ddMMyy
      * <p/>
-     * Issues:
-     * 3 cases:
-     * 1. yyyy-MM-dd
-     * 2. yyyy-MM-dd-WXX-dT-hh:mm
-     * 3. yyyy-MM-ddT-hh:mm
-     * <p/>
      * Usage:
      * <p/>
-     * getDateInFormat("2014-11-09"); > 091114
-     * getDateInFormat("2014-11-23T14:30"); > 231114
-     * getDateInFormat("2014-11-11-WXX-2"); > 111114
-     * getDateInFormat("2014-11-18-WXX-2T10:00"); > 181114
+     * genericDateFormat("2014-11-09"); > 091114
      *
      * @param _date
      * @return _result
@@ -147,53 +138,26 @@ public class DateValidator {
     }
 
     /**
-     * This method validates the date and parse to the following format (yyyy-MM-dd)
-     * This will return with the format of ddMMyy
-     * <p/>
-     * Issues:
-     * 3 cases:
-     * 1. yyyy-MM-dd
-     * 2. yyyy-MM-dd-WXX-dT-hh:mm
-     * 3. yyyy-MM-ddT-hh:mm
+     * This method validates the date and parse to the following format (ddMMyy)
+     * This works for general cases where the day difference is more than 2 days.
+     * This method is similar to getDateInFormat
      * <p/>
      * Usage:
-     * <p/>
-     * getDateInFormat("2014-11-09"); > 091114
-     * getDateInFormat("2014-11-23T14:30"); > 231114
-     * getDateInFormat("2014-11-11-WXX-2"); > 111114
-     * getDateInFormat("2014-11-18-WXX-2T10:00"); > 181114
+     * validateDate("2014-11-18-WXX-2T10:00"); > 181114
      *
      * @param _date
-     * @return _result
+     * @return
      */
-    public String getDateInFormat(String _date) throws ParseException {
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-        int num_days;
+    public String validateDate(String _date) {
         String _result;
-        String[] exact_date = extractDate(_date);
-
-        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
         Matcher date_matcher = date_pattern.matcher(_date);
-
-        Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
-        num_days = calculateDays(today_date, next_date);
-
-        if (next_date.after(today_date) || next_date.equals(today_date)) {
-            if (num_days >= 0 && num_days <= 1) {
-                while (date_matcher.find()) {
-                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
-
-                    return _result;
-                }
-            }
-        }
 
         if (!date_matcher.matches()) {
             return null;
-        } else {
-            _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
         }
+
+        _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
 
         return _result;
     }
@@ -245,39 +209,12 @@ public class DateValidator {
     }
 
     /**
-     * This method validates the date and parse to the following format (ddMMyy)
-     * This works for general cases where the day difference is more than 2 days.
-     * This method is similar to getDateInFormat
-     * <p/>
-     * Usage:
-     * validateDate("2014-11-18-WXX-2T10:00"); > 181114
-     *
-     * @param _date
-     * @return
-     */
-    public String validateDate(String _date) {
-        String _result;
-        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
-        Matcher date_matcher = date_pattern.matcher(_date);
-
-        if (!date_matcher.matches()) {
-            return null;
-        }
-
-        _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
-
-        return _result;
-    }
-
-    /**
      * This method validates the token from NLP SUTIME Annotation based on our predefined regex expression
      * This method is parsed to get the time only
      * <p/>
      * Usage:
      * <p/>
      * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
-     * validateTime("10:30"); > 10:30
-     * validateTime("2014-11-23T14:30"); > 14:30
      * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
      *
      * @param _time
