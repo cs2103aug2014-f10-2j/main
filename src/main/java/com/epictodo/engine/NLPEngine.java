@@ -291,13 +291,13 @@ public class NLPEngine {
             String _key = map_result.getKey();
             String _value = map_result.getValue();
 
-            tomorrow_date = date_validator.getDateToCompare(_value);
+            tomorrow_date = date_validator.convertDateFormat(_value);
             num_days = date_validator.compareDate(tomorrow_date);
 
             // Checks if date distance is >= 0 or <= 1 of 1 day
             if (num_days >= 0 && num_days <= 1) {
                 _priority = date_validator.determinePriority(tomorrow_date);
-                date_value = date_validator.getDateInFormat(_value);
+                date_value = date_validator.genericDateFormat(tomorrow_date);
                 time_value = date_validator.getTimeInFormat(_value);
 
                 if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
@@ -325,7 +325,7 @@ public class NLPEngine {
                 analyzed_results.add(_priority);
             } else { // Check if TaskDate has been set previously, prevent override
                 _priority = date_validator.determinePriority(_value);
-                date_value = date_validator.validateDate(_value);
+                date_value = date_validator.genericDateFormat(tomorrow_date);
                 time_value = date_validator.validateTime(_value);
 
                 if (!is_date_set) {
