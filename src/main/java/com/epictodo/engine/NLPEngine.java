@@ -27,6 +27,7 @@ package com.epictodo.engine;
 
 import com.epictodo.controller.nlp.SentenceAnalysis;
 import com.epictodo.controller.nlp.SentenceStructure;
+import com.epictodo.model.Delta;
 import com.epictodo.model.Response;
 import com.epictodo.util.DateValidator;
 import com.epictodo.util.TimeValidator;
@@ -46,7 +47,9 @@ public class NLPEngine {
     private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
     private SentenceStructure sentence_struct = new SentenceStructure();
     private Response _response = new Response();
+    private Delta _delta = new Delta();
     private PrintStream _err = System.err;
+    private int CAPACITY = 1000;
 
     public NLPEngine() {
         _pipeline = load_engine._pipeline;
@@ -375,5 +378,67 @@ public class NLPEngine {
         _response.setTaskDesc(task_desc);
 
         return _response;
+    }
+
+    /**
+     * This method understands the natural input from user's input to edit a task
+     * The algorithm analyzes the sentence given, the following are executed.
+     * 1. Detects the Task to be edited and the DELTA change of the sentence
+     * 2. Process the DELTA changes to flexiAdd in order to analyze the data to be stored
+     * 3. Returns a DELTA which consists of a RESPONSE data type to be replaced with the original Task
+     *
+     * Assumptions:
+     * 1. Users are required to search for the exact TaskName to be edited
+     * 2. Sentence will analyze the format of "[ORIGINAL_TASK] to [DELTA]"
+     * 2.1. Everything before 'to' will be considered as ORIGINAL_TASK to be replaced
+     * 2.2. Everything after 'to' will be considered as DELTA to replace with
+     *
+     * @param _sentence
+     * @return _delta
+     * @throws ParseException
+     */
+    public Delta flexiEdit(String _sentence) throws ParseException {
+        boolean is_first = true;
+        int _index = 0;
+        List<String> sentence_list = new ArrayList<>();
+        List<String> delta_list = new ArrayList<>();
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
+        Scanner _scanner = new Scanner(_sentence);
+
+        while (_scanner.hasNext()) {
+            sentence_list.add(_scanner.next());
+        }
+        _scanner.close();
+
+        for (int i = 0; i < sentence_list.size(); i++) {
+            if (sentence_list.get(i).equalsIgnoreCase("edit")) {
+                sentence_list.remove(i);
+            }
+
+            if (sentence_list.get(i).equalsIgnoreCase("to")) {
+                _index = i;
+                i = sentence_list.size();
+            }
+        }
+
+        for (int i = 0; i < _index; i++) {
+            delta_list.add(sentence_list.get(0));
+            sentence_list.remove(0);
+        }
+
+        for (String word : sentence_list) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                string_builder.append(' ');
+            }
+
+            string_builder.append(word);
+        }
+
+        _delta.setTaskName(delta_list);
+        _delta.setDeltaChange(flexiAdd(string_builder.toString()));
+
+        return _delta;
     }
 }
