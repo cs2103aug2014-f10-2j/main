@@ -39,7 +39,6 @@ public class NLPEngineTest {
 
     @BeforeClass
     public static void initialize() {
-        NLPLoadEngine.getInstance();
     }
 
     /**
