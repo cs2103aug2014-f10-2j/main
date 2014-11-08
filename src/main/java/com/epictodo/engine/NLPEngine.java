@@ -386,12 +386,29 @@ public class NLPEngine {
      * 1. Detects the Task to be edited and the DELTA change of the sentence
      * 2. Process the DELTA changes to flexiAdd in order to analyze the data to be stored
      * 3. Returns a DELTA which consists of a RESPONSE data type to be replaced with the original Task
-     *
+     * <p/>
      * Assumptions:
      * 1. Users are required to search for the exact TaskName to be edited
      * 2. Sentence will analyze the format of "[ORIGINAL_TASK] to [DELTA]"
      * 2.1. Everything before 'to' will be considered as ORIGINAL_TASK to be replaced
      * 2.2. Everything after 'to' will be considered as DELTA to replace with
+     * <p/>
+     * Usage:
+     * 1. flexisEdit("edit project submission to project report submission by next Thursday at 15:30");
+     * [project submission] - ORIGINAL_TASK
+     * [project report submission by next Thursday at 15:30] - DELTA
+     * <p/>
+     * Output:
+     * 1.
+     * Delta Change: project submission
+     * Task Name: project report submission next
+     * Task Desc: next Thursday at 15:30
+     * Task Date: 131114
+     * Task Time: 15:30
+     * Task Priority: 9
+     * Task Start Time: 12:00
+     * Task End Time: 14:00
+     * Task Duration: 2.0
      *
      * @param _sentence
      * @return _delta
@@ -411,12 +428,13 @@ public class NLPEngine {
         _scanner.close();
 
         for (int i = 0; i < sentence_list.size(); i++) {
-            if (sentence_list.get(i).equalsIgnoreCase("edit")) {
+            if (sentence_list.get(i).equalsIgnoreCase("edit") || sentence_list.get(i).equalsIgnoreCase("change")) {
                 sentence_list.remove(i);
             }
 
             if (sentence_list.get(i).equalsIgnoreCase("to")) {
                 _index = i;
+                sentence_list.remove(i);
                 i = sentence_list.size();
             }
         }
