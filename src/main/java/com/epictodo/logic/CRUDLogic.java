@@ -10,14 +10,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * 
- */
-
-/**
- * @author Eric
+ * @author Liu Longyin - A0112725N
  *
  */
 public class CRUDLogic {
+
+	/*
+	 * Message Constants
+	 */
+	private static final String MSG_CANT_REMOVE_TASK = "can't remove task";
+	private static final String MSG_POSTFIX_AS_DONE = "\" as done";
+	private static final String MSG_FAILED_TO_MARK_TASK = "failed to mark task \"";
+	public static final String MSG_NO_MORE_ACTIONS_TO_BE_REDONE = "no more actions to be redone";
+	public static final String MSG_NO_MORE_ACTIONS_TO_BE_UNDONE = "no more actions to be undone";
+	private static final String MSG_POSTFIX_IS_REMOVED = "\" is removed";
+	private static final String MSG_POSTFIX_IS_UPDATED = "\" is updated";
+	private static final String MSG_POSTFIX_MARKED_AS_DONE = "\" is marked as done";
+	private static final String MSG_ERROR = "error!";
+	private static final String MSG_POSTFIX_IS_ADDED = "\" is added";
+	private static final String MSG_PREFIX_TASK = "task \"";
+	private static final String MSG_FAILED_IO_ERROR = "failed due to file io error";
+	private static final String MSG_INVALID_INPUT = "invalid input";
+	private static final String MSG_ILLEGAL_PRIORITY = "illegal priority";
+	private static final String MSG_KEYWORD_MUST_NOT_BE_NULL = "keyword must not be <null>";
 
 	/*
 	 * Constants
@@ -46,8 +61,9 @@ public class CRUDLogic {
 	}
 
 	/*
-	 * Getters
+	 * CRUD Methods
 	 */
+
 	/**
 	 * This method returns the whole list of Tasks regardless of their status
 	 * 
@@ -106,7 +122,7 @@ public class CRUDLogic {
 		 * Exception handling to make sure param is not null
 		 */
 		if (keyword == null) {
-			throw new NullPointerException("Keyword must not be <null>");
+			throw new NullPointerException(MSG_KEYWORD_MUST_NOT_BE_NULL);
 		}
 
 		for (int i = 0; i < size(); i++) {
@@ -158,7 +174,7 @@ public class CRUDLogic {
 		 * Exception handling to make sure the priority is within valid range
 		 */
 		if (p < CONFIG_PRIORITY_MIN || p > CONFIG_PRIORITY_MAX) {
-			throw new IllegalArgumentException("Illegal priority");
+			throw new IllegalArgumentException(MSG_ILLEGAL_PRIORITY);
 		}
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getPriority() == p && !_items.get(i).getIsDone()) {
@@ -168,6 +184,16 @@ public class CRUDLogic {
 		return list;
 	}
 
+	/**
+	 * This method returns a list of active tasks in chronological order of due
+	 * dates
+	 * 
+	 * @return array list of tasks
+	 * @throws IllegalArgumentException
+	 * @throws ParseException
+	 * @throws InvalidDateException
+	 * @throws InvalidTimeException
+	 */
 	public ArrayList<Task> getTasksOrderedByDueDate()
 			throws IllegalArgumentException, ParseException,
 			InvalidDateException, InvalidTimeException {
@@ -198,18 +224,6 @@ public class CRUDLogic {
 	 */
 
 	/**
-	 * This method assign UID to new Task and add it to the list
-	 * 
-	 * @param t
-	 *            : the task to add
-	 */
-	private void addToItems(Task t) {
-		t.setUid(_nextUid);
-		_items.add(t);
-		_nextUid++;
-	}
-
-	/**
 	 * This method adds a Task to the list
 	 * 
 	 * @param t
@@ -218,7 +232,7 @@ public class CRUDLogic {
 	 */
 	public String createTask(Task t) throws NullPointerException {
 		if (t == null) {
-			return "invalid input";
+			return MSG_INVALID_INPUT;
 		}
 		addToItems(t);
 
@@ -231,9 +245,9 @@ public class CRUDLogic {
 			saveToFile();
 		} catch (IOException ioe) {
 			_items.remove(t);
-			return "Failed to create task due to File IO error";
+			return MSG_FAILED_IO_ERROR;
 		}
-		return "task \"" + t.getTaskName() + "\" is added";
+		return MSG_PREFIX_TASK + t.getTaskName() + MSG_POSTFIX_IS_ADDED;
 	}
 
 	/**
@@ -269,9 +283,26 @@ public class CRUDLogic {
 		return createTask(tt);
 	}
 
+	/**
+	 * This method displays the content of all the tasks that matches the
+	 * keyword in names
+	 * 
+	 * @param keyword
+	 * @return
+	 */
+	public String searchForTasks(String keyword) {
+		try {
+			return displayList(getTasksByName(keyword));
+		} catch (NullPointerException | ParseException | InvalidDateException
+				| InvalidTimeException e) {
+			e.printStackTrace();
+			return MSG_ERROR;
+		}
+	}
+
 	public String markAsDone(Task t) {
 		if (t == null)
-			return "invalid input";
+			return MSG_INVALID_INPUT;
 		Task found = getTaskByUid(t.getUid());
 
 		if (found != null) {
@@ -282,48 +313,26 @@ public class CRUDLogic {
 				addCommand(Command.CommandType.MARKDONE, found, index);
 
 				saveToFile();
-				return "task \"" + t.getTaskName() + "\" is marked as done";
+				return MSG_PREFIX_TASK + t.getTaskName()
+						+ MSG_POSTFIX_MARKED_AS_DONE;
 			} catch (IOException ioe) {
 				found.setIsDone(false);
-				return "failed to mark task \"" + t.getTaskName()
-						+ "\" as done";
+				return MSG_FAILED_TO_MARK_TASK + t.getTaskName()
+						+ MSG_POSTFIX_AS_DONE;
 			}
 		} else {
-			return "failed to mark task \"" + t.getTaskName() + "\" as done";
+			return MSG_FAILED_TO_MARK_TASK + t.getTaskName()
+					+ MSG_POSTFIX_AS_DONE;
 		}
 	}
 
 	/**
-	 * This method removes a Task by UID
+	 * This method updates a task item by replacing it with an updated one
 	 * 
-	 * @param t
-	 * @return
+	 * @param target
+	 * @param replacement
+	 * @return the message indicating the successfulness of the operation
 	 */
-	public String deleteTask(Task t) {
-		if (t == null)
-			return "invalid input";
-		Task found = getTaskByUid(t.getUid());
-
-		int index = _items.indexOf(getTaskByUid(found.getUid()));
-
-		if (found != null && _items.remove(found)) {
-			try {
-				/*
-				 * create an undoable command
-				 */
-				addCommand(Command.CommandType.DELETE, found, index);
-
-				saveToFile();
-				return "task \"" + t.getTaskName() + "\" is removed";
-			} catch (IOException ioe) {
-				_items.remove(t);
-				return "Failed to remove task due to File IO error";
-			}
-		} else {
-			return "can't remove task";
-		}
-	}
-
 	public String updateTask(Task target, Task replacement) {
 		int index = _items.indexOf(getTaskByUid(target.getUid()));
 		if (index != -1) {
@@ -338,13 +347,50 @@ public class CRUDLogic {
 			 */
 			try {
 				saveToFile();
-				return "task \"" + target.getTaskName() + "\" is updated";
+				return MSG_PREFIX_TASK + target.getTaskName()
+						+ MSG_POSTFIX_IS_UPDATED;
 			} catch (IOException e) {
 				e.printStackTrace();
-				return "there was an error saving the update";
+				return MSG_FAILED_IO_ERROR;
 			}
 		} else {
-			return "invalid input";
+			return MSG_INVALID_INPUT;
+		}
+	}
+
+	/*
+	 * Undo and Redo methods
+	 */
+
+	/**
+	 * This method removes a Task by UID
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public String deleteTask(Task t) {
+		if (t == null)
+			return MSG_INVALID_INPUT;
+		Task found = getTaskByUid(t.getUid());
+
+		int index = _items.indexOf(getTaskByUid(found.getUid()));
+
+		if (found != null && _items.remove(found)) {
+			try {
+				/*
+				 * create an undoable command
+				 */
+				addCommand(Command.CommandType.DELETE, found, index);
+
+				saveToFile();
+				return MSG_PREFIX_TASK + t.getTaskName()
+						+ MSG_POSTFIX_IS_REMOVED;
+			} catch (IOException ioe) {
+				_items.remove(t);
+				return MSG_FAILED_IO_ERROR;
+			}
+		} else {
+			return MSG_CANT_REMOVE_TASK;
 		}
 	}
 
@@ -354,7 +400,7 @@ public class CRUDLogic {
 	 * @return The result in a string
 	 */
 	public String undoMostRecent() {
-		String result = "no more actions to be undone";
+		String result = MSG_NO_MORE_ACTIONS_TO_BE_UNDONE;
 
 		if (_undoList.size() > 0) {
 			Command comm = _undoList.get(_undoList.size() - 1);
@@ -375,31 +421,15 @@ public class CRUDLogic {
 	 * @return The result in a string
 	 */
 	public String redoMostRecent() {
-		String result = "no more actions to be redone";
+		String result = MSG_NO_MORE_ACTIONS_TO_BE_REDONE;
 
 		if (_redoList.size() > 0) {
 			Command comm = _redoList.get(_redoList.size() - 1);
-			result = comm.undo();
+			result = comm.redo();
 			_undoList.add(_redoList.remove(_redoList.size() - 1));
 		}
 
 		return result;
-	}
-
-	/**
-	 * This method returns an actual reference to the task with a specific UID
-	 * in the item list
-	 * 
-	 * @param uid
-	 * @return
-	 */
-	private Task getTaskByUid(long uid) {
-		for (int i = 0; i < _items.size(); i++) {
-			if (_items.get(i).getUid() == uid) {
-				return _items.get(i);
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -425,7 +455,7 @@ public class CRUDLogic {
 			return displayList(getAllTasks());
 		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
 			e.printStackTrace();
-			return "error!";
+			return MSG_ERROR;
 		}
 
 	}
@@ -441,50 +471,9 @@ public class CRUDLogic {
 			return displayList(getIncompleteTasks());
 		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
 			e.printStackTrace();
-			return "error!";
+			return MSG_ERROR;
 		}
 
-	}
-
-	/**
-	 * This method displays the content of all the tasks that matches the
-	 * keyword in names
-	 * 
-	 * @param keyword
-	 * @return
-	 */
-	public String searchForTasks(String keyword) {
-		try {
-			return displayList(getTasksByName(keyword));
-		} catch (NullPointerException | ParseException | InvalidDateException
-				| InvalidTimeException e) {
-			e.printStackTrace();
-			return "error!";
-		}
-	}
-
-	/*
-	 * Storage handlers
-	 */
-
-	/**
-	 * This method loads all tasks from the text file
-	 */
-	public boolean loadFromFile() throws IOException {
-		_items = Storage.loadDbFile(PATH_DATA_FILE);
-		if (_items == null) {
-			_items = new ArrayList<Task>();
-		}
-		_nextUid = getMaxuID();
-		return true;
-	}
-
-	/**
-	 * This method saves all tasks to the text file
-	 */
-	public void saveToFile() throws IOException {
-		String filename = PATH_DATA_FILE;
-		Storage.saveToJson(filename, _items);
 	}
 
 	/**
@@ -502,7 +491,63 @@ public class CRUDLogic {
 		return retStr;
 	}
 
-	private long getMaxuID() {
+	/*
+	 * Storage handlers
+	 */
+
+	/**
+	 * This method loads all tasks from the text file
+	 */
+	public boolean loadFromFile() throws IOException {
+		_items = Storage.loadDbFile(PATH_DATA_FILE);
+		if (_items == null) {
+			_items = new ArrayList<Task>();
+		}
+		_nextUid = getMaxUid();
+		return true;
+	}
+
+	/**
+	 * This method saves all tasks to the text file
+	 */
+	public void saveToFile() throws IOException {
+		String filename = PATH_DATA_FILE;
+		Storage.saveToJson(filename, _items);
+	}
+
+	/*
+	 * Private Methods
+	 */
+
+	/**
+	 * This method assign UID to new Task and add it to the list
+	 * 
+	 * @param t
+	 *            : the task to add
+	 */
+	private void addToItems(Task t) {
+		t.setUid(_nextUid);
+		_items.add(t);
+		_nextUid++;
+	}
+
+	/**
+	 * This method returns an actual reference to the task with a specific UID
+	 * in the item list
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	private Task getTaskByUid(long uid) {
+		for (int i = 0; i < _items.size(); i++) {
+			if (_items.get(i).getUid() == uid) {
+				return _items.get(i);
+			}
+		}
+		return null;
+	}
+
+	private long getMaxUid() {
 		long max = 0;
 		if (_items != null) {
 			for (int i = 0; i < _items.size(); i++) {
