@@ -107,15 +107,26 @@ public class TimedTask extends Task {
 		return super.toString() + " from " + this.getStartDateTimeAsString() + " to "
 				+ this.getEndDateTimeAsString();
 	}
-
-	/*
-	 * public TimedTask clone() { String taskName = super.getTaskName(); String
-	 * taskDescription = super.getTaskDescription(); int priority =
-	 * super.getPriority(); String date = getStartDate(); String time =
-	 * getStartTime(); int duration = getDuration(); TimedTask newClone = new
-	 * TimedTask(taskName, taskDescription, priority, date, time, duration);
-	 * return newClone; }
-	 */
+	
+	public Boolean equals(TimedTask task2) {
+		Boolean compareTask = super.equals(task2);
+		Boolean enddatetime = false;
+		Boolean startdatetime = false;
+		
+		if (this.getEndDateTime() == task2.getEndDateTime()) {
+			enddatetime = true;
+		}
+		
+		if (this.getStartDateTime() == task2.getStartDateTime()) {
+			startdatetime = true;
+		}
+		
+		if (compareTask && enddatetime && startdatetime) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public TimedTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
 		Task t = super.copy();

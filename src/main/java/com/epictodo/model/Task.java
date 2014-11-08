@@ -78,6 +78,36 @@ public class Task {
 		return "Name: " + this.taskName + '\n' + "Description: " + this.taskDescription + '\n';
 	}
 	
+	public Boolean equals(Task task2) {
+		Boolean uid = false;
+		Boolean taskName = false;
+		Boolean taskDescription = false;
+		Boolean priority = false;
+		Boolean isDone = false;
+		
+		if (this.getTaskName() == task2.getTaskName()) {
+			taskName = true;
+		}
+		if (this.getUid() == task2.getUid()) {
+			uid = true;
+		}
+		if (this.getTaskDescription() == task2.getTaskDescription()) {
+			taskDescription = true;
+		}
+		if (this.getPriority() == task2.getPriority()) {
+			priority = true;
+		}
+		if (this.getIsDone() == task2.getIsDone()) {
+			isDone = true;
+		}
+		
+		if (uid && taskName && taskDescription && priority && isDone) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String toString() {
 		return getTaskName();
 	}

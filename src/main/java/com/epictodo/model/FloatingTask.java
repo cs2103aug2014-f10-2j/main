@@ -33,6 +33,16 @@ public class FloatingTask extends Task {
 		return super.getDetail();
 	}
 	
+	public Boolean equals(FloatingTask task2) {
+		Boolean compareTask = super.equals(task2);
+		
+		if (compareTask) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public FloatingTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
 		Task t = super.copy();
 		FloatingTask cloned= null;

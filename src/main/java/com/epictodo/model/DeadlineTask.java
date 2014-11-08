@@ -70,6 +70,21 @@ public class DeadlineTask extends Task {
 		return super.getDetail() + "End Date and time: " + this.getEndDateTimeAsString() + '\n';
 	}
 	
+	public Boolean equals(DeadlineTask task2) {
+		Boolean compareTask = super.equals(task2);
+		Boolean enddatetime = false;
+		
+		if (this.getEndDateTime() == task2.getEndDateTime()) {
+			enddatetime = true;
+		}
+		
+		if (compareTask && enddatetime) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String toString() {
 		return super.toString() + " by " + this.getEndDateTimeAsString();
 	}
