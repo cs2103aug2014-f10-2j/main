@@ -38,10 +38,12 @@ import static org.junit.Assert.assertEquals;
 
 public class CRUDLogicTest {
 	private CRUDLogic _logic = new CRUDLogic();
+	private CRUDLogic expected_crud = new CRUDLogic();
 	private Task _nulltask = null;
 	private Task _task1 = null;
 	private Task _task2 = null;
 	private ArrayList<Task> _tasklist;
+	private String expected = "";
 
 	@Before
 	public void ini() throws Exception {
@@ -127,4 +129,61 @@ public class CRUDLogicTest {
 		String result = _logic.redoMostRecent();
 		assertEquals(result, CRUDLogic.MSG_NO_MORE_ACTIONS_TO_BE_REDONE);
 	}
+	
+	//@author A0111683L
+	@Test
+    public void testUndoAdd1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
+    	_logic.createTask(_task1);
+    	expected_crud.createTask(_task1.copy());
+    	expected = expected_crud.undoMostRecent();
+    	assertEquals(expected, _logic.undoMostRecent());
+    }
+    
+    @Test
+    public void testUndoAdd2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
+    	_logic.createTask(_task2);
+    	expected_crud.createTask(_task2.copy());
+    	expected = expected_crud.undoMostRecent();
+    	assertEquals(expected, _logic.undoMostRecent());
+    }
+    
+    @Test
+    public void testUndoDelete1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
+    	_logic.createTask(_task1);
+    	expected_crud.createTask(_task1.copy());
+    	_logic.deleteTask(_task1);
+    	expected_crud.deleteTask(_task1);
+    	expected = expected_crud.undoMostRecent();
+    	assertEquals(expected, _logic.undoMostRecent());
+    }
+    
+    @Test
+    public void testUndoDelete2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
+    	_logic.createTask(_task1);
+    	expected_crud.createTask(_task1.copy());
+    	_logic.createTask(_task2);
+    	expected_crud.createTask(_task2.copy());
+    	_logic.deleteTask(_task1);
+    	expected_crud.deleteTask(_task1.copy());
+    	_logic.deleteTask(_task2);
+    	expected_crud.deleteTask(_task2.copy());
+    	expected = expected_crud.undoMostRecent();
+    	assertEquals(expected, _logic.undoMostRecent());
+    	
+    }
+    
+    @Test
+    public void testMark1() {
+    	_logic.createTask(_task1);
+    	String _result = _logic.markAsDone(_task1);
+    	assertEquals("task \"Project Meeting\" is marked as done", _result);
+    }
+    
+    @Test
+    public void testMark2() {
+    	_logic.createTask(_task2);
+    	String _result = _logic.markAsDone(_task2);
+    	assertEquals("task \"Board Meeting\" is marked as done", _result);
+    }
+    
 }
