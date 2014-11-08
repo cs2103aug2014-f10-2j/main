@@ -526,11 +526,12 @@ public class NLPEngine {
     public Delta flexiEdit(String _sentence) throws ParseException {
         boolean is_first = true;
         int _index = 0;
+
         List<String> sentence_list = new ArrayList<>();
         List<String> delta_list = new ArrayList<>();
         StringBuilder string_builder = new StringBuilder(CAPACITY);
-        Scanner _scanner = new Scanner(_sentence);
 
+        Scanner _scanner = new Scanner(_sentence);
         while (_scanner.hasNext()) {
             sentence_list.add(_scanner.next());
         }
