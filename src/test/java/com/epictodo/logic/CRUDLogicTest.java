@@ -37,60 +37,93 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 
 public class CRUDLogicTest {
-    private CRUDLogic crud_logic = new CRUDLogic();
-    private Task task_null = null;
-    private Task _task = null;
-    private Task task_2 = null;
-    private ArrayList<Task> task_list;
+	private CRUDLogic _logic = new CRUDLogic();
+	private Task _nulltask = null;
+	private Task _task1 = null;
+	private Task _task2 = null;
+	private ArrayList<Task> _tasklist;
 
-    @Before
-    public void ini() throws Exception{
-    	   task_null = new Task(null, null, 0);
-    	   _task = new Task("Project Meeting", "2103 project meeting", 2);
-    	    task_2 = new Task("Board Meeting", "Board of directors meeting", 2);
-    	    
-    }
-    
-    @Test
-    public void createEmptyTaskTest() {
-        String _result = crud_logic.createTask(task_null);
-        assertEquals("task added", _result);
-    }
+	@Before
+	public void ini() throws Exception {
+		_nulltask = new Task(null, null, 0);
+		_task1 = new Task("Project Meeting", "2103 project meeting", 2);
+		_task2 = new Task("Board Meeting", "Board of directors meeting", 2);
 
-    @Test
-    public void createNormalTaskTest() {
-        String _result = crud_logic.createTask(_task);
-        assertEquals("task added", _result);
-    }
+	}
 
-    @Test
-    public void removeUnknownTaskTest() {
-        String _result = crud_logic.deleteTask(task_2);
-        assertEquals("can't remove task", _result);
-    }
+	@Test
+	public void createEmptyTaskTest() {
+		int count = _logic.size();
+		_logic.createTask(_nulltask);
+		assertEquals(count + 1, _logic.size());
+	}
 
-    @Test
-    public void removeNormalTaskTest() {
-        crud_logic.createTask(_task);
-        String _result = crud_logic.deleteTask(_task);
-        assertEquals("task removed", _result);
-    }
+	@Test
+	public void createNormalTaskTest() {
+		int count = _logic.size();
+		_logic.createTask(_task1);
+		assertEquals(count + 1, _logic.size());
+	}
 
-    @Test
-    public void displayTaskTest() {
-        crud_logic.createTask(_task);
-        crud_logic.createTask(task_2);
-        String _result = crud_logic.displayAllTaskList();
-        assertEquals("1. Project Meeting\r\n" +
-                     "2. Board Meeting\r\n", _result);
-    }
+	@Test
+	public void removeNormalTaskTest() {
+		_logic.createTask(_task1);
+		int count = _logic.size();
+		_logic.deleteTask(_task1);
+		assertEquals(count - 1, _logic.size());
+	}
 
-    @Test
-    public void searchByTaskNameTest() throws ParseException, InvalidDateException, InvalidTimeException {
-        crud_logic.createTask(_task);
-        task_list = new ArrayList<Task>();
-        task_list.add(_task);
-        ArrayList<Task> _result = crud_logic.getTasksByName("Meeting");
-        assertEquals(task_list.get(0).getTaskName(), _result.get(0).getTaskName());
-    }
+	@Test
+	public void displayTaskTest() {
+		_logic.createTask(_task1);
+		_logic.createTask(_task2);
+		String result = _logic.displayAllTaskList();
+		assertEquals("1. Project Meeting\r\n" + "2. Board Meeting\r\n", result);
+	}
+
+	@Test
+	public void searchByTaskNameTest() throws ParseException,
+			InvalidDateException, InvalidTimeException {
+		_logic.createTask(_task1);
+		_tasklist = new ArrayList<Task>();
+		_tasklist.add(_task1);
+		ArrayList<Task> result = _logic.getTasksByName("Meeting");
+		assertEquals(_tasklist.get(0).getTaskName(), result.get(0)
+				.getTaskName());
+	}
+
+	@Test
+	public void undoAddOneTest() {
+		_logic.createTask(_task1);
+		_logic.undoMostRecent();
+		assertEquals(_logic.size(), 0);
+	}
+
+	@Test
+	public void undoLimitTest() {
+		_logic.createTask(_task1);
+		_logic.undoMostRecent();
+		String result = _logic.undoMostRecent();
+		assertEquals(result, CRUDLogic.MSG_NO_MORE_ACTIONS_TO_BE_UNDONE);
+	}
+
+	@Test
+	public void redoTest() throws ParseException, InvalidDateException,
+			InvalidTimeException {
+		_logic.createTask(_task1);
+		_logic.createTask(_task2);
+		Task check = _logic.getAllTasks().get(1);
+		_logic.undoMostRecent();
+		_logic.redoMostRecent();
+		assertEquals(check.getUid(), _logic.getAllTasks().get(1).getUid());
+	}
+	
+	@Test
+	public void redoLimitTest() {
+		_logic.createTask(_task1);
+		_logic.undoMostRecent();
+		_logic.redoMostRecent();
+		String result = _logic.redoMostRecent();
+		assertEquals(result, CRUDLogic.MSG_NO_MORE_ACTIONS_TO_BE_REDONE);
+	}
 }
