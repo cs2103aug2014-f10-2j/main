@@ -10,6 +10,7 @@ import com.epictodo.util.TaskBuilder;
 import edu.stanford.nlp.semgraph.semgrex.ParseException;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import org.apache.xpath.FoundIndex;
 public class MenuWorker {
 	private final static String MENU_SELECT_UPDATE_OPTION ="Enter your option to be updated (or 0 to menu): ";	
 	private final static String MENU_SELECT_DELETE_OPTION ="Enter your option to be deleted (or 0 to menu): ";
+	private final static String MENU_SELECT_MARK_OPTION ="Enter your option to be marked (or 0 to menu): ";
 	private final static String MENU_SELECT_SEARCH_OPTION ="Enter your option for details (or 0 to menu): ";
 	private final static String MENU_SEARCH_INSTRUCTION ="Enter keyword: ";
 
@@ -25,8 +27,7 @@ public class MenuWorker {
 	private static int _defaultPriority = 2;
 	private static String _defaultTime = "09:00";
 	static Scanner s = null;
-	
-	// KW please study this and apply SLAP
+
 	public static Task addMenu() {
 		s =new Scanner(System.in);
 		String taskName = "";
@@ -44,7 +45,7 @@ public class MenuWorker {
 	    }
 		    taskTime = getTaskTime();
 		    if (!taskTime.equals("")){
-		    	Display("Enter Task Duration in hours(Optional)");
+		    	display("Enter Task Duration in hours(Optional)");
 		    	String durationTemp = s.nextLine();
 		    	if (!durationTemp.equals("")){
 		    		try{
@@ -65,25 +66,25 @@ public class MenuWorker {
 	}
 	
 	public static String getTaskName() {
-		Display("Enter Task Name: ");
+		display("Enter Task Name: ");
 		String taskName = s.nextLine();
 		return taskName;
 	}
 	
 	public static String getTaskDescription() {
-		 Display("Enter Description(Optional): ");
+		 display("Enter Description(Optional): ");
 		    String taskDesc = s.nextLine();
 		    return taskDesc;
 	}
 	
 	public static String getTaskDate() {
-		Display("Enter Task Date (DDMMYY): ");
+		display("Enter Task Date (DDMMYY): ");
 	    String taskDate = s.nextLine();
 	    return taskDate;
 	}
 	
 	public static String getTaskTime() {
-		Display("Enter Task Time: ");
+		display("Enter Task Time: ");
 	    String taskTime = s.nextLine();
 	    return taskTime;
 	}
@@ -91,7 +92,7 @@ public class MenuWorker {
 	public static String findMenu(){
 		String result = "";
 		s= new Scanner(System.in);
-		Display(MENU_SEARCH_INSTRUCTION);
+		display(MENU_SEARCH_INSTRUCTION);
 		result = s.nextLine();
 		return result;
 	}
@@ -101,48 +102,52 @@ public class MenuWorker {
 		return TaskBuilder.buildTask(taskName, taskDesc, priority);
 	}
 
-	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items) throws ParseException{
-		if (list.size()==0){
-			throw new ParseException();
-		}
+	public static Task selectItemFromList(CommandType type,ArrayList<Task> list, String items)throws IndexOutOfBoundsException{
 		if(list.size()==1){
 			return list.get(0);
 		}
+		
 		s = new Scanner(System.in);
-		int option = 0;
-		DisplayLine(items);
-		if(type== CommandType.DELETE){
-			Display(MENU_SELECT_DELETE_OPTION);
-		}else if(type ==CommandType.UPDATE){
-			Display(MENU_SELECT_UPDATE_OPTION);
-		}else if(type ==CommandType.SEARCH){
-			Display(MENU_SELECT_SEARCH_OPTION);
+		displaySelectInstruction(type, items);
+		
+		int option = retrieveInputOption();
+		if (option ==0){
+			return null;
 		}
+		Task t = list.get(option-1);
+		return t;
+	}
+
+	private static void displaySelectInstruction(CommandType type, String items) {
+		displayLine(items);
+		if(type== CommandType.DELETE){
+			display(MENU_SELECT_DELETE_OPTION);
+		}else if(type ==CommandType.UPDATE){
+			display(MENU_SELECT_UPDATE_OPTION);
+		}else if(type ==CommandType.SEARCH){
+			display(MENU_SELECT_SEARCH_OPTION);
+		}else if(type == CommandType.DONE){
+			display(MENU_SELECT_MARK_OPTION);
+		}
+	}
+
+	private static int retrieveInputOption() {
+		int option = 0;
 		try{
 			option = s.nextInt();
-			if (option== 0){
-				return null;
-			}
 		}
 		catch(Exception e){
-			return null;
+			return -2;
 		};
-		try{
-		Task t = list.get(option-1);
-		return list.get(option-1);
-		}
-		catch(IndexOutOfBoundsException ioe){
-			return null;
-		}
-		
+		return option;
 	}
 	
 	
-	private static void DisplayLine(String a){
+	private static void displayLine(String a){
 		System.out.println(a);
 	}
 	
-	private static void Display(String a){
+	private static void display(String a){
 		System.out.print(a);
 	}
 
@@ -150,20 +155,20 @@ public class MenuWorker {
 		if (t == null) return null;
 		Task result =null;
 		s = new Scanner(System.in);
-		DisplayLine("please enter the updated info or press enter to remain unchange");
-		Display(String.format("Name ( %s ):",t.getTaskName()));
+		displayLine("please enter the updated info or press enter to remain unchange");
+		display(String.format("Name ( %s ):",t.getTaskName()));
 		String taskName = getUpdatedInfo(s,t.getTaskName());
-		Display(String.format("Description ( %s ):",t.getTaskDescription()));
+		display(String.format("Description ( %s ):",t.getTaskDescription()));
 		String taskDesc = getUpdatedInfo(s,t.getTaskDescription());
-		Display(String.format("priority ( %s ):",t.getPriority()));
+		display(String.format("priority ( %s ):",t.getPriority()));
 		String p = getUpdatedInfo(s, String.valueOf(t.getPriority()));
 		int taskPriority = Integer.valueOf(p);
 		if (t instanceof TimedTask){
-			Display(String.format("start Date ( %s ):",((TimedTask) t).getStartDate()));
+			display(String.format("start Date ( %s ):",((TimedTask) t).getStartDate()));
 			String startDate = getUpdatedInfo(s, ((TimedTask) t).getStartDate());
-			Display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
+			display(String.format("start Time ( %s ):",((TimedTask) t).getStartTime()));
 			String startTime = getUpdatedInfo(s, ((TimedTask) t).getStartTime());
-			Display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
+			display(String.format("duration in hours ( %s ):",((TimedTask) t).getDuration()));
 			String d = getUpdatedInfo(s, String.valueOf(((TimedTask) t).getDuration()));
 			double duration = Double.valueOf(d);
 			try {
@@ -175,9 +180,9 @@ public class MenuWorker {
 			result.setUid(t.getUid());
 			return result;
 		}else if (t instanceof DeadlineTask){
-			Display(String.format("end Date ( %s ):",((DeadlineTask) t).getDate()));
+			display(String.format("end Date ( %s ):",((DeadlineTask) t).getDate()));
 			String endDate = getUpdatedInfo(s, ((DeadlineTask) t).getDate());
-			Display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
+			display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
 			String endTime = getUpdatedInfo(s, ((DeadlineTask) t).getTime());
 			try {
 				result =  new DeadlineTask(taskName,taskDesc,taskPriority,endDate,endTime);

@@ -1,7 +1,9 @@
 package com.epictodo.engine;
 
+import java.awt.DisplayMode;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 
 import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.InvalidDateException;
@@ -18,29 +20,34 @@ public class WorkDistributor {
 	private final static String[] COMMAND_DELETE = { "delete", "remove" };
 	private final static String[] COMMAND_SEARCH = { "search", "find" };
 	private final static String[] COMMAND_DISPLAY = { "display" };
-	private final static String[] COMMAND_UNDO = { "undo" };
+	private final static String[] COMMAND_UNDO = { "undo","revert" };
+	private final static String[] COMMAND_REDO = { "redo" };
 	private final static String[] COMMAND_DONE = {"done", "mark"};
 
+	private static final String MSG_INVALID_INPUT = "invalid input";
+
 	enum CommandType {
-		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, DONE
+		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
 	};
-
+	
+	public static boolean loadData() {
+		try {
+			return logic.loadFromFile();
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+	
 	public static String proceedInstruc(String instruc) {
-		// Clear expired timed tasks
-		logic.clearExpiredTask();
-
-		// get command
-		CommandType command = defineCommandType(instruc);
-
-		/*
-		 * <command> <instruction> Since, NLP should handle only instruction
-		 * Therefore, NLP can look into CommandWorker to fill in the attribute
-		 * for task nicely.
-		 */
-		instruc = removeCommand(instruc);
 		String result = "";
 		ArrayList<Task> list = null;
 		Task t = null;
+		// Clear expired timed tasks
+		logic.clearExpiredTask();
+
+		CommandType command = defineCommandType(instruc);
+		instruc = removeCommand(instruc);
+
 		switch (command) {
 		case DISPLAY:
 			return logic.displayIncompleteTaskList();
@@ -51,89 +58,77 @@ public class WorkDistributor {
 			return result;
 
 		case DELETE:
-			try {
-				list = logic.getTasksByName(instruc);
-			} catch (NullPointerException | ParseException
-					| InvalidDateException | InvalidTimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				t = MenuWorker.selectItemFromList(command, list,
-						logic.displayList(list));
-			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
-				return "task not found";
-			}
-			result = logic.deleteTask(t);
-			return result;
-			
 		case DONE:
-			try {
-				list = logic.getTasksByName(instruc);
-			} catch (NullPointerException | ParseException
-					| InvalidDateException | InvalidTimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				t = MenuWorker.selectItemFromList(command, list,
-						logic.displayList(list));
-			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
-				return "task not found";
-			}
-			result = logic.markAsDone(t);
-			return result;
 		case UPDATE:
-			try {
-				list = logic.getTasksByName(instruc);
-			} catch (NullPointerException | ParseException
-					| InvalidDateException | InvalidTimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				t = MenuWorker.selectItemFromList(command, list,
-						logic.displayList(list));
-			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
-				return "task not found";
-			}
-			Task updatedTask = MenuWorker.updateTask(t);
-			result = logic.updateTask(t, updatedTask);
-			return result;
-
 		case SEARCH:
-			try {
-				list = logic.getTasksByName(instruc);
-			} catch (NullPointerException | ParseException
-					| InvalidDateException | InvalidTimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			list = searchThroughKeywords(instruc);
+			if (list == null){
+				return "Cannnot find '"+instruc+"'";
 			}
-			try {
-				t = MenuWorker.selectItemFromList(command, list,
-						logic.displayList(list));
-			} catch (edu.stanford.nlp.semgraph.semgrex.ParseException e) {
-				return "task not found";
-			}
-			return t.getDetail();
-
-
+			result = selectItemProcess(list, command);
+			return result;
 		case EXIT:
 			System.exit(0);
 			break;
-
-		case INVALID:
-			// todo: defined all invalid cases
-			return "This is invalid";
-
 		case UNDO:
 			result = logic.undoMostRecent();
 			return result;
-
+		case INVALID:
+			// todo: defined all invalid cases
+			return MSG_INVALID_INPUT;
+		default:
+			break;
 		}
 
 		// todo handle invalid input here
 		return null;
+	}
+	
+	private static String selectItemProcess(ArrayList<Task> list, CommandType command) {
+		String result =null;
+		Task t=null;
+		try{
+			t = MenuWorker.selectItemFromList(command, list,
+					logic.displayList(list));
+		}catch(IndexOutOfBoundsException iobe){
+			return MSG_INVALID_INPUT;
+		}
+		result = processCommand(command, result, t);
+		return result;
+	}
+
+	private static String processCommand(CommandType command, String result,
+			Task t) {
+		switch(command){
+		case DELETE:
+			result = logic.deleteTask(t);
+			break;
+		case DONE:
+			result = logic.markAsDone(t);
+			break;
+		case UPDATE:
+			Task updatedTask = MenuWorker.updateTask(t);
+			result = logic.updateTask(t, updatedTask);
+			break;
+		case SEARCH:
+			result = t.getDetail();
+			break;
+		default:
+			break;
+		}
+		return result;
+	}
+
+	private static ArrayList<Task> searchThroughKeywords(String instruc) {
+			ArrayList<Task> list = new ArrayList<Task>();
+		try {
+			
+			list = logic.getTasksByName(instruc);
+		} catch (NullPointerException | ParseException
+				| InvalidDateException | InvalidTimeException e) {
+			return null;
+		}
+		return list;
 	}
 
 	private static CommandType defineCommandType(String instruc) {
@@ -154,10 +149,13 @@ public class WorkDistributor {
 			return CommandType.EXIT;
 		} else if (identifyCommand(command, COMMAND_UNDO)) {
 			return CommandType.UNDO;
+		} else if (identifyCommand(command,COMMAND_REDO)){
+			return CommandType.REDO;
 		} else if (identifyCommand(command,COMMAND_DONE)){
 			return CommandType.DONE;
-		} else
+		} else{
 			return CommandType.INVALID;
+		}
 	}
 
 	private static boolean identifyCommand(String command, final String[] vocabs) {
@@ -167,14 +165,6 @@ public class WorkDistributor {
 			}
 		}
 		return false;
-	}
-
-	public static boolean loadData() {
-		try {
-			return logic.loadFromFile();
-		} catch (Exception ex) {
-			return false;
-		}
 	}
 
 	private static boolean compareString(String text, String text2) {
