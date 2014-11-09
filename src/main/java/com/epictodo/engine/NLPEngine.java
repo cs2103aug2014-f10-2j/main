@@ -30,6 +30,7 @@ import com.epictodo.controller.nlp.SentenceAnalysis;
 import com.epictodo.controller.nlp.SentenceStructure;
 import com.epictodo.model.Delta;
 import com.epictodo.model.Response;
+import com.epictodo.model.Search;
 import com.epictodo.util.DateValidator;
 import com.epictodo.util.TimeValidator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -51,6 +52,7 @@ public class NLPEngine {
     private GrammaticalParser grammartical_parser = new GrammaticalParser();
     private Response _response = new Response();
     private Delta _delta = new Delta();
+    private Search _search = new Search();
     private PrintStream _err = System.err;
     private int CAPACITY = 1000;
 
@@ -581,5 +583,49 @@ public class NLPEngine {
         _delta.setDeltaChange(flexiAdd(string_builder.toString()));
 
         return _delta;
+    }
+
+    /**
+     * This method analyzes the sentence structure into SUTIME Annotation.
+     * The algorithm facilitates natural language for searching by date.
+     *
+     * For instance, "search today" > retrieves today task
+     *
+     * Usage:
+     * 1. flexiSearch("search today");
+     *
+     * @param _sentence
+     * @throws ParseException
+     */
+    public Search flexiSearch(String _sentence) throws ParseException {
+        String date_value;
+        String parse_date = date_validator.nlpShortDate(_sentence);
+
+        // Initialize Date Analysis to Map
+        Map<String, String> date_map = sentence_analysis.dateTimeAnalyzer(_sentence);
+
+        if (_sentence.isEmpty() || _sentence.equalsIgnoreCase(null) || _sentence.equals("")) {
+            _search.setSearchDate(null);
+        }
+
+        if (_sentence.equalsIgnoreCase(parse_date)) {
+            _search.setSearchDate(parse_date);
+        } else {
+            /**
+             * Date analyzer analyzes the sentence in order to map the analyze date values to be searched
+             * This algorithm will check for TOMORROW date & time distance.
+             *
+             */
+            for (Map.Entry<String, String> map_result : date_map.entrySet()) {
+                String _value = map_result.getValue();
+
+                date_value = date_validator.convertDateFormat(_value);
+                date_value = date_validator.genericDateFormat(date_value);
+
+                _search.setSearchDate(date_value);
+            }
+        }
+
+        return _search;
     }
 }
