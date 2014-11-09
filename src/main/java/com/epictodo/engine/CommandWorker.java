@@ -1,5 +1,6 @@
 package com.epictodo.engine;
 
+import com.epictodo.engine.WorkDistributor.KeywordType;
 import com.epictodo.model.InvalidDateException;
 import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Response;
@@ -10,21 +11,22 @@ import java.text.ParseException;
 import java.util.logging.Logger;
 
 public class CommandWorker {
-    private static final int CAPACITY = 100;
-    private static NLPEngine nlp_engine = NLPEngine.getInstance();
+    private static final String LOG_FLOATINGTASK = "floating task is created!";
+	private static final String LOG_INVALID = "invalid command!";
+	private static final int CAPACITY = 100;
+    private static NLPEngine _nlp_engine = NLPEngine.getInstance();
     private static Response _response = new Response();
+    private static Logger _logger = Logger.getLogger("System Log");
 
     /*
      * This is the helper class to retrieve value from instruction
      * This class will call TaskBuilder to return a proper task.
      */
     public static Task createTask(String instruc) {
-        boolean is_first = true;
-        Logger logger = Logger.getLogger("System Log");
         Task newTask = null;
 
         try {
-            _response = nlp_engine.flexiAdd(instruc);
+            _response = _nlp_engine.flexiAdd(instruc);
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
@@ -33,6 +35,52 @@ public class CommandWorker {
         StringBuilder taskd_builder = new StringBuilder(CAPACITY);
 
         // NLP can replace the work below
+
+        
+        String taskName = getTaskNameViaNlp(taskn_builder);
+        String taskDesc = getTaskDescViaNlp(taskd_builder);
+        String taskDate = _response.getTaskDate();
+        String taskTime = _response.getTaskTime();
+        int taskPriority = _response.getPriority();
+        double taskDuration = _response.getTaskDuration();
+
+        try{
+        if (taskName.equals("")) {
+            _logger.info(LOG_INVALID);
+        }else if (taskDate == null) {
+        	// Floating Task
+            _logger.info(LOG_FLOATINGTASK);
+            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
+        }else if (taskDuration > 0) {
+            // Timed Task
+            _logger.info("Timed task is created!");
+            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime, taskDuration);
+        }else if (taskDate!=null){
+        	// Deadline Task
+        	_logger.info("DeadLine task is created!");
+        	newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
+        }
+        }catch(InvalidTimeException ite){
+        	_logger.info("invalid time");
+        }catch(InvalidDateException ide){
+        	_logger.info("invalid date");
+        }
+        	return newTask;
+
+    }
+
+	public static KeywordType getKeywordType(String input) {
+		//nlp take place here
+		//define if input is a date
+		if(true){
+			return KeywordType.TIME;
+		}
+		// else this will be a word search
+		return KeywordType.WORD;
+	}
+	
+	private static String getTaskNameViaNlp(StringBuilder taskn_builder){
+		boolean is_first = true;
         for (String task_name : _response.getTaskName()) {
             if (is_first) {
                 is_first = false;
@@ -42,8 +90,10 @@ public class CommandWorker {
 
             taskn_builder.append(task_name);
         }
-
-        String taskName = taskn_builder.toString();
+		return taskn_builder.toString();
+	}
+	private static String getTaskDescViaNlp(StringBuilder taskd_builder){
+		boolean is_first = true;
 
         for (String task_desc : _response.getTaskDesc()) {
             if (is_first) {
@@ -54,69 +104,8 @@ public class CommandWorker {
 
             taskd_builder.append(task_desc);
         }
-
-        String taskDesc = taskd_builder.toString();
-
-        String taskDate = _response.getTaskDate();
-        String taskTime = _response.getTaskTime();
-        int taskPriority = _response.getPriority();
-        double taskDuration = _response.getTaskDuration();
-
-        try{
-        if (taskName.equals("")) {
-            logger.info("invalid command!");
-        }else if (taskDate == null) {
-            logger.info("floating task is created!");
-            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
-        }else if (taskDuration > 0) {
-            // Timed Task
-            logger.info("Timed task is created!");
-            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime, taskDuration);
-        }
-
-        // Deadline Task
-        newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
-        }catch(InvalidTimeException ite){
-        	
-        }catch(InvalidDateException ide){
-        	
-        }
-        	return newTask;
-
-    }
-/*
-    public static Task updateTask(String instruc) {
-        Logger logger = Logger.getLogger("System Log");
-        Task newTask = null;
-        //NLP take place here!
-        Scanner s = new Scanner(instruc);
-        String taskName = getTaskNameThroughInstruction(s);
-        String taskDate = getTaskDateThroughInstruction(s);
-        String taskTime = getTaskTimeThroughInstruction(s);
-        double taskDuration = getTaskDurationThroughInstruction(s);
-        String taskDesc = "";
-
-        if (taskName == null) {
-            logger.info("invalid command!");
-        }
-        if (taskDate == null) {
-            logger.info("floating task is created!");
-            newTask= TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority);
-        }
-        if (taskTime == null) {
-            //Deadline Task (default end time)
-            newTask=  TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, _defaultTime);
-        }
-        if (taskDuration != -1) {
-            // Timed Task
-            newTask= TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime, taskDuration);
-        }
-        // Deadline Task
-        newTask= TaskBuilder.buildTask(taskName, taskDesc, _defaultPriority, taskDate, taskTime);
-        
-        return newTask;
-    }
-*/
+		return taskd_builder.toString();
+	}
 
 
 }

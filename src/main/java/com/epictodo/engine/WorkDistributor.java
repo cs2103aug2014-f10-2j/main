@@ -29,6 +29,9 @@ public class WorkDistributor {
 	enum CommandType {
 		DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
 	};
+	enum KeywordType {
+		WORD, TIME
+	};
 	
 	/**
 	 * Return true if the storage is detected and loaded
@@ -77,7 +80,8 @@ public class WorkDistributor {
 			case DONE :
 			case UPDATE :
 			case SEARCH :
-				list = searchThroughKeywords(input);
+				KeywordType keywordType = CommandWorker.getKeywordType(input);
+				list =  searchThroughKeywords(keywordType, input);
 				if (list == null){
 					return "Cannnot find '"+input+"'";
 				}
@@ -159,15 +163,21 @@ public class WorkDistributor {
 	 * @param keyword the key words from user input
 	 * @return list of possible tasks base on the search result.
 	 */
-	private static ArrayList<Task> searchThroughKeywords(String keyword) {
-			ArrayList<Task> list = new ArrayList<Task>();
-		try {
-			
-			list = _logic.getTasksByName(keyword);
-		} catch (NullPointerException | ParseException
-				| InvalidDateException | InvalidTimeException e) {
-			return null;
-		}
+	private static ArrayList<Task> searchThroughKeywords(KeywordType keywordType, String keyword) {
+		ArrayList<Task> list = new ArrayList<Task>();
+		switch(keywordType){
+		case WORD :
+			try {
+				list = _logic.getTasksByName(keyword);
+				} catch (NullPointerException | ParseException
+					| InvalidDateException | InvalidTimeException e) {
+				return null;
+			}
+			break;
+		case TIME :
+			//todo gettasksbyDate();
+			break;
+		}	
 		return list;
 	}
 	
