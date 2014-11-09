@@ -163,7 +163,6 @@ public class NLPEngine {
         boolean is_date_set = false;
         boolean is_time_set = false;
         boolean is_priority_set = false;
-        boolean to_check = false;
         String tomorrow_date;
         String date_value;
         String time_value;
@@ -178,6 +177,9 @@ public class NLPEngine {
         List<String> task_desc = new ArrayList<>();
         List<String> task_date = new ArrayList<>();
         List<String> task_time = new ArrayList<>();
+        List<String> date_list = new ArrayList<>();
+
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
 
         // Initialize Sentence Structure & Sentence Analysis to Map
         Map<String, String> sentence_struct_map = sentence_struct.sentenceDependencies(_sentence);
@@ -227,6 +229,35 @@ public class NLPEngine {
             if (_value.equalsIgnoreCase("NUMBER")) {
                 if (date_validator.validateDateExpression(_key)) {
                     date_value = date_validator.fixShortDate(_key);
+                    task_date.add(date_value);
+                    num_days = date_validator.compareDate(date_value);
+
+                    // Checks if date distance is >= 0 or <= 1 of 1 day
+                    if (num_days >= 0 && num_days <= 1) {
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    } else { // Check if TaskDate has been set previously, prevent override
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+                    is_date_set = true;
+                } else {
+                    date_value = date_validator.nlpShortDate(_key);
                     task_date.add(date_value);
                     num_days = date_validator.compareDate(date_value);
 
@@ -318,8 +349,25 @@ public class NLPEngine {
                     time_value = date_validator.getTimeInFormat(_value);
 
                     if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
-                        _response.setTaskDate(date_value);
-                        is_date_set = true;
+                        if (date_value.length() == 5) {
+                            date_list.add(0, "0");
+
+                            Scanner _scanner = new Scanner(date_value);
+                            while (_scanner.hasNext()) {
+                                date_list.add(_scanner.next());
+                            }
+                            _scanner.close();
+
+                            for (String date : date_list) {
+                                string_builder.append(date);
+                            }
+
+                            _response.setTaskDate(string_builder.toString());
+                            is_date_set = true;
+                        } else {
+                            _response.setTaskDate(date_value);
+                            is_date_set = true;
+                        }
                     }
 
                     if (!is_time_set) {
@@ -346,8 +394,25 @@ public class NLPEngine {
                     time_value = date_validator.validateTime(_value);
 
                     if (!is_date_set) {
-                        _response.setTaskDate(date_value);
-                        is_date_set = true;
+                        if (date_value.length() == 5) {
+                            date_list.add(0, "0");
+
+                            Scanner _scanner = new Scanner(date_value);
+                            while (_scanner.hasNext()) {
+                                date_list.add(_scanner.next());
+                            }
+                            _scanner.close();
+
+                            for (String date : date_list) {
+                                string_builder.append(date);
+                            }
+
+                            _response.setTaskDate(string_builder.toString());
+                            is_date_set = true;
+                        } else {
+                            _response.setTaskDate(date_value);
+                            is_date_set = true;
+                        }
                     }
 
                     if (!is_time_set) {
