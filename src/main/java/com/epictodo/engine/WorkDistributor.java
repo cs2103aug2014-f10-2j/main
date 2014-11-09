@@ -162,16 +162,20 @@ public class WorkDistributor {
 	 * @return list of possible tasks base on the search result.
 	 */
 	private static ArrayList<Task> searchThroughKeywords(String keyword) {
-		_logic.translateWorkingListId(keyword);
-		String date = CommandWorker.getDateViaNlp(keyword);
-		KeywordType keywordType = CommandWorker.getKeywordType(date);
 		ArrayList<Task> list = new ArrayList<Task>();
+		Task tempTask = _logic.translateWorkingListId(keyword);
+		String date = CommandWorker.getDateViaNlp(keyword);
+		KeywordType keywordType = CommandWorker.getKeywordType(tempTask,date);
+		
 		switch(keywordType){
 		case WORD :
 				list = _logic.getTasksByName(keyword);
 			break;
 		case TIME :			
 				list = _logic.getTasksByDate(date);
+			break;
+		case OPTION:
+				list.add(tempTask);
 			break;
 		}	
 		return list;
