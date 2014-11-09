@@ -1,11 +1,8 @@
 //@author A0112918H
 package com.epictodo.engine;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import com.epictodo.logic.CRUDLogic;
-import com.epictodo.model.InvalidDateException;
-import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
 
 public class WorkDistributor {
@@ -30,7 +27,7 @@ public class WorkDistributor {
 		DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
 	};
 	enum KeywordType {
-		WORD, TIME
+		WORD, TIME, OPTION
 	};
 	
 	/**
@@ -81,12 +78,13 @@ public class WorkDistributor {
 			case UPDATE :
 			case SEARCH :
 				
-				list =  searchThroughKeywords( input);
+				list =  searchThroughKeywords(input);
 				if (list == null){
 					return "Cannnot find '"+input+"'";
 				}
 				result = selectItemProcess(list, command);
 				return result;
+				
 			case EXIT :
 				System.exit(0);
 				break;
@@ -164,6 +162,7 @@ public class WorkDistributor {
 	 * @return list of possible tasks base on the search result.
 	 */
 	private static ArrayList<Task> searchThroughKeywords(String keyword) {
+		_logic.translateWorkingListId(keyword);
 		String date = CommandWorker.getDateViaNlp(keyword);
 		KeywordType keywordType = CommandWorker.getKeywordType(date);
 		ArrayList<Task> list = new ArrayList<Task>();
