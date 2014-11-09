@@ -38,10 +38,11 @@ public class GrammaticalParser {
     private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
     private GrammaticalStructure grammartical_structure;
     private List<TypedDependency> typed_dependency_list;
-    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
     public GrammaticalParser() {
-        lexicalized_parser = load_engine.LEXICAL_MODEL;
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+
+        lexicalized_parser = load_engine.LEXICAL_PARSER;
         lexicalized_parser.setOptionFlags(new String[]{"-maxLength", "80", "-retainTmpSubcategories"});
     }
 
