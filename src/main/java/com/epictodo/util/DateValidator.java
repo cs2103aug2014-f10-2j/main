@@ -108,7 +108,7 @@ public class DateValidator {
      */
     public String genericDateFormat(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-        int num_days;
+//        int num_days;
         String _result;
 
         Pattern date_pattern = Pattern.compile(GENERIC_PATTERN);
@@ -116,17 +116,18 @@ public class DateValidator {
 
         Date today_date = date_format.parse(getTodayDate());
         Date next_date = date_format.parse(_date);
-        num_days = calculateDays(today_date, next_date);
+//        num_days = calculateDays(today_date, next_date);
 
-        if (next_date.after(today_date) || next_date.equals(today_date)) {
-            if (num_days >= 0 && num_days <= 1) {
-                while (date_matcher.find()) {
-                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
-
-                    return _result;
-                }
-            }
-        }
+        // Algorithm causing a bug for tomorrow's date
+//        if (next_date.after(today_date) || next_date.equals(today_date)) {
+//            if (num_days >= 0 && num_days <= 1) {
+//                while (date_matcher.find()) {
+//                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+//
+//                    return _result;
+//                }
+//            }
+//        }
 
         if (!date_matcher.matches()) {
             return null;
@@ -298,6 +299,32 @@ public class DateValidator {
      */
     public String fixShortDate(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String _result;
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+
+        return _result;
+    }
+
+    /**
+     * This method will check if date matches ddMMyy.
+     * The algorithm converts that into readable date of format yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * nlpShortDate("011214"); > 2014-12-01
+     *
+     * @param _date
+     * @return _result
+     * @throws ParseException
+     */
+    public String nlpShortDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("ddMMyy", Locale.ENGLISH);
         String _result;
         _calendar.setTime(date_format.parse(_date));
 
