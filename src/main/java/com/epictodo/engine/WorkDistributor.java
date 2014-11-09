@@ -79,7 +79,7 @@ public class WorkDistributor {
 			case SEARCH :
 				
 				list =  searchThroughKeywords(input);
-				if (list == null){
+				if (list.size() == 0){
 					return "Cannnot find '"+input+"'";
 				}
 				result = selectItemProcess(list, command);
