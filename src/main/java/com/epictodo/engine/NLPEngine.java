@@ -44,7 +44,6 @@ import java.util.*;
 public class NLPEngine {
     protected static StanfordCoreNLP _pipeline;
     private static NLPEngine instance = null;
-    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private TimeValidator time_validator = TimeValidator.getInstance();
     private DateValidator date_validator = DateValidator.getInstance();
     private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
@@ -58,6 +57,7 @@ public class NLPEngine {
     private final String DATE_PATTERN = "(\\d+)";
 
     public NLPEngine() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
         _pipeline = load_engine._pipeline;
     }
 
