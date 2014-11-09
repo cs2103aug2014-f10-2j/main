@@ -269,10 +269,11 @@ public class CRUDLogic {
 	 * @param index
 	 * @return the task object - <null> indicates not found
 	 */
-	public Task translateWorkingListId(int index) {
+	public Task translateWorkingListId(String keyword) {
 		try {
+			int index  = Integer.valueOf(keyword);
 			return _workingList.get(index - 1);
-		} catch (ArrayIndexOutOfBoundsException ex) {
+		} catch (Exception ex) {
 			return null;
 		}
 	}
