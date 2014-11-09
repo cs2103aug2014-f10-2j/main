@@ -254,7 +254,7 @@ public class WorkDistributor {
      * @throws IllegalArgumentException If zone is <= 0.
      */
     private static String getInstruction(String input) {
-        return input.substring(getCommandLength(input), input.length());
+        return input.substring(getCommandLength(input), input.length()).trim();
     }
 
     /**
