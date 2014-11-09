@@ -47,6 +47,7 @@ public class CRUDLogic {
 	private ArrayList<Task> _items; // to store all tasks
 	private ArrayList<Command> _undoList; // to store undoable commands
 	private ArrayList<Command> _redoList; // to store undone items
+	private ArrayList<Task> _workingList; // to store previously displayed list
 
 	/*
 	 * Constructor
@@ -70,8 +71,7 @@ public class CRUDLogic {
 	 * @throws InvalidDateException
 	 * @throws ParseException
 	 */
-	public ArrayList<Task> getAllTasks() throws ParseException,
-			InvalidDateException, InvalidTimeException {
+	public ArrayList<Task> getAllTasks() {
 		/*
 		 * the return should only deliver a duplicate of the objects
 		 */
@@ -79,6 +79,9 @@ public class CRUDLogic {
 		for (int i = 0; i < _items.size(); i++) {
 			retList.add(_items.get(i).copy());
 		}
+
+		updateWorkingList(retList); // update the working list
+
 		return retList;
 	}
 
@@ -90,17 +93,19 @@ public class CRUDLogic {
 	 * @throws InvalidDateException
 	 * @throws ParseException
 	 */
-	public ArrayList<Task> getIncompleteTasks() throws ParseException,
-			InvalidDateException, InvalidTimeException {
+	public ArrayList<Task> getIncompleteTasks() {
 		/*
 		 * the return should only deliver a duplicate of the objects
 		 */
-		ArrayList<Task> retList = new ArrayList<Task>();
+		ArrayList<Task> resultList = new ArrayList<Task>();
 		for (int i = 0; i < _items.size(); i++) {
 			if (!_items.get(i).getIsDone())
-				retList.add(_items.get(i).copy());
+				resultList.add(_items.get(i).copy());
 		}
-		return retList;
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
 	}
 
 	/**
@@ -114,7 +119,7 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksByName(String keyword)
 			throws NullPointerException, ParseException, InvalidDateException,
 			InvalidTimeException {
-		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<Task> resultList = new ArrayList<Task>();
 
 		/*
 		 * Exception handling to make sure param is not null
@@ -127,10 +132,13 @@ public class CRUDLogic {
 			if (_items.get(i).getTaskName().toLowerCase()
 					.contains(keyword.trim().toLowerCase())
 					&& !_items.get(i).getIsDone()) {
-				list.add(_items.get(i).copy());
+				resultList.add(_items.get(i).copy());
 			}
 		}
-		return list;
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
 	}
 
 	/**
@@ -144,13 +152,16 @@ public class CRUDLogic {
 	 */
 	public ArrayList<Task> getTasksByStatus(boolean done)
 			throws ParseException, InvalidDateException, InvalidTimeException {
-		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<Task> resultList = new ArrayList<Task>();
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getIsDone() == done) {
-				list.add(_items.get(i).copy());
+				resultList.add(_items.get(i).copy());
 			}
 		}
-		return list;
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
 	}
 
 	/**
@@ -166,7 +177,7 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksByPriority(int p)
 			throws IllegalArgumentException, ParseException,
 			InvalidDateException, InvalidTimeException {
-		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<Task> resultList = new ArrayList<Task>();
 
 		/*
 		 * Exception handling to make sure the priority is within valid range
@@ -176,10 +187,13 @@ public class CRUDLogic {
 		}
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i).getPriority() == p && !_items.get(i).getIsDone()) {
-				list.add(_items.get(i).copy());
+				resultList.add(_items.get(i).copy());
 			}
 		}
-		return list;
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
 	}
 
 	/**
@@ -195,13 +209,13 @@ public class CRUDLogic {
 	public ArrayList<Task> getTasksOrderedByDueDate()
 			throws IllegalArgumentException, ParseException,
 			InvalidDateException, InvalidTimeException {
-		ArrayList<Task> list = new ArrayList<Task>();
+		ArrayList<Task> resultList = new ArrayList<Task>();
 		ArrayList<Task> temp = new ArrayList<Task>();
 
 		for (int i = 0; i < size(); i++) {
 			if (_items.get(i) instanceof FloatingTask) {
 				// Add floating tasks to list first
-				list.add(_items.get(i).copy());
+				resultList.add(_items.get(i).copy());
 			} else {
 				// Dump all other tasks into a temp list
 				temp.add(_items.get(i).copy());
@@ -212,9 +226,42 @@ public class CRUDLogic {
 		Collections.sort(temp, new TaskDueDateComparator());
 
 		// add the ordered temp list to the final list
-		list.addAll(temp);
+		resultList.addAll(temp);
 
-		return list;
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
+	}
+
+	/**
+	 * This method retrieves a list of tasks based on a specific due date
+	 * (starting date)
+	 * 
+	 * @param compareDate
+	 *            due date in the ddmmyy format
+	 * @return the list of tasks
+	 */
+	public ArrayList<Task> getTasksByDate(String compareDate) {
+		ArrayList<Task> resultList = new ArrayList<Task>();
+		ArrayList<Task> incomplete = getIncompleteTasks();
+		for (int i = 0; i < incomplete.size(); i++) {
+			Task t = incomplete.get(i);
+
+			String taskDate = "";
+			if (t instanceof DeadlineTask) {
+				taskDate = ((DeadlineTask) t).getDate();
+			} else if (t instanceof TimedTask) {
+				taskDate = ((TimedTask) t).getStartDate();
+			}
+
+			if (taskDate.equals(compareDate)) {
+				resultList.add(t);
+			}
+		}
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
 	}
 
 	/*
@@ -473,13 +520,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		try {
-			return displayList(getAllTasks());
-		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
-			e.printStackTrace();
-			return MSG_ERROR;
-		}
-
+		return displayList(getAllTasks());
 	}
 
 	/**
@@ -489,13 +530,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayIncompleteTaskList() {
-		try {
-			return displayList(getIncompleteTasks());
-		} catch (ParseException | InvalidDateException | InvalidTimeException e) {
-			e.printStackTrace();
-			return MSG_ERROR;
-		}
-
+		return displayList(getIncompleteTasks());
 	}
 
 	/**
@@ -622,6 +657,16 @@ public class CRUDLogic {
 	private void addCommand(Command.CommandType type, Task target, int index) {
 		Command comm = new Command(_items, type, target, index);
 		_undoList.add(comm);
+	}
+
+	/**
+	 * This method updates the working list
+	 * 
+	 * @param li
+	 *            the previously displayed list
+	 */
+	private void updateWorkingList(ArrayList<Task> li) {
+		_workingList = li;
 	}
 
 }
