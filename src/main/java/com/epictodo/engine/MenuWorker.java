@@ -39,31 +39,6 @@ public class MenuWorker {
 		return t;
 	}
 
-	private static void displaySelectInstruction(CommandType type, String items) {
-		// print out the possible result
-		displayLine(items);
-		if(type== CommandType.DELETE){
-			display(MENU_SELECT_DELETE_OPTION);
-		}else if(type ==CommandType.UPDATE){
-			display(MENU_SELECT_UPDATE_OPTION);
-		}else if(type ==CommandType.SEARCH){
-			display(MENU_SELECT_SEARCH_OPTION);
-		}else if(type == CommandType.DONE){
-			display(MENU_SELECT_MARK_OPTION);
-		}
-	}
-
-	private static int retrieveInputOption() {
-		int option = 0;
-		try{
-			option = _sc.nextInt();
-		}
-		catch(Exception e){
-			return -2;
-		};
-		return option;
-	}
-	
 	
 
 	public static Task updateTask(Task t) {
@@ -102,6 +77,30 @@ public class MenuWorker {
 		
 	}
 
+	private static void displaySelectInstruction(CommandType type, String items) {
+		// print out the possible result
+		displayLine(items);
+		if(type== CommandType.DELETE){
+			display(MENU_SELECT_DELETE_OPTION);
+		}else if(type ==CommandType.UPDATE){
+			display(MENU_SELECT_UPDATE_OPTION);
+		}else if(type ==CommandType.SEARCH){
+			display(MENU_SELECT_SEARCH_OPTION);
+		}else if(type == CommandType.DONE){
+			display(MENU_SELECT_MARK_OPTION);
+		}
+	}
+	private static int retrieveInputOption() {
+		int option = 0;
+		try{
+			option = _sc.nextInt();
+		}
+		catch(Exception e){
+			return -2;
+		};
+		return option;
+	}
+	
 	private static String updateTaskEndTime(Task t) {
 		display(String.format("end Time ( %s ):",((DeadlineTask) t).getTime()));
 		String endTime = getUpdatedInfo(_sc, ((DeadlineTask) t).getTime());

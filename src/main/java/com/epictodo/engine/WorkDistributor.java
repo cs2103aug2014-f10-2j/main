@@ -18,7 +18,8 @@ public class WorkDistributor {
 			"modify" };
 	private final static String[] COMMAND_DELETE = { "delete", "remove" };
 	private final static String[] COMMAND_SEARCH = { "search", "find" };
-	private final static String[] COMMAND_DISPLAY = { "display" };
+	private final static String[] COMMAND_DISPLAY = { "display","upcoming" };
+	private final static String[] COMMAND_DISPLAYALL = { "all","displayall","showall" };
 	private final static String[] COMMAND_UNDO = { "undo","revert" };
 	private final static String[] COMMAND_REDO = { "redo" };
 	private final static String[] COMMAND_DONE = {"done", "mark"};
@@ -26,7 +27,7 @@ public class WorkDistributor {
 	private static final String MSG_INVALID_INPUT = "invalid input";
 
 	enum CommandType {
-		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
+		DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
 	};
 	
 	/**
@@ -52,7 +53,7 @@ public class WorkDistributor {
 	 * @param input    User input
 	 * @return     Operation result Message.
 	 */
-	public static String proceedInstruc(String input) {
+	public static String processCommand(String input) {
 		String result = "";
 		ArrayList<Task> list = null;
 		Task t = null;
@@ -65,7 +66,8 @@ public class WorkDistributor {
 		switch (command) {
 			case DISPLAY :
 				return _logic.displayIncompleteTaskList();
-	
+			case DISPLAYALL:
+				return _logic.displayAllTaskList();
 			case ADD :
 				t = CommandWorker.createTask(input);
 				result = _logic.createTask(t);
@@ -191,6 +193,8 @@ public class WorkDistributor {
 			return CommandType.SEARCH;
 		} else if (matchCommand(command, COMMAND_DISPLAY)) {
 			return CommandType.DISPLAY;
+		}else if (matchCommand(command,COMMAND_DISPLAYALL)){
+			return CommandType.DISPLAYALL;
 		} else if (matchCommand(command, COMMAND_EXIT)) {
 			return CommandType.EXIT;
 		} else if (matchCommand(command, COMMAND_UNDO)) {

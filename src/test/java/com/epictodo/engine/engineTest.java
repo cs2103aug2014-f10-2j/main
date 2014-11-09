@@ -18,7 +18,7 @@ public class engineTest {
 	
 	@Test
 	public void addTest() {
-		String result = WorkDistributor.proceedInstruc("add meeting @ 121214 10:00 2");
+		String result = WorkDistributor.processCommand("add meeting @ 121214 10:00 2");
 		assertEquals(result,"task added");
 		
 	}

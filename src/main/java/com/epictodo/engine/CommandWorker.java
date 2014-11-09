@@ -7,7 +7,6 @@ import com.epictodo.model.Task;
 import com.epictodo.util.TaskBuilder;
 
 import java.text.ParseException;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class CommandWorker {

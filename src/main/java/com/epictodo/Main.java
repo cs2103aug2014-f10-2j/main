@@ -21,7 +21,7 @@ public class Main {
 		while(true){
 			Display("\nEnter your command:");
 			String instruc = sc.nextLine();
-			Display(WorkDistributor.proceedInstruc(instruc));
+			Display(WorkDistributor.processCommand(instruc));
 		}
 	}
 	
