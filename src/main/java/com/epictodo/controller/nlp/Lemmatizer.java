@@ -37,9 +37,9 @@ import java.util.List;
 
 public class Lemmatizer {
     protected StanfordCoreNLP _pipeline;
-    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
     public Lemmatizer() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
         this._pipeline = load_engine._pipeline;
     }
 

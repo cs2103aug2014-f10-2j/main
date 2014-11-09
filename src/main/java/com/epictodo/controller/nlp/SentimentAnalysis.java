@@ -39,9 +39,9 @@ import java.util.List;
 
 public class SentimentAnalysis {
     protected StanfordCoreNLP _pipeline;
-    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
 
     public SentimentAnalysis() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
         this._pipeline = load_engine._pipeline;
     }
 

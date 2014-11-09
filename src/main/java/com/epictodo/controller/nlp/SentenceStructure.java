@@ -42,7 +42,6 @@ import java.util.logging.Logger;
 
 public class SentenceStructure {
     protected StanfordCoreNLP _pipeline;
-    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private static Logger _logger = Logger.getLogger("--- SentenceStructure Log ---");
     private TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
     private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
@@ -50,6 +49,7 @@ public class SentenceStructure {
     private TypedDependency type_dependency;
 
     public SentenceStructure() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
         this._pipeline = load_engine._pipeline;
     }
 
