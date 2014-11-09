@@ -1,11 +1,6 @@
 package com.epictodo.util;
 
-import com.epictodo.model.DeadlineTask;
-import com.epictodo.model.FloatingTask;
-import com.epictodo.model.InvalidDateException;
-import com.epictodo.model.InvalidTimeException;
-import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
+import com.epictodo.model.*;
 
 /*
     "start_date_time": 1412907000,
@@ -18,26 +13,26 @@ import com.epictodo.model.TimedTask;
  */
 
 public class TaskBuilder {
-	
-	
-	public static Task buildTask(String taskName, String taskDescription, int priority,
-			String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException{
-		
-		Task tt;
-			tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
-		return tt;
-	}
-	
-	public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException{
-		Task dt;
-			dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
-		return dt;
-	}
-	
-	public static Task buildTask(String taskName, String taskDescription, int priority){
-		Task ft;
-			ft = new FloatingTask(taskName, taskDescription, priority);
-		return ft;
-	}
-	
+
+
+    public static Task buildTask(String taskName, String taskDescription, int priority,
+                                 String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException {
+
+        Task tt;
+        tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
+        return tt;
+    }
+
+    public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException {
+        Task dt;
+        dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
+        return dt;
+    }
+
+    public static Task buildTask(String taskName, String taskDescription, int priority) {
+        Task ft;
+        ft = new FloatingTask(taskName, taskDescription, priority);
+        return ft;
+    }
+
 }

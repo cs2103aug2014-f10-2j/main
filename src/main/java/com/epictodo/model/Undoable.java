@@ -3,7 +3,7 @@
 package com.epictodo.model;
 
 public interface Undoable {
-	public String undo();
+    public String undo();
 
-	public String redo();
+    public String redo();
 }

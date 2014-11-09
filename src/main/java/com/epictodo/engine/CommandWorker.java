@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 
 public class CommandWorker {
     private static final String LOG_INVALID_DATE = "invalid date";
-	private static final String LOG_INVALID_TIME = "invalid time";
-	private static final String LOG_DEADLINETASK = "DeadLine task is created!";
-	private static final String LOG_TIMEDTASK = "Timed task is created!";
-	private static final String LOG_FLOATINGTASK = "floating task is created!";
-	private static final String LOG_INVALID = "invalid command!";
-	private static final int CAPACITY = 100;
+    private static final String LOG_INVALID_TIME = "invalid time";
+    private static final String LOG_DEADLINETASK = "DeadLine task is created!";
+    private static final String LOG_TIMEDTASK = "Timed task is created!";
+    private static final String LOG_FLOATINGTASK = "floating task is created!";
+    private static final String LOG_INVALID = "invalid command!";
+    private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
     private static Response _response = new Response();
     private static Search _search = new Search();
@@ -37,8 +37,6 @@ public class CommandWorker {
         StringBuilder taskd_builder = new StringBuilder(CAPACITY);
 
         // NLP can replace the work below
-
-        
         String taskName = getTaskNameViaNlp(taskn_builder);
         String taskDesc = getTaskDescViaNlp(taskd_builder);
         String taskDate = _response.getTaskDate();
@@ -46,33 +44,33 @@ public class CommandWorker {
         int taskPriority = _response.getPriority();
         double taskDuration = _response.getTaskDuration();
 
-        try{
-        if (taskName.equals("")) {
-            _logger.info(LOG_INVALID);
-        }else if (taskDate == null) {
-        	// Floating Task
-        //    _logger.info(LOG_FLOATINGTASK);
-            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
-        }else if (taskDuration > 0) {
-            // Timed Task
-        //    _logger.info(LOG_TIMEDTASK);
-            newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime, taskDuration);
-        }else if (taskDate!=null){
-        	// Deadline Task
-        //	_logger.info(LOG_DEADLINETASK);
-        	newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
+        try {
+            if (taskName.equals("")) {
+                _logger.info(LOG_INVALID);
+            } else if (taskDate == null) {
+                // Floating Task
+                //    _logger.info(LOG_FLOATINGTASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
+            } else if (taskDuration > 0) {
+                // Timed Task
+                //    _logger.info(LOG_TIMEDTASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime, taskDuration);
+            } else if (taskDate != null) {
+                // Deadline Task
+                //	_logger.info(LOG_DEADLINETASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
+            }
+        } catch (InvalidTimeException ite) {
+            _logger.info(LOG_INVALID_TIME);
+        } catch (InvalidDateException ide) {
+            _logger.info(LOG_INVALID_DATE);
         }
-        }catch(InvalidTimeException ite){
-        	_logger.info(LOG_INVALID_TIME);
-        }catch(InvalidDateException ide){
-        	_logger.info(LOG_INVALID_DATE);
-        }
-        	return newTask;
 
+        return newTask;
     }
 
-	public static String getDateViaNlp(String keyword) {
-		String ddmmyy ="";
+    public static String getDateViaNlp(String keyword) {
+        String ddmmyy;
 
         try {
             _search = _nlp_engine.flexiSearch(keyword);
@@ -82,22 +80,22 @@ public class CommandWorker {
 
         ddmmyy = _search.getSearchDate();
 
-		return ddmmyy;
-	}
-    
-	public static KeywordType getKeywordType(Task t, String date) {
-		if(t != null){
-			return KeywordType.OPTION;
-		}
-		if(date !=null){
-			return KeywordType.TIME;
-		}else{
-		return KeywordType.WORD;
-		}
-	}
-	
-	private static String getTaskNameViaNlp(StringBuilder taskn_builder){
-		boolean is_first = true;
+        return ddmmyy;
+    }
+
+    public static KeywordType getKeywordType(Task t, String date) {
+        if (t != null) {
+            return KeywordType.OPTION;
+        }
+        if (date != null) {
+            return KeywordType.TIME;
+        } else {
+            return KeywordType.WORD;
+        }
+    }
+
+    private static String getTaskNameViaNlp(StringBuilder taskn_builder) {
+        boolean is_first = true;
         for (String task_name : _response.getTaskName()) {
             if (is_first) {
                 is_first = false;
@@ -107,10 +105,11 @@ public class CommandWorker {
 
             taskn_builder.append(task_name);
         }
-		return taskn_builder.toString();
-	}
-	private static String getTaskDescViaNlp(StringBuilder taskd_builder){
-		boolean is_first = true;
+        return taskn_builder.toString();
+    }
+
+    private static String getTaskDescViaNlp(StringBuilder taskd_builder) {
+        boolean is_first = true;
 
         for (String task_desc : _response.getTaskDesc()) {
             if (is_first) {
@@ -121,10 +120,6 @@ public class CommandWorker {
 
             taskd_builder.append(task_desc);
         }
-		return taskd_builder.toString();
-	}
-
-
-
-
+        return taskd_builder.toString();
+    }
 }
