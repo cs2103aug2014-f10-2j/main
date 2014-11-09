@@ -34,9 +34,7 @@ import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by kennetham on 24/10/14.
- */
+//@author A0111683L
 public class TimedTaskTest {
     private Task _task;
     private TimedTask timed_task;

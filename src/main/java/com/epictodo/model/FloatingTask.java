@@ -2,6 +2,7 @@ package com.epictodo.model;
 
 import java.text.ParseException;
 
+//@author A0111683L
 public class FloatingTask extends Task {
 	/************** Data members **********************/
 

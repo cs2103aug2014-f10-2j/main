@@ -31,9 +31,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by kennetham on 24/10/14.
- */
+//@author A0111683L
 public class TaskTest {
     private Task _task;
 
