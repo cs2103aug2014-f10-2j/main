@@ -271,7 +271,7 @@ public class CRUDLogic {
 	 */
 	public Task translateWorkingListId(String keyword) {
 		try {
-			int index  = Integer.valueOf(keyword);
+			int index = Integer.valueOf(keyword.trim());
 			return _workingList.get(index - 1);
 		} catch (Exception ex) {
 			return null;
@@ -350,7 +350,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String searchForTasks(String keyword) {
-			return displayList(getTasksByName(keyword));
+		return displayList(getTasksByName(keyword));
 	}
 
 	public String markAsDone(Task t) {
