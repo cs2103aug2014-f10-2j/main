@@ -1,18 +1,17 @@
+//@author A0112918H
 package com.epictodo.engine;
 
-import java.awt.DisplayMode;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
-
 import com.epictodo.logic.CRUDLogic;
 import com.epictodo.model.InvalidDateException;
 import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
 
-// user input = { command + instruction }
 public class WorkDistributor {
-	static CRUDLogic logic = new CRUDLogic();
+	private static CRUDLogic _logic = new CRUDLogic();
+	
+	// 
 	private final static String[] COMMAND_EXIT = { "exit", "quit" };
 	private final static String[] COMMAND_ADD = { "add", "create" };
 	private final static String[] COMMAND_UPDATE = { "update", "change",
@@ -30,135 +29,190 @@ public class WorkDistributor {
 		DISPLAY, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
 	};
 	
+	/**
+	 * Return true if the storage is detected and loaded
+	 * If error or files not found, false is returned.
+	 *
+	 * @param zone Zone of position.
+	 * @return     Lateral location.
+	 * @throws IllegalArgumentException  If zone is <= 0.
+	 */
 	public static boolean loadData() {
 		try {
-			return logic.loadFromFile();
+			return _logic.loadFromFile();
 		} catch (Exception ex) {
 			return false;
 		}
 	}
 	
-	public static String proceedInstruc(String instruc) {
+	/**
+	 * Return message after every command is operated
+	 * If command is not operated successfully, "invalid input" is returned.
+	 *
+	 * @param input    User input
+	 * @return     Operation result Message.
+	 */
+	public static String proceedInstruc(String input) {
 		String result = "";
 		ArrayList<Task> list = null;
 		Task t = null;
 		// Clear expired timed tasks
-		logic.clearExpiredTask();
+		_logic.clearExpiredTask();
 
-		CommandType command = defineCommandType(instruc);
-		instruc = removeCommand(instruc);
+		CommandType command = defineCommandType(input);
+		input = getInstruction(input);
 
 		switch (command) {
-		case DISPLAY:
-			return logic.displayIncompleteTaskList();
-
-		case ADD:
-			t = CommandWorker.createTask(instruc);
-			result = logic.createTask(t);
-			return result;
-
-		case DELETE:
-		case DONE:
-		case UPDATE:
-		case SEARCH:
-			list = searchThroughKeywords(instruc);
-			if (list == null){
-				return "Cannnot find '"+instruc+"'";
-			}
-			result = selectItemProcess(list, command);
-			return result;
-		case EXIT:
-			System.exit(0);
-			break;
-		case UNDO:
-			result = logic.undoMostRecent();
-			return result;
-		case INVALID:
-			// todo: defined all invalid cases
-			return MSG_INVALID_INPUT;
-		default:
-			break;
+			case DISPLAY :
+				return _logic.displayIncompleteTaskList();
+	
+			case ADD :
+				t = CommandWorker.createTask(input);
+				result = _logic.createTask(t);
+				return result;
+	
+			case DELETE :
+			case DONE :
+			case UPDATE :
+			case SEARCH :
+				list = searchThroughKeywords(input);
+				if (list == null){
+					return "Cannnot find '"+input+"'";
+				}
+				result = selectItemProcess(list, command);
+				return result;
+			case EXIT :
+				System.exit(0);
+				break;
+			case UNDO :
+				result = _logic.undoMostRecent();
+				return result;
+			case INVALID :
+				// todo: defined all invalid cases
+				return MSG_INVALID_INPUT;
+			default:
+				break;
 		}
 
 		// todo handle invalid input here
 		return null;
 	}
 	
-	private static String selectItemProcess(ArrayList<Task> list, CommandType command) {
+	/**
+	 * Calls MenuWorker to prompt for user input
+	 * Return operation result message
+	 *
+	 * @param list    list of possible option from the search result
+	 * @param commandType    Defined user command type
+	 * @return    result message.
+	 */
+	private static String selectItemProcess(ArrayList<Task> list, CommandType commandType) {
 		String result =null;
-		Task t=null;
+		Task tempTask=null;
 		try{
-			t = MenuWorker.selectItemFromList(command, list,
-					logic.displayList(list));
+			tempTask = MenuWorker.selectItemFromList(commandType, list,
+					_logic.displayList(list));
 		}catch(IndexOutOfBoundsException iobe){
 			return MSG_INVALID_INPUT;
 		}
-		result = processCommand(command, result, t);
+		result = processCommand(commandType, tempTask);
 		return result;
 	}
 
-	private static String processCommand(CommandType command, String result,
-			Task t) {
+	/**
+	 * Calls CRUDLogic class to process the task
+	 * Return proper result message given from CRUDLogic
+	 * @param command    System defined command type
+	 * @param task    Y coordinate of position.
+	 * @return      Operation result message
+	 */
+	private static String processCommand(CommandType command, Task task) {
+		String result= "";
 		switch(command){
-		case DELETE:
-			result = logic.deleteTask(t);
-			break;
-		case DONE:
-			result = logic.markAsDone(t);
-			break;
-		case UPDATE:
-			Task updatedTask = MenuWorker.updateTask(t);
-			result = logic.updateTask(t, updatedTask);
-			break;
-		case SEARCH:
-			result = t.getDetail();
-			break;
-		default:
-			break;
+			case DELETE :
+				result = _logic.deleteTask(task);
+				break;
+			case DONE :
+				result = _logic.markAsDone(task);
+				break;
+			case UPDATE :
+				Task updatedTask = MenuWorker.updateTask(task);
+				if (updatedTask !=null){
+				result = _logic.updateTask(task, updatedTask);
+				}
+				break;
+			case SEARCH :
+				result = task.getDetail();
+				break;
+			default :
+				break;
 		}
 		return result;
 	}
 
-	private static ArrayList<Task> searchThroughKeywords(String instruc) {
+	/**
+	 * Calls CRUDLogic search by using the keywords
+	 * Return a list of tasks from the searches
+	 *
+	 * @param keyword the key words from user input
+	 * @return list of possible tasks base on the search result.
+	 */
+	private static ArrayList<Task> searchThroughKeywords(String keyword) {
 			ArrayList<Task> list = new ArrayList<Task>();
 		try {
 			
-			list = logic.getTasksByName(instruc);
+			list = _logic.getTasksByName(keyword);
 		} catch (NullPointerException | ParseException
 				| InvalidDateException | InvalidTimeException e) {
 			return null;
 		}
 		return list;
 	}
-
-	private static CommandType defineCommandType(String instruc) {
-		String command = getCommand(instruc);
+	
+	/**
+	 * Return CommandType base on the command given from the input
+	 *
+	 * @param input    user input
+	 * @return     Command type
+	 */
+	private static CommandType defineCommandType(String input) {
+		//retrieve command key from the user input
+		String command = getCommand(input);
+		//match them with proper command type
 		if (compareString(command, ""))
 			return CommandType.NULL;
-		else if (identifyCommand(command, COMMAND_ADD)) {
+		else if (matchCommand(command, COMMAND_ADD)) {
 			return CommandType.ADD;
-		} else if (identifyCommand(command, COMMAND_DELETE)) {
+		} else if (matchCommand(command, COMMAND_DELETE)) {
 			return CommandType.DELETE;
-		} else if (identifyCommand(command, COMMAND_UPDATE)) {
+		} else if (matchCommand(command, COMMAND_UPDATE)) {
 			return CommandType.UPDATE;
-		} else if (identifyCommand(command, COMMAND_SEARCH)) {
+		} else if (matchCommand(command, COMMAND_SEARCH)) {
 			return CommandType.SEARCH;
-		} else if (identifyCommand(command, COMMAND_DISPLAY)) {
+		} else if (matchCommand(command, COMMAND_DISPLAY)) {
 			return CommandType.DISPLAY;
-		} else if (identifyCommand(command, COMMAND_EXIT)) {
+		} else if (matchCommand(command, COMMAND_EXIT)) {
 			return CommandType.EXIT;
-		} else if (identifyCommand(command, COMMAND_UNDO)) {
+		} else if (matchCommand(command, COMMAND_UNDO)) {
 			return CommandType.UNDO;
-		} else if (identifyCommand(command,COMMAND_REDO)){
+		} else if (matchCommand(command,COMMAND_REDO)){
 			return CommandType.REDO;
-		} else if (identifyCommand(command,COMMAND_DONE)){
+		} else if (matchCommand(command,COMMAND_DONE)){
 			return CommandType.DONE;
 		} else{
 			return CommandType.INVALID;
 		}
 	}
 
-	private static boolean identifyCommand(String command, final String[] vocabs) {
+	/**
+	 * Return true when the command matches with the vocab or its synonyms 
+	 * if it does not match with each other, false is returned
+	 *
+	 * @param command    System define command.
+	 * @param vocabs    command key and its synonyms
+	 * @return     Boolean.
+	 */
+	private static boolean matchCommand(String command, final String[] vocabs) {
 		for (int i = 0; i < vocabs.length; i++) {
 			if (compareString(command, vocabs[i])) {
 				return true;
@@ -167,19 +221,46 @@ public class WorkDistributor {
 		return false;
 	}
 
-	private static boolean compareString(String text, String text2) {
-		return (text.equalsIgnoreCase(text2));
+	/**
+	 * Return true if both strings are the same
+	 * 
+	 *
+	 * @param text1    First String to be compared.
+	 * @param text2    Second String to be compared.
+	 * @return     true/false
+	 */
+	private static boolean compareString(String text1, String text2) {
+		return (text1.equalsIgnoreCase(text2));
 	}
 
-	private static String removeCommand(String instruc) {
-		return instruc.substring(getCommand(instruc, true), instruc.length());
+	/**
+	 * Return instruction by removing command from user input
+	 *
+	 * @param input    user input
+	 * @return     instruction
+	 * @throws IllegalArgumentException  If zone is <= 0.
+	 */
+	private static String getInstruction(String input) {
+		return input.substring(getCommandLength(input), input.length());
 	}
 
-	private static int getCommand(String instruc, boolean findLength) {
+	/**
+	 * Return command length.
+	 *
+	 * @param instruc user's input.
+	 * @return     commands length.
+	 */
+	private static int getCommandLength(String instruc) {
 		String commandTypeString = instruc.trim().split("\\s+")[0];
 		return commandTypeString.length();
 	}
-
+	
+	/**
+	 * Return command type.
+	 *
+	 * @param instruc user's input.
+	 * @return     commands.
+	 */
 	private static String getCommand(String instruc) {
 		String commandTypeString = instruc.trim().split("\\s+")[0];
 		return commandTypeString;
