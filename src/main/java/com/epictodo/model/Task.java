@@ -1,16 +1,16 @@
 package com.epictodo.model;
 
 //@author A0111683L
-public class Task {
+public abstract class Task {
 
     /**
      * *********** Data members *********************
      */
-    private long uid;
-    private String taskName;
-    private String taskDescription;
-    private int priority;
-    private boolean isDone;
+    long _uid;
+    String _taskName;
+    String _taskDescription;
+    int _priority;
+    boolean _isDone;
 
     /**
      * *********** Constructors
@@ -22,7 +22,7 @@ public class Task {
         /*
 		 * New member: long uid
 		 */
-        uid = -1; // -1 indicates an newly created Task object
+        _uid = -1; // -1 indicates an newly created Task object
 
         setTaskName(taskName);
         setTaskDescription(taskDescription);
@@ -34,55 +34,55 @@ public class Task {
      * ************* Accessors **********************
      */
     public long getUid() {
-        return this.uid;
+        return this._uid;
     }
 
     /**
      * ************* Mutators ***********************
      */
     public void setUid(long uid) {
-        this.uid = uid;
+        this._uid = uid;
     }
 
     public String getTaskName() {
-        return taskName;
+        return _taskName;
     }
 
     public void setTaskName(String newTask) {
-        taskName = newTask;
+        _taskName = newTask;
     }
 
     public String getTaskDescription() {
-        return taskDescription;
+        return _taskDescription;
     }
 
     public void setTaskDescription(String newTaskDescription) {
-        taskDescription = newTaskDescription;
+        _taskDescription = newTaskDescription;
     }
 
     public int getPriority() {
-        return priority;
+        return _priority;
     }
 
     public void setPriority(int newPriority) {
         assert newPriority >= 0 && newPriority <= 10;
-        priority = newPriority;
+        _priority = newPriority;
     }
 
     public boolean getIsDone() {
-        return isDone;
+        return _isDone;
     }
 
     public void setIsDone(boolean status) {
         assert status == true || status == false;
-        isDone = status;
+        _isDone = status;
     }
 
     /**
      * ************* Class methods ***********************
      */
     public String getDetail() {
-        return "Name: " + this.taskName + '\n' + "Description: " + this.taskDescription + '\n';
+        return "Name: " + this._taskName + '\n' + "Description: " + this._taskDescription + '\n';
     }
 
     public Boolean equals(Task task2) {
@@ -119,11 +119,5 @@ public class Task {
         return getTaskName();
     }
 
-    public Task copy() {
-        Task cloned = null;
-        cloned = new Task(getTaskName(), getTaskDescription(),
-                getPriority());
-        cloned.setUid(getUid());
-        return cloned;
-    }
+    public abstract Task copy () throws InvalidDateException, InvalidTimeException;
 }

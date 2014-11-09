@@ -106,19 +106,12 @@ public class DeadlineTask extends Task {
         return super.toString() + " by " + this.getEndDateTimeAsString();
     }
 
-    public DeadlineTask copy() {
-
-        Task t = super.copy();
-        DeadlineTask cloned = null;
-        try {
-            cloned = new DeadlineTask(t, getEndDateTime());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        cloned.setUid(t.getUid());
-        return cloned;
-    }
+    public DeadlineTask copy() throws InvalidDateException, InvalidTimeException{
+		DeadlineTask cloned = null;
+		cloned = new DeadlineTask(_taskName, _taskDescription, _priority, this.getDate(), this.getTime());
+		cloned.setUid(getUid());
+		return cloned;
+	}
 
     /**
      * ************* Class methods(For local class only) ***********************

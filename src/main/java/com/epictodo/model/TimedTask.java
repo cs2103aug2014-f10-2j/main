@@ -147,17 +147,11 @@ public class TimedTask extends Task {
         }
     }
 
-    public TimedTask copy() {
-        Task t = super.copy();
-        TimedTask cloned = null;
-        try {
-            cloned = new TimedTask(t, getStartDateTime(), getEndDateTime());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        cloned.setUid(t.getUid());
-        return cloned;
+    public TimedTask copy() throws InvalidDateException, InvalidTimeException {
+    	TimedTask cloned = null;
+		cloned = new TimedTask(_taskName, _taskDescription, _priority, this.getStartDate(), this.getStartTime(), this.getDuration());
+		cloned.setUid(getUid());
+		return cloned;
     }
 
     /**

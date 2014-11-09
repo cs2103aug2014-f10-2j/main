@@ -49,11 +49,9 @@ public class FloatingTask extends Task {
     }
 
     public FloatingTask copy() {
-        Task t = super.copy();
-        FloatingTask cloned = null;
-
-        cloned = new FloatingTask(t);
-        cloned.setUid(t.getUid());
-        return cloned;
+    	FloatingTask cloned = null;
+		cloned = new FloatingTask(_taskName, _taskDescription, _priority);
+		cloned.setUid(getUid());
+		return cloned;
     }
 }
