@@ -325,6 +325,30 @@ public class CRUDLogic {
 	}
 
 	/**
+	 * This method marks all expired tasks as done
+	 */
+	public void clearExpiredTask() {
+		for (int i = 0; i < size(); i++) {
+			Task t = _items.get(i);
+
+			long dateTimeNow = System.currentTimeMillis() / 1000L;
+
+			if (t instanceof TimedTask && !t.getIsDone()
+					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
+				t.setIsDone(true);
+			} else if (t instanceof DeadlineTask && !t.getIsDone()
+					&& ((DeadlineTask) t).getEndDateTime() < dateTimeNow) {
+				t.setIsDone(true);
+			}
+		}
+		try {
+			saveToFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * This method updates a task item by replacing it with an updated one
 	 * 
 	 * @param target
@@ -545,6 +569,11 @@ public class CRUDLogic {
 		return null;
 	}
 
+	/**
+	 * This method retrieves the next UID available for newly added Task objects
+	 * 
+	 * @return the UID
+	 */
 	private long getMaxUid() {
 		long max = 0;
 		if (_items != null) {
@@ -568,36 +597,31 @@ public class CRUDLogic {
 		_undoList.add(comm);
 	}
 
+	/**
+	 * This method adds a undoable command object to the undo list without
+	 * supplying the index of object being affected
+	 * 
+	 * @param type
+	 * @param target
+	 * @param replacement
+	 */
 	private void addCommand(Command.CommandType type, Task target,
 			Task replacement) {
 		Command comm = new Command(_items, type, target, replacement);
 		_undoList.add(comm);
 	}
 
+	/**
+	 * This method adds a undoable command object to the undo list with index of
+	 * affected object supplied as param
+	 * 
+	 * @param type
+	 * @param target
+	 * @param index
+	 */
 	private void addCommand(Command.CommandType type, Task target, int index) {
 		Command comm = new Command(_items, type, target, index);
 		_undoList.add(comm);
-	}
-
-	public void clearExpiredTask() {
-		for (int i = 0; i < size(); i++) {
-			Task t = _items.get(i);
-
-			long dateTimeNow = System.currentTimeMillis() / 1000L;
-
-			if (t instanceof TimedTask && !t.getIsDone()
-					&& ((TimedTask) t).getEndDateTime() < dateTimeNow) {
-				t.setIsDone(true);
-			} else if (t instanceof DeadlineTask && !t.getIsDone()
-					&& ((DeadlineTask) t).getEndDateTime() < dateTimeNow) {
-				t.setIsDone(true);
-			}
-		}
-		try {
-			saveToFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
