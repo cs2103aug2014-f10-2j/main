@@ -53,10 +53,11 @@ public class CRUDLogic {
 	 * Constructor
 	 */
 	public CRUDLogic() {
+		_nextUid = 1;
 		_items = new ArrayList<Task>();
 		_undoList = new ArrayList<Command>();
 		_redoList = new ArrayList<Command>();
-		_nextUid = 1;
+		_workingList = new ArrayList<Task>();
 	}
 
 	/*
@@ -262,6 +263,20 @@ public class CRUDLogic {
 		updateWorkingList(resultList); // update the working list
 
 		return resultList;
+	}
+
+	/**
+	 * This method retrieves the task item in the working list based on index
+	 * 
+	 * @param index
+	 * @return the task object - <null> indicates not found
+	 */
+	public Task translateWorkingListId(int index) {
+		try {
+			return _workingList.get(index - 1);
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			return null;
+		}
 	}
 
 	/*
@@ -668,5 +683,4 @@ public class CRUDLogic {
 	private void updateWorkingList(ArrayList<Task> li) {
 		_workingList = li;
 	}
-
 }
