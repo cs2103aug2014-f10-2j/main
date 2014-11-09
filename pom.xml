@@ -43,7 +43,7 @@
                         <source>1.7</source>
                         <target>1.7</target>
                         <meminitial>512m</meminitial>
-                        <maxmem>1024m</maxmem>
+                        <maxmem>1g</maxmem>
                     </configuration>
                 </plugin>
             </plugins>
