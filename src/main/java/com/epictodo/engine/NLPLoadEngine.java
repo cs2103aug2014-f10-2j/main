@@ -41,8 +41,9 @@ public class NLPLoadEngine {
     public StanfordCoreNLP _pipeline;
     private static NLPLoadEngine instance = null;
     private static final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
-    public static final CRFClassifier<CoreLabel> CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
-    public static final LexicalizedParser LEXICAL_MODEL = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+    private static final String ENGLISHPCFG_MODEL = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
+    public static CRFClassifier<CoreLabel> CLASSIFIER = null;
+    public static LexicalizedParser LEXICAL_MODEL = null;
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
     private PrintStream _err = System.err;
 
@@ -79,6 +80,9 @@ public class NLPLoadEngine {
         _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
 
         try {
+            CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+            LEXICAL_MODEL = LexicalizedParser.loadModel(ENGLISHPCFG_MODEL);
+
             _pipeline = new StanfordCoreNLP(_properties, true);
             _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
 
