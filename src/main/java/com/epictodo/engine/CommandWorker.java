@@ -11,7 +11,11 @@ import java.text.ParseException;
 import java.util.logging.Logger;
 
 public class CommandWorker {
-    private static final String LOG_FLOATINGTASK = "floating task is created!";
+    private static final String LOG_INVALID_DATE = "invalid date";
+	private static final String LOG_INVALID_TIME = "invalid time";
+	private static final String LOG_DEADLINETASK = "DeadLine task is created!";
+	private static final String LOG_TIMEDTASK = "Timed task is created!";
+	private static final String LOG_FLOATINGTASK = "floating task is created!";
 	private static final String LOG_INVALID = "invalid command!";
 	private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
@@ -49,34 +53,41 @@ public class CommandWorker {
             _logger.info(LOG_INVALID);
         }else if (taskDate == null) {
         	// Floating Task
-            _logger.info(LOG_FLOATINGTASK);
+        //    _logger.info(LOG_FLOATINGTASK);
             newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
         }else if (taskDuration > 0) {
             // Timed Task
-            _logger.info("Timed task is created!");
+        //    _logger.info(LOG_TIMEDTASK);
             newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime, taskDuration);
         }else if (taskDate!=null){
         	// Deadline Task
-        	_logger.info("DeadLine task is created!");
+        //	_logger.info(LOG_DEADLINETASK);
         	newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
         }
         }catch(InvalidTimeException ite){
-        	_logger.info("invalid time");
+        	_logger.info(LOG_INVALID_TIME);
         }catch(InvalidDateException ide){
-        	_logger.info("invalid date");
+        	_logger.info(LOG_INVALID_DATE);
         }
         	return newTask;
 
     }
 
+	public static String getDateViaNlp(String keyword) {
+		String ddmmyy ="";
+		
+		//todo NLP please come to here
+		// possible user input will be : Today, Tomorrow, Next Monday, 121214
+		// please return null if this is not a date
+		return ddmmyy;
+	}
+    
 	public static KeywordType getKeywordType(String input) {
-		//nlp take place here
-		//define if input is a date
-		if(true){
+		if(input !=null){
 			return KeywordType.TIME;
-		}
-		// else this will be a word search
+		}else{
 		return KeywordType.WORD;
+		}
 	}
 	
 	private static String getTaskNameViaNlp(StringBuilder taskn_builder){
@@ -106,6 +117,8 @@ public class CommandWorker {
         }
 		return taskd_builder.toString();
 	}
+
+
 
 
 }

@@ -80,8 +80,8 @@ public class WorkDistributor {
 			case DONE :
 			case UPDATE :
 			case SEARCH :
-				KeywordType keywordType = CommandWorker.getKeywordType(input);
-				list =  searchThroughKeywords(keywordType, input);
+				
+				list =  searchThroughKeywords( input);
 				if (list == null){
 					return "Cannnot find '"+input+"'";
 				}
@@ -163,19 +163,16 @@ public class WorkDistributor {
 	 * @param keyword the key words from user input
 	 * @return list of possible tasks base on the search result.
 	 */
-	private static ArrayList<Task> searchThroughKeywords(KeywordType keywordType, String keyword) {
+	private static ArrayList<Task> searchThroughKeywords(String keyword) {
+		String date = CommandWorker.getDateViaNlp(keyword);
+		KeywordType keywordType = CommandWorker.getKeywordType(date);
 		ArrayList<Task> list = new ArrayList<Task>();
 		switch(keywordType){
 		case WORD :
-			try {
 				list = _logic.getTasksByName(keyword);
-				} catch (NullPointerException | ParseException
-					| InvalidDateException | InvalidTimeException e) {
-				return null;
-			}
 			break;
-		case TIME :
-			//todo gettasksbyDate();
+		case TIME :			
+				list = _logic.getTasksByDate(date);
 			break;
 		}	
 		return list;

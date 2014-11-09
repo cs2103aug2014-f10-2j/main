@@ -117,9 +117,7 @@ public class CRUDLogic {
 	 * @throws InvalidDateException
 	 * @throws ParseException
 	 */
-	public ArrayList<Task> getTasksByName(String keyword)
-			throws NullPointerException, ParseException, InvalidDateException,
-			InvalidTimeException {
+	public ArrayList<Task> getTasksByName(String keyword) {
 		ArrayList<Task> resultList = new ArrayList<Task>();
 
 		/*
@@ -351,13 +349,7 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String searchForTasks(String keyword) {
-		try {
 			return displayList(getTasksByName(keyword));
-		} catch (NullPointerException | ParseException | InvalidDateException
-				| InvalidTimeException e) {
-			e.printStackTrace();
-			return MSG_ERROR;
-		}
 	}
 
 	public String markAsDone(Task t) {
