@@ -14,10 +14,7 @@ public class Task {
 	/************** Constructors 
 	 * @throws Exception **********************/
 
-	public Task(String taskName, String taskDescription, int priority) throws Exception {
-		if ( priority < 0 || priority > 10){
-			throw new Exception();
-		}
+	public Task(String taskName, String taskDescription, int priority) {
 		/*
 		 * New member: long uid
 		 */
@@ -112,16 +109,10 @@ public class Task {
 		return getTaskName();
 	}
 
-	public Task copy() throws ParseException, InvalidDateException, InvalidTimeException{
+	public Task copy(){
 		Task cloned= null;
-		
-		try {
 			cloned = new Task(getTaskName(), getTaskDescription(),
 					getPriority());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		cloned.setUid(getUid());
 		return cloned;
 	}

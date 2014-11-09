@@ -2,6 +2,8 @@ package com.epictodo.util;
 
 import com.epictodo.model.DeadlineTask;
 import com.epictodo.model.FloatingTask;
+import com.epictodo.model.InvalidDateException;
+import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
 import com.epictodo.model.TimedTask;
 
@@ -19,37 +21,22 @@ public class TaskBuilder {
 	
 	
 	public static Task buildTask(String taskName, String taskDescription, int priority,
-			String ddmmyy, String time, double duration){
+			String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException{
 		
 		Task tt;
-		try {
 			tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return null;
-		}
 		return tt;
 	}
 	
-	public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time){
+	public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException{
 		Task dt;
-		try {
 			dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return null;
-		}
 		return dt;
 	}
 	
 	public static Task buildTask(String taskName, String taskDescription, int priority){
 		Task ft;
-		try {
 			ft = new FloatingTask(taskName, taskDescription, priority);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return null;
-		}
 		return ft;
 	}
 	

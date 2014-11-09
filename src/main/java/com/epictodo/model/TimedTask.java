@@ -12,15 +12,23 @@ public class TimedTask extends Task {
 	private long endDateTime;
 
 	/*************** Constructors
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException 
+	 * @throws ParseException 
 	 * @throws Exception **********************/
 
-	public TimedTask(String taskName, String taskDescription, int priority, String ddmmyy, String time, double duration) throws Exception {
+	public TimedTask(String taskName, String taskDescription, int priority, String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException {
 		super(taskName, taskDescription, priority);
 		// This checks whether date and time entered are of correct length
 		assert ddmmyy.length() == 6;
 		assert time.length() == 5;
 
-		setDateTime(ddmmyy, time);
+		// ignore the default parsing error since we already have invalid date and time
+		try {
+			setDateTime(ddmmyy, time);
+		} catch (ParseException e) {
+			
+		}
 		setDuration(duration);
 
 	}
@@ -128,7 +136,7 @@ public class TimedTask extends Task {
 		}
 	}
 
-	public TimedTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
+	public TimedTask copy(){
 		Task t = super.copy();
 		TimedTask cloned=null;
 		try {

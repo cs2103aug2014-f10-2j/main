@@ -7,10 +7,10 @@ public class FloatingTask extends Task {
 
 	/************** Constructors 
 	 * @throws Exception **********************/
-	public FloatingTask(String taskName, String taskDescription, int priority) throws Exception {
+	public FloatingTask(String taskName, String taskDescription, int priority) {
 		super(taskName, taskDescription, priority);
 	}
-	public FloatingTask(Task t) throws Exception {
+	public FloatingTask(Task t) {
 		super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
 	}
 
@@ -43,15 +43,11 @@ public class FloatingTask extends Task {
 		}
 	}
 	
-	public FloatingTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
+	public FloatingTask copy() {
 		Task t = super.copy();
 		FloatingTask cloned= null;
-		try {
-			cloned = new FloatingTask(t);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		cloned = new FloatingTask(t);
 		cloned.setUid(t.getUid());
 		return cloned;
 	}

@@ -9,14 +9,19 @@ public class DeadlineTask extends Task {
 	/************** Data members **********************/
 	private long endDateTime;
 
-	/************** Constructors **********************/
-	public DeadlineTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws Exception {
+	/************** Constructors 
+	 * @throws InvalidTimeException 
+	 * @throws InvalidDateException **********************/
+	public DeadlineTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException  {
 		super(taskName, taskDescription, priority);
 		// This checks whether date and time entered are of correct length
 		assert ddmmyy.length() == 6;
 		assert time.length() == 5;
-
-		setDateTime(ddmmyy, time);
+		try {
+			setDateTime(ddmmyy, time);
+		} catch (ParseException e) {
+			
+		}
 	}
 	
 	public DeadlineTask(Task t, long endDateTime) throws Exception{
@@ -89,7 +94,7 @@ public class DeadlineTask extends Task {
 		return super.toString() + " by " + this.getEndDateTimeAsString();
 	}
 
-	public DeadlineTask copy() throws ParseException, InvalidDateException, InvalidTimeException{
+	public DeadlineTask copy(){
 	
 			Task t = super.copy();
 			DeadlineTask cloned = null;
