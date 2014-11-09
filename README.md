@@ -2,13 +2,6 @@
 
 EpicTodo is a personal Task manager console-based application. EpicTodo is an application that uses state-of-the-art Natural Language Processing Technology to understand your commands in any way possible.
 
-
-  - Type some Markdown on the left
-  - See HTML in the right
-  - Magic
-
-Markdown is a lightweight markup language based on the formatting conventions that people naturally use in email.  As [John Gruber] writes on the [Markdown site] [1]:
-
 > EPICTODO has never made it so much easier to use.
 > It's simple yet powerful command-line interface
 > gives us, customers, so much flexibility to
