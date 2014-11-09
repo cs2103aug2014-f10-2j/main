@@ -1,14 +1,12 @@
 package com.epictodo;
 
 import com.epictodo.engine.NLPEngine;
-import com.epictodo.engine.NLPLoadEngine;
 import com.epictodo.engine.WorkDistributor;
 
 import java.util.Scanner;
 
 
 public class Main {
-    private static NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
     private static NLPEngine nlp_engine = NLPEngine.getInstance();
 
     // COMMAND INPUT
@@ -20,7 +18,7 @@ public class Main {
         WorkDistributor.loadData();
         bannerDisplay();
         while (true) {
-            Display("\nEnter your command:");
+            Display("\nEnter your command: ");
             String instruc = sc.nextLine();
             Display(WorkDistributor.processCommand(instruc));
         }
@@ -55,6 +53,4 @@ public class Main {
     public static void Display(String a) {
         System.out.print(a);
     }
-
-
 }
