@@ -1,10 +1,7 @@
 package com.epictodo.engine;
 
 import com.epictodo.engine.WorkDistributor.KeywordType;
-import com.epictodo.model.InvalidDateException;
-import com.epictodo.model.InvalidTimeException;
-import com.epictodo.model.Response;
-import com.epictodo.model.Task;
+import com.epictodo.model.*;
 import com.epictodo.util.TaskBuilder;
 
 import java.text.ParseException;
@@ -20,6 +17,7 @@ public class CommandWorker {
 	private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
     private static Response _response = new Response();
+    private static Search _search = new Search();
     private static Logger _logger = Logger.getLogger("System Log");
 
     /*
@@ -75,10 +73,15 @@ public class CommandWorker {
 
 	public static String getDateViaNlp(String keyword) {
 		String ddmmyy ="";
-		
-		//todo NLP please come to here
-		// possible user input will be : Today, Tomorrow, Next Monday, 121214
-		// please return null if this is not a date
+
+        try {
+            _search = _nlp_engine.flexiSearch(keyword);
+        } catch (ParseException ex) {
+            _logger.info(LOG_INVALID);
+        }
+
+        ddmmyy = _search.getSearchDate();
+
 		return ddmmyy;
 	}
     
