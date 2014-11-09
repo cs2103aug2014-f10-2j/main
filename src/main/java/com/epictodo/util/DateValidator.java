@@ -324,6 +324,8 @@ public class DateValidator {
      * @throws ParseException
      */
     public String nlpShortDate(String _date) throws ParseException {
+        assert _date.length() == 6;
+
         SimpleDateFormat date_format = new SimpleDateFormat("ddMMyy", Locale.ENGLISH);
         String _result;
         _calendar.setTime(date_format.parse(_date));
