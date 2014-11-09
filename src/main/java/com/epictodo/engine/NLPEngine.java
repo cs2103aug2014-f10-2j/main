@@ -55,6 +55,7 @@ public class NLPEngine {
     private Search _search = new Search();
     private PrintStream _err = System.err;
     private int CAPACITY = 1000;
+    private final String DATE_PATTERN = "(\\d+)";
 
     public NLPEngine() {
         _pipeline = load_engine._pipeline;
@@ -588,9 +589,9 @@ public class NLPEngine {
     /**
      * This method analyzes the sentence structure into SUTIME Annotation.
      * The algorithm facilitates natural language for searching by date.
-     *
+     * <p/>
      * For instance, "search today" > retrieves today task
-     *
+     * <p/>
      * Usage:
      * 1. flexiSearch("search today");
      *
@@ -599,17 +600,38 @@ public class NLPEngine {
      */
     public Search flexiSearch(String _sentence) throws ParseException {
         String date_value;
-        String parse_date = date_validator.nlpShortDate(_sentence);
+        String parse_date;
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
 
         // Initialize Date Analysis to Map
         Map<String, String> date_map = sentence_analysis.dateTimeAnalyzer(_sentence);
+        List<String> date_list = new ArrayList<>();
 
         if (_sentence.isEmpty() || _sentence.equalsIgnoreCase(null) || _sentence.equals("")) {
             _search.setSearchDate(null);
         }
 
-        if (_sentence.equalsIgnoreCase(parse_date)) {
-            _search.setSearchDate(parse_date);
+        if (_sentence.matches(DATE_PATTERN)) {
+            parse_date = date_validator.nlpShortDate(_sentence);
+            parse_date = date_validator.genericDateFormat(parse_date);
+
+            if (parse_date.length() == 5) {
+                date_list.add(0, "0");
+
+                Scanner _scanner = new Scanner(parse_date);
+                while (_scanner.hasNext()) {
+                    date_list.add(_scanner.next());
+                }
+                _scanner.close();
+
+                for (String date : date_list) {
+                    string_builder.append(date);
+                }
+
+                _search.setSearchDate(string_builder.toString());
+            } else {
+                _search.setSearchDate(parse_date);
+            }
         } else {
             /**
              * Date analyzer analyzes the sentence in order to map the analyze date values to be searched
