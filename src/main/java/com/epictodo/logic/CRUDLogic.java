@@ -78,7 +78,11 @@ public class CRUDLogic {
 		 */
         ArrayList<Task> retList = new ArrayList<Task>();
         for (int i = 0; i < _items.size(); i++) {
-            retList.add(_items.get(i).copy());
+            try {
+				retList.add(_items.get(i).copy());
+			} catch (InvalidDateException e) {
+			} catch (InvalidTimeException e) {
+			}
         }
 
         updateWorkingList(retList); // update the working list
@@ -101,7 +105,13 @@ public class CRUDLogic {
         ArrayList<Task> resultList = new ArrayList<Task>();
         for (int i = 0; i < _items.size(); i++) {
             if (!_items.get(i).getIsDone())
-                resultList.add(_items.get(i).copy());
+				try {
+					resultList.add(_items.get(i).copy());
+				} catch (InvalidDateException e) {
+
+				} catch (InvalidTimeException e) {
+
+				}
         }
 
         updateWorkingList(resultList); // update the working list
@@ -131,7 +141,11 @@ public class CRUDLogic {
             if (_items.get(i).getTaskName().toLowerCase()
                     .contains(keyword.trim().toLowerCase())
                     && !_items.get(i).getIsDone()) {
-                resultList.add(_items.get(i).copy());
+                try {
+					resultList.add(_items.get(i).copy());
+				} catch (InvalidDateException e) {
+				} catch (InvalidTimeException e) {
+				}
             }
         }
 
