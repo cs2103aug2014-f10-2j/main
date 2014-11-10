@@ -31,6 +31,7 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.time.TimeAnnotator;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
@@ -96,7 +97,20 @@ public class NLPLoadEngine {
                 bar.append(" ");
             }
         }
-
+        try {
+        	 final String os = System.getProperty("os.name");
+        	 if (os.contains("Windows"))
+             {
+                 Runtime.getRuntime().exec("cls");
+             }
+             else
+             {
+                 Runtime.getRuntime().exec("clear");
+             }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         bar.append("]   Loading... " + _percent + "%     ");
         System.out.print("\r" + bar.toString());
     }
