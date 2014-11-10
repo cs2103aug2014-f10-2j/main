@@ -59,7 +59,9 @@ public class MenuWorker {
             } else if (t instanceof FloatingTask) {
                 updatedTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
             }
-            updatedTask.setUid(t.getUid());
+            if(t !=null) {
+            	updatedTask.setUid(t.getUid());
+            }
         } catch (InvalidDateException ide) {
             displayLine("invalid Date");
         } catch (InvalidTimeException ite) {

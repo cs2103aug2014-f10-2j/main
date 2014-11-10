@@ -61,7 +61,7 @@ public class DeadlineTask extends Task {
         // Index 9 is the colon
         String timeHour = dateTime.substring(7, 9);
         String timeMinute = dateTime.substring(10);
-        return timeHour + timeMinute;
+        return timeHour +":"+ timeMinute;
     }
 
     /**
