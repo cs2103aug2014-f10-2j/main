@@ -80,11 +80,11 @@ public class Storage {
 
     /**
      * This method loads the Json file to ArrayList<Task> of memory objects
+     * Construct them into MAP <TaskType, List<Task>>
      *
-     * @param file_name
+     * @param list
      * @return _result
      */
-
     private static Map<TaskType, List<Task>> makeMap(ArrayList<Task> list) {
         ArrayList<Task> timed_list = new ArrayList<>();
         ArrayList<Task> deadline_list = new ArrayList<>();
@@ -110,25 +110,38 @@ public class Storage {
         return _map;
     }
     
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     * Construct them into MAP <TaskType, List<Task>>
+     *
+     * @param list
+     * @return _result
+     */
     public static ArrayList<Task> loadDbFile(String file_name) {
-        assert file_name.equalsIgnoreCase(file_name);
-        _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
         File f = new File(file_name);
         Gson _gson = instantiateObject();
         ArrayList<Task> _result = makeArrayList(f, _gson);
 
         return _result;
     }
-
-    private static ArrayList<Task> makeArrayList(File f, Gson _gson) {
+    
+    /**
+     * This method make use of makeTask to retrieve all of tasks from the storage file
+     * Returns an arraylist of Task from the storage
+     *
+     * @param file
+     * @param _gson
+     * @return _result
+     */
+    private static ArrayList<Task> makeArrayList(File file, Gson _gson) {
         ArrayList<Task> _result = new ArrayList<>();
 
         try {
-            Map<TaskType, List<Task>> timed_result = makeTimedTaskList(f, _gson);
-            Map<TaskType, List<Task>> deadline_result = makeDeadlineTaskList(f,
+            Map<TaskType, List<Task>> timed_result = makeTimedTaskList(file, _gson);
+            Map<TaskType, List<Task>> deadline_result = makeDeadlineTaskList(file,
                     _gson);
             Map<TaskType, List<Task>> floatingt_result = makeFloatingTaskList(
-                    f, _gson);
+                    file, _gson);
 
             _result.addAll(timed_result.get(TaskType.TIMED));
             _result.addAll(deadline_result.get(TaskType.DEADLINE));
@@ -140,16 +153,32 @@ public class Storage {
             return null;
         }
     }
-
-    private static Map<TaskType, List<Task>> makeFloatingTaskList(File f, Gson _gson) throws FileNotFoundException {
+    
+    /**
+     * This method reads the storage file and 
+     * convert all of them into a Map consist of floating task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of floating task
+     */
+    private static Map<TaskType, List<Task>> makeFloatingTaskList(File file, Gson _gson) throws FileNotFoundException {
         FileReader _reader;
-        _reader = new FileReader(f);
+        _reader = new FileReader(file);
         TypeToken<Map<TaskType, List<FloatingTask>>> f_token = new TypeToken<Map<TaskType, List<FloatingTask>>>() {
         };
         Map<TaskType, List<Task>> floatingt_result = _gson.fromJson(_reader, f_token.getType());
         return floatingt_result;
     }
 
+    /**
+     * This method reads the storage file and 
+     * convert all of them into a Map consist of deadline task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of deadline task
+     */
     private static Map<TaskType, List<Task>> makeDeadlineTaskList(File f, Gson _gson) throws FileNotFoundException {
         FileReader _reader;
         _reader = new FileReader(f);
@@ -159,8 +188,16 @@ public class Storage {
         return deadline_result;
     }
 
-    private static Map<TaskType, List<Task>> makeTimedTaskList(File f, Gson _gson) throws FileNotFoundException {
-        FileReader _reader = new FileReader(f);
+    /**
+     * This method reads the storage file and 
+     * convert all of them into a Map consist of timed task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of timed task
+     */
+    private static Map<TaskType, List<Task>> makeTimedTaskList(File file, Gson _gson) throws FileNotFoundException {
+        FileReader _reader = new FileReader(file);
         TypeToken<Map<TaskType, List<TimedTask>>> t_token = new TypeToken<Map<TaskType, List<TimedTask>>>() {
         };
         Map<TaskType, List<Task>> timed_result = _gson.fromJson(_reader, t_token.getType());
