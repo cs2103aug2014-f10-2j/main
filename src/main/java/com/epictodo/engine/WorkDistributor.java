@@ -117,7 +117,7 @@ public class WorkDistributor {
         Task tempTask = null;
         try {
             tempTask = MenuWorker.selectItemFromList(commandType, list,
-                    _logic.displayList(list));
+                    _logic.convertListToString(list));
         } catch (IndexOutOfBoundsException iobe) {
             return MSG_INVALID_INPUT;
         }
