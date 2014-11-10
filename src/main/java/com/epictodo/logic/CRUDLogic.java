@@ -33,6 +33,8 @@ public class CRUDLogic {
 	private static final String MSG_ILLEGAL_PRIORITY = "illegal priority";
 	private static final String MSG_KEYWORD_MUST_NOT_BE_NULL = "keyword must not be <null>";
 	private static final String MSG_EMPTY_LIST = "empty list";
+	private static final String MSG_THERES_NO_INCOMPLETE_TASK = "there's no incomplete task";
+	private static final String MSG_THERES_NO_TASKS = "there's no tasks";
 
 	/*
 	 * Constants
@@ -531,7 +533,12 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayAllTaskList() {
-		return convertListToString(getAllTasks());
+		String result = convertListToString(getAllTasks());
+		if (result.equals(MSG_EMPTY_LIST)) {
+			return MSG_THERES_NO_TASKS;
+		} else {
+			return result;
+		}
 	}
 
 	/**
@@ -541,7 +548,12 @@ public class CRUDLogic {
 	 * @return
 	 */
 	public String displayIncompleteTaskList() {
-		return convertListToString(getIncompleteTasks());
+		String result = convertListToString(getIncompleteTasks());
+		if (result.equals(MSG_EMPTY_LIST)) {
+			return MSG_THERES_NO_INCOMPLETE_TASK;
+		} else {
+			return result;
+		}
 	}
 
 	/**
