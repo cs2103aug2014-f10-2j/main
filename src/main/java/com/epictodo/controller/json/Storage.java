@@ -24,25 +24,7 @@ public class Storage {
     public enum TaskType {
         FLOATING, DEADLINE, TIMED
     };
-
-    /**
-     * This method instantiates a GSON Object.
-     * Method will read JSON Object from memory and translates to JSON.
-     *
-     * @return _gson
-     */
-    private static Gson instantiateObject() {
-        GsonBuilder gson_builder = new GsonBuilder();
-        gson_builder.setPrettyPrinting()
-                .serializeNulls()
-                .disableHtmlEscaping()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
-
-        Gson _gson = gson_builder.create();
-
-        return _gson;
-    }
-
+    
     /**
      * This method saves ArrayList<Task> from memory object to Json file.
      *
@@ -111,19 +93,23 @@ public class Storage {
     }
     
     /**
-     * This method loads the Json file to ArrayList<Task> of memory objects
-     * Construct them into MAP <TaskType, List<Task>>
+     * This method instantiates a GSON Object.
+     * Method will read JSON Object from memory and translates to JSON.
      *
-     * @param list
-     * @return _result
+     * @return _gson
      */
-    public static ArrayList<Task> loadDbFile(String file_name) {
-        File f = new File(file_name);
-        Gson _gson = instantiateObject();
-        ArrayList<Task> _result = makeArrayList(f, _gson);
+    private static Gson instantiateObject() {
+        GsonBuilder gson_builder = new GsonBuilder();
+        gson_builder.setPrettyPrinting()
+                .serializeNulls()
+                .disableHtmlEscaping()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
-        return _result;
+        Gson _gson = gson_builder.create();
+
+        return _gson;
     }
+
     
     /**
      * This method make use of makeTask to retrieve all of tasks from the storage file

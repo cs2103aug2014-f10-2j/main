@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package com.epictodo.engine;
+package com.epictodo.controller.nlp;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;

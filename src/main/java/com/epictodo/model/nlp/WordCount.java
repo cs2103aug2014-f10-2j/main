@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package com.epictodo.controller.nlp;
+package com.epictodo.model.nlp;
 
 import java.util.HashMap;
 

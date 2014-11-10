@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.epictodo.logic.CRUDLogic;
+import com.epictodo.controller.logic.CRUDLogic;
+import com.epictodo.controller.worker.CommandWorker;
+import com.epictodo.controller.worker.WorkDistributor;
 import com.epictodo.model.task.Task;
 
 public class engineTest {

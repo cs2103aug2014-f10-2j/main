@@ -24,6 +24,7 @@
 
 package com.epictodo.logic;
 
+import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.task.Task;

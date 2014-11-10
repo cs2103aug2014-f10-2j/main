@@ -1,6 +1,6 @@
 // @author A0112725N
 
-package com.epictodo.logic;
+package com.epictodo.controller.logic;
 
 import com.epictodo.controller.json.Storage;
 import com.epictodo.model.*;

@@ -25,6 +25,7 @@
 
 package com.epictodo.engine;
 
+import com.epictodo.controller.nlp.NLPEngine;
 import com.epictodo.model.nlp.Response;
 
 import org.junit.Assert;

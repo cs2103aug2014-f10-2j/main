@@ -23,11 +23,8 @@
  * SOFTWARE.
  */
 
-package com.epictodo.engine;
+package com.epictodo.controller.nlp;
 
-import com.epictodo.controller.nlp.GrammaticalParser;
-import com.epictodo.controller.nlp.SentenceAnalysis;
-import com.epictodo.controller.nlp.SentenceStructure;
 import com.epictodo.model.nlp.Delta;
 import com.epictodo.model.nlp.Response;
 import com.epictodo.model.nlp.Search;

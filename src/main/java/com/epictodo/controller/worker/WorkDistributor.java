@@ -1,7 +1,7 @@
 //@author A0112918H
-package com.epictodo.engine;
+package com.epictodo.controller.worker;
 
-import com.epictodo.logic.CRUDLogic;
+import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.task.Task;
 
 import java.util.ArrayList;

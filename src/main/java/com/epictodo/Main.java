@@ -1,8 +1,8 @@
 //@author A0112918H
 package com.epictodo;
 
-import com.epictodo.engine.NLPEngine;
-import com.epictodo.engine.WorkDistributor;
+import com.epictodo.controller.nlp.NLPEngine;
+import com.epictodo.controller.worker.WorkDistributor;
 
 import java.util.Scanner;
 
