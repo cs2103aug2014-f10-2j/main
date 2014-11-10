@@ -1,4 +1,6 @@
+//@author A0111875E - unused
 /*
+
  * The MIT License (MIT)
  *
  * Copyright (c) 2014 Kenneth Ham

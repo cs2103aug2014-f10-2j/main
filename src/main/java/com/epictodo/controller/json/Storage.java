@@ -1,3 +1,4 @@
+//@author A0112918H
 package com.epictodo.controller.json;
 
 import com.epictodo.model.DeadlineTask;
@@ -20,8 +21,6 @@ import java.util.logging.Logger;
 
 public class Storage {
     private static Logger _logger = Logger.getLogger("--- Storage Parser Log ---");
-    private static final String file_name = "storage.txt";
-
     public enum TaskType {
         FLOATING, DEADLINE, TIMED
     };
