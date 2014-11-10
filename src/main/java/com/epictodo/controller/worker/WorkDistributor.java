@@ -95,6 +95,9 @@ public class WorkDistributor {
             case REDO:
             	result = _logic.redoMostRecent();
             	return result;
+            case HELP:
+            	result = MSG_HELP;
+            	return result;
             case INVALID:
                 // todo: defined all invalid cases
                 return MSG_INVALID_INPUT;
@@ -153,8 +156,7 @@ public class WorkDistributor {
             case SEARCH:
                 result = _logic.searchDetail(task);
                 break;
-            case HELP:
-            	result = MSG_HELP;
+
             default:
                 break;
         }
