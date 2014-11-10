@@ -25,7 +25,10 @@
 
 package com.epictodo.controller.nlp;
 
+import static org.junit.Assert.*;
+
 import com.epictodo.model.nlp.Response;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,7 +57,7 @@ public class NLPEngineTest {
         expected.setTaskTime("23:59");
         Response results = nlp_engine.flexiAdd(sentence);
 
-        Assert.assertEquals(expected.getTaskTime(), results.getTaskTime());
+        assertEquals(expected.equals(results),true);
     }
 
     @Test
