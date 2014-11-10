@@ -31,7 +31,6 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.time.TimeAnnotator;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
@@ -61,23 +60,8 @@ public class NLPLoadEngine {
     public void mute() {
         System.setErr(new PrintStream(new OutputStream() {
             public void write(int b) {
-            	loadSystem();
+                progressBar();
             }
-
-			private void loadSystem() {
-				_counter++;
-            	if (_counter/LOAD_COUNT == 1){
-            		System.out.println("System loading..");
-            	}else if (_counter/LOAD_COUNT == 0.1){
-            		System.out.println("10%");
-            	}else if (_counter/LOAD_COUNT == 0.25){
-            		System.out.println("25%");
-            	}else if (_counter/LOAD_COUNT == 0.50){
-            		System.out.println("50%");
-            	}else if (_counter/3000 == 0.75){
-            		System.out.println("75%");
-            	}
-			}
         }));
     }
 
@@ -91,6 +75,26 @@ public class NLPLoadEngine {
      */
     public void restore() {
         System.setErr(_err);
+    }
+
+    /**
+     * This method displays a progress while loading NLP models
+     * [Quick fix] inject this method into PrintStream OutputStream
+     */
+    private void progressBar() {
+        _counter++;
+
+        if (_counter / LOAD_COUNT == 0) {
+            System.out.println("Initializing...");
+        } else if (_counter / LOAD_COUNT == 0.1) {
+            System.out.println("Loading...10%");
+        } else if (_counter / LOAD_COUNT == 0.25) {
+            System.out.println("Loading...25%");
+        } else if (_counter / LOAD_COUNT == 0.50) {
+            System.out.println("Loading...50%");
+        } else if (_counter / 3000 == 0.75) {
+            System.out.println("Loading...75%");
+        }
     }
 
     /**

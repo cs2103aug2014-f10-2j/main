@@ -51,6 +51,7 @@
     </build>
 
     <dependencies>
+
         <!-- Maven Compiler Plugins -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
