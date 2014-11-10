@@ -1,0 +1,11 @@
+com.epictodo
+com.epictodo.controller.json
+com.epictodo.controller.lexer
+com.epictodo.controller.logic
+com.epictodo.controller.nlp
+com.epictodo.controller.worker
+com.epictodo.model.command
+com.epictodo.model.exception
+com.epictodo.model.nlp
+com.epictodo.model.task
+com.epictodo.util
