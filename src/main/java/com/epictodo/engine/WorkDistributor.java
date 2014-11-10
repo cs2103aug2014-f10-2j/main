@@ -90,6 +90,9 @@ public class WorkDistributor {
             case UNDO:
                 result = _logic.undoMostRecent();
                 return result;
+            case REDO:
+            	result = _logic.redoMostRecent();
+            	return result;
             case INVALID:
                 // todo: defined all invalid cases
                 return MSG_INVALID_INPUT;

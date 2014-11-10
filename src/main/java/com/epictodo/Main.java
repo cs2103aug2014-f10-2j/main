@@ -14,7 +14,7 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        nlp_engine.mute();
+       // nlp_engine.mute();
 
         WorkDistributor.loadData();
         bannerDisplay();
