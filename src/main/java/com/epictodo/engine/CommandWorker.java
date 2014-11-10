@@ -102,8 +102,7 @@ public class CommandWorker {
     public static KeywordType getKeywordType(Task task, String date) {
         if (task != null) {
             return KeywordType.OPTION;
-        }
-        if (date != null) {
+        }else if (date != null) {
             return KeywordType.TIME;
         } else {
             return KeywordType.WORD;

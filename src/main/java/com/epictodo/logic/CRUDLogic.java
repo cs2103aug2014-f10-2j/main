@@ -452,7 +452,7 @@ public class CRUDLogic {
 				 * create an undoable command
 				 */
                 addCommand(Command.CommandType.DELETE, found, index);
-
+                _workingList = new ArrayList<Task>();
                 saveToFile();
                 return MSG_PREFIX_TASK + t.getTaskName()
                         + MSG_POSTFIX_IS_REMOVED;

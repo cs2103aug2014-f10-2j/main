@@ -47,8 +47,8 @@ public class Storage {
     /**
      * This method saves ArrayList<Task> from memory object to Json file.
      *
-     * @param file_name
-     * @param list
+     * @param file_name		fileName
+     * @param list			wholeList to be added
      * @return true
      */
     public static boolean saveToJson(String file_name, ArrayList<Task> list) {
@@ -79,6 +79,13 @@ public class Storage {
         return true;
     }
 
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     *
+     * @param file_name
+     * @return _result
+     */
+
     private static Map<TaskType, List<Task>> makeMap(ArrayList<Task> list) {
         ArrayList<Task> timed_list = new ArrayList<>();
         ArrayList<Task> deadline_list = new ArrayList<>();
@@ -103,14 +110,7 @@ public class Storage {
         _map.put(TaskType.FLOATING, floating_list);
         return _map;
     }
-
-    /**
-     * This method loads the Json file to ArrayList<Task> of memory objects
-     *
-     * @param file_name
-     * @return _result
-     */
-
+    
     public static ArrayList<Task> loadDbFile(String file_name) {
         assert file_name.equalsIgnoreCase(file_name);
         _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");

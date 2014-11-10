@@ -166,7 +166,7 @@ public class WorkDistributor {
         Task tempTask = _logic.translateWorkingListId(keyword);
         String date= null;
         if(keyword.length()!=1){
-        date = CommandWorker.getDateViaNlp(keyword);
+        	date = CommandWorker.getDateViaNlp(keyword);
         }
         KeywordType keywordType = CommandWorker.getKeywordType(tempTask, date);
 
