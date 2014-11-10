@@ -26,8 +26,8 @@ public class CRUDLogic {
 	private static final String MSG_CANT_REMOVE_TASK = "can't remove task";
 	private static final String MSG_POSTFIX_AS_DONE = "\" as done";
 	private static final String MSG_FAILED_TO_MARK_TASK = "failed to mark task \"";
-	public static final String MSG_NO_MORE_ACTIONS_TO_BE_REDONE = "no more actions to be redone";
-	public static final String MSG_NO_MORE_ACTIONS_TO_BE_UNDONE = "no more actions to be undone";
+	private static final String MSG_NO_MORE_ACTIONS_TO_BE_REDONE = "no more actions to be redone";
+	private static final String MSG_NO_MORE_ACTIONS_TO_BE_UNDONE = "no more actions to be undone";
 	private static final String MSG_POSTFIX_IS_REMOVED = "\" is removed";
 	private static final String MSG_POSTFIX_IS_UPDATED = "\" is updated";
 	private static final String MSG_POSTFIX_MARKED_AS_DONE = "\" is marked as done";
@@ -77,9 +77,6 @@ public class CRUDLogic {
 	 * This method returns the whole list of Tasks regardless of their status
 	 *
 	 * @return the ArrayList containing all the tasks
-	 * @throws InvalidTimeException
-	 * @throws InvalidDateException
-	 * @throws ParseException
 	 */
 	public ArrayList<Task> getAllTasks() {
 		/*
@@ -99,10 +96,6 @@ public class CRUDLogic {
 	 * This method returns the whole list of incomplete tasks
 	 *
 	 * @return the ArrayList containing all the tasks
-	 * @throws IllegalArgumentException
-	 * @throws InvalidTimeException
-	 * @throws InvalidDateException
-	 * @throws ParseException
 	 */
 	public ArrayList<Task> getIncompleteTasks() {
 		/*
@@ -124,9 +117,6 @@ public class CRUDLogic {
 	 * This method returns tasks based on whether it has been marked as done
 	 *
 	 * @return the ArrayList containing selected tasks
-	 * @throws InvalidTimeException
-	 * @throws InvalidDateException
-	 * @throws ParseException
 	 */
 	public ArrayList<Task> getTasksByName(String keyword) {
 		ArrayList<Task> resultList = new ArrayList<Task>();
@@ -151,14 +141,11 @@ public class CRUDLogic {
 		return resultList;
 	}
 
+	//@author A0112725N-unused
 	/**
 	 * This method returns tasks based on whether it has been marked as done
 	 *
 	 * @param boolean when true = Marked as done
-	 * @return the ArrayList containing selected tasks
-	 * @throws InvalidTimeException
-	 * @throws InvalidDateException
-	 * @throws ParseException
 	 */
 	public ArrayList<Task> getTasksByStatus(boolean done)
 			throws ParseException, InvalidDateException, InvalidTimeException {
@@ -180,9 +167,6 @@ public class CRUDLogic {
 	 * @param p
 	 *            the priority enum
 	 * @return the ArrayList containing the selected tasks
-	 * @throws InvalidTimeException
-	 * @throws InvalidDateException
-	 * @throws ParseException
 	 */
 	public ArrayList<Task> getTasksByPriority(int p)
 			throws IllegalArgumentException, ParseException,
@@ -206,41 +190,7 @@ public class CRUDLogic {
 		return resultList;
 	}
 
-	/**
-	 * This method returns a list of active tasks in chronological order of due
-	 * dates
-	 *
-	 * @return array list of tasks
-	 * @throws IllegalArgumentException
-	 * @throws ParseException
-	 * @throws InvalidDateException
-	 * @throws InvalidTimeException
-	 */
-	public ArrayList<Task> getTasksOrderedByDueDate() {
-		ArrayList<Task> resultList = new ArrayList<Task>();
-		ArrayList<Task> temp = new ArrayList<Task>();
-
-		for (int i = 0; i < size(); i++) {
-			if (_items.get(i) instanceof FloatingTask) {
-				// Add floating tasks to list first
-				resultList.add(_items.get(i).copy());
-			} else {
-				// Dump all other tasks into a temp list
-				temp.add(_items.get(i).copy());
-			}
-		}
-
-		// sort the temp list
-		Collections.sort(temp, new TaskDueDateComparator());
-
-		// add the ordered temp list to the final list
-		resultList.addAll(temp);
-
-		updateWorkingList(resultList); // update the working list
-
-		return resultList;
-	}
-
+	//@author A0112725N
 	/**
 	 * This method retrieves a list of tasks based on a specific due date
 	 * (starting date)
@@ -270,6 +220,20 @@ public class CRUDLogic {
 		updateWorkingList(resultList); // update the working list
 
 		return resultList;
+	}
+
+	/**
+	 * This method returns the details of a task in string
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public String searchDetail(Task task) {
+		String details = "";
+		if (task != null) {
+			details = task.getDetail();
+		}
+		return details;
 	}
 
 	/**
@@ -318,6 +282,7 @@ public class CRUDLogic {
 		return MSG_PREFIX_TASK + t.getTaskName() + MSG_POSTFIX_IS_ADDED;
 	}
 
+	//@author A0112725N-unused
 	/**
 	 * This method adds an Floating Task to the list
 	 *
@@ -362,6 +327,14 @@ public class CRUDLogic {
 		return convertListToString(getTasksByName(keyword));
 	}
 
+	//@author A0112725N
+	/**
+	 * This method set a task object as done
+	 * 
+	 * @param t
+	 *            the task
+	 * @return result as a string
+	 */
 	public String markAsDone(Task t) {
 		if (t == null)
 			return MSG_INVALID_INPUT;
@@ -444,10 +417,6 @@ public class CRUDLogic {
 		}
 	}
 
-	/*
-	 * Undo and Redo methods
-	 */
-
 	/**
 	 * This method removes a Task by UID
 	 *
@@ -479,6 +448,10 @@ public class CRUDLogic {
 			return MSG_CANT_REMOVE_TASK;
 		}
 	}
+
+	/*
+	 * Undo and Redo methods
+	 */
 
 	/**
 	 * This method invokes the undo operation on the most recent undoable action
@@ -654,6 +627,37 @@ public class CRUDLogic {
 	}
 
 	/**
+	 * This method returns a list of active tasks in chronological order of due
+	 * dates
+	 *
+	 * @return array list of tasks
+	 */
+	private ArrayList<Task> getTasksOrderedByDueDate() {
+		ArrayList<Task> resultList = new ArrayList<Task>();
+		ArrayList<Task> temp = new ArrayList<Task>();
+
+		for (int i = 0; i < size(); i++) {
+			if (_items.get(i) instanceof FloatingTask) {
+				// Add floating tasks to list first
+				resultList.add(_items.get(i).copy());
+			} else {
+				// Dump all other tasks into a temp list
+				temp.add(_items.get(i).copy());
+			}
+		}
+
+		// sort the temp list
+		Collections.sort(temp, new TaskDueDateComparator());
+
+		// add the ordered temp list to the final list
+		resultList.addAll(temp);
+
+		updateWorkingList(resultList); // update the working list
+
+		return resultList;
+	}
+
+	/**
 	 * This method creates an undoable command in the stack
 	 *
 	 * @param type
@@ -702,13 +706,5 @@ public class CRUDLogic {
 	 */
 	private void updateWorkingList(ArrayList<Task> li) {
 		_workingList = li;
-	}
-
-	public String searchDetail(Task task) {
-		String details = "";
-		if (task != null) {
-			details = task.getDetail();
-		}
-		return details;
 	}
 }
