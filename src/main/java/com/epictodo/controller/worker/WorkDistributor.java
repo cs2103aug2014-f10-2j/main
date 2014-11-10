@@ -9,20 +9,22 @@ import com.epictodo.model.task.Task;
 public class WorkDistributor {
     private static CRUDLogic _logic = new CRUDLogic();
     private final static String[] COMMAND_EXIT = {"exit", "quit"};
-    private final static String[] COMMAND_ADD = {"add", "create"};
+    private final static String[] COMMAND_ADD = {"add", "create","+"};
     private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
-    private final static String[] COMMAND_DELETE = {"delete", "remove"};
-    private final static String[] COMMAND_SEARCH = {"search", "find"};
+    private final static String[] COMMAND_DELETE = {"delete", "remove", "-"};
+    private final static String[] COMMAND_SEARCH = {"search", "find", "ls"};
     private final static String[] COMMAND_DISPLAY = {"display", "upcoming"};
     private final static String[] COMMAND_DISPLAYALL = {"all", "displayall", "showall"};
     private final static String[] COMMAND_UNDO = {"undo", "revert"};
     private final static String[] COMMAND_REDO = {"redo"};
     private final static String[] COMMAND_DONE = {"done", "mark"};
-
-    private static final String MSG_INVALID_INPUT = "invalid input";
+    private final static String[] COMMAND_HELP = {"help","?"};
+    
+	private static final String MSG_HELP = "insert [Command]+[Instruction]\nCommandTypes are:\n\t\t1.Add/Create\n\t\t2.Search/Find\n\t\t3.Update/Change/Modify\n\t\t4.Display/Upcoming\n\t\t5.Undo/Revert\n\t\t6.Redo\n\t\t7.Displayall";
+    private final static String MSG_INVALID_INPUT = "invalid input";
 
     enum CommandType {
-        DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE
+        DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE, HELP
     }
 
     enum KeywordType {
@@ -151,6 +153,8 @@ public class WorkDistributor {
             case SEARCH:
                 result = _logic.searchDetail(task);
                 break;
+            case HELP:
+            	result = MSG_HELP;
             default:
                 break;
         }
@@ -219,6 +223,8 @@ public class WorkDistributor {
             return CommandType.REDO;
         } else if (matchCommand(command, COMMAND_DONE)) {
             return CommandType.DONE;
+        } else if (matchCommand(command, COMMAND_HELP)){
+        	return CommandType.HELP;
         } else {
             return CommandType.INVALID;
         }
