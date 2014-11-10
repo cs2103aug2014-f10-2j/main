@@ -37,7 +37,7 @@ public class TaskTest {
     private Task _task_copy;
 
     @Before
-    public void initialise() throws Exception {
+    public void initialise() {
         _task = new Task("Meeting at CLB", "Group Project", 2);
         _task_copy = new Task("Meeting at CLB", "Group Project", 2);
     }

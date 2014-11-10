@@ -27,7 +27,6 @@ package com.epictodo.model.task;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.task.DeadlineTask;
-import com.epictodo.model.task.Task;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,13 +37,11 @@ import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
 public class DeadlineTaskTest {
-    private Task _task;
     private DeadlineTask _deadline_task;
     private DeadlineTask _deadline_task_copy;
 
     @Before
     public void initialise() throws InvalidDateException, InvalidTimeException, ParseException {
-        _task = new Task("Meeting at CLB", "Group Project", 2);
         _deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "121214", "10:00");
         _deadline_task_copy = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "121214", "10:00");
     }

@@ -24,7 +24,8 @@
 
 package com.epictodo.model.task;
 
-import com.epictodo.model.task.Task;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.task.TimedTask;
 
 import org.junit.Before;
@@ -36,13 +37,11 @@ import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
 public class TimedTaskTest {
-	private Task _task;
 	private TimedTask _timed_task;
 	private TimedTask _timed_task_copy;
 
 	@Before
-	public void initialise() throws Exception {
-		_task = new Task("Meeting at CLB", "Group Project", 2);
+	public void initialise() throws InvalidDateException, InvalidTimeException, ParseException {
 		_timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing",
 				5, "121214", "20:00", 2.0);
 		_timed_task_copy = new TimedTask("Do CS2103 online quiz", "Quiz on testing",

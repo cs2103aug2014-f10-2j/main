@@ -39,7 +39,7 @@ public class FloatingTaskTest {
     private FloatingTask _floating_task_copy;
 
     @Before
-    public void initialise() throws Exception {
+    public void initialise() {
         _task = new Task("Meeting at CLB", "Group Project", 2);
         _floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
         _floating_task_copy = new FloatingTask("Meeting at CLB", "Group Project", 2);
