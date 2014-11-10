@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.epictodo.logic;
+package com.epictodo.controller.logic;
 
 import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.exception.InvalidDateException;
