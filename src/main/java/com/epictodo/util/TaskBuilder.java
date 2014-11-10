@@ -19,25 +19,19 @@ public class TaskBuilder {
                                  String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException {
 
         Task tt = null;
-        try{
         tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time, duration);
-        } catch(Exception e){}
         return tt;
     }
 
     public static Task buildTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException {
         Task dt=null;
-        try{
         dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
-        } catch(Exception e){}
         return dt;
     }
 
     public static Task buildTask(String taskName, String taskDescription, int priority) {
         Task ft= null;
-        try{
         ft = new FloatingTask(taskName, taskDescription, priority);
-        } catch(Exception e){}
         return ft;
     }
 

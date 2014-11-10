@@ -166,7 +166,12 @@ public class TimedTask extends Task {
 
     private boolean checkTimeIsValid(String time) throws InvalidTimeException {
         String regex = "[0-9]+";
-        String hour = time.substring(0, 2);
+        String hour = "";
+        try{
+        hour = time.substring(0, 2);
+        }catch(Exception e){
+        	throw new InvalidTimeException("");
+        }
         // Check whether hour is made up of digits
         if (!hour.matches(regex)) {
             throw new InvalidTimeException(time);
