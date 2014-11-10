@@ -35,23 +35,35 @@ import static org.junit.Assert.assertEquals;
 //@author A0111683L
 public class FloatingTaskTest {
     private Task _task;
-    private FloatingTask floating_task;
+    private FloatingTask _floating_task;
+    private FloatingTask _floating_task_copy;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
+        _floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
+        _floating_task_copy = new FloatingTask("Meeting at CLB", "Group Project", 2);
     }
-
-    /*
+    
     @Test
-    public void checkFloatingTaskCloneMethod() {
-        FloatingTask temp_ftask;
-        temp_ftask = floating_task.copy();
-        assertEquals(temp_ftask.getTaskName(), "Meeting at CLB");
-        assertEquals(temp_ftask.getTaskDescription(), "Group Project");
-        assertEquals(temp_ftask.getPriority(), 2);
-        assertEquals(temp_ftask.getIsDone(), false);
+    public void checkToStringMethod() {
+    	assertEquals("Meeting at CLB", _floating_task.toString());
     }
-    */
+    
+    @Test
+    public void checkGetDetailMethod() {
+    	assertEquals("Name: Meeting at CLB\nDescription: Group Project\n", _floating_task.getDetail());
+    }
+    
+    @Test
+    public void checkEqualsMethod() {
+    	assertEquals(_floating_task_copy.equals(_floating_task), true);
+    }
+    
+    @Test
+    public void checkCopyMethod() {
+    	FloatingTask test_copy;
+    	test_copy = _floating_task.copy();
+    	assertEquals(test_copy.equals(_floating_task), true);
+    }
 }

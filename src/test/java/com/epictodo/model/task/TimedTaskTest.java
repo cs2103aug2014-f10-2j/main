@@ -36,38 +36,57 @@ import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
 public class TimedTaskTest {
-    private Task _task;
-    private TimedTask timed_task;
+	private Task _task;
+	private TimedTask _timed_task;
+	private TimedTask _timed_task_copy;
 
-    @Before
-    public void initialise() throws Exception {
-        _task = new Task("Meeting at CLB", "Group Project", 2);
-        timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
-    }
+	@Before
+	public void initialise() throws Exception {
+		_task = new Task("Meeting at CLB", "Group Project", 2);
+		_timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing",
+				5, "121214", "20:00", 2.0);
+		_timed_task_copy = new TimedTask("Do CS2103 online quiz", "Quiz on testing",
+				5, "121214", "20:00", 2.0);
+	}
 
-    @Test
-    public void checkSetDuration() {
-        timed_task.setDuration(4.0);
-        assertEquals(timed_task.getEndDateTimeAsString(), "251014 00:00");
-    }
+	@Test
+	public void checkSetDuration() {
+		_timed_task.setDuration(4.0);
+		assertEquals("131214 00:00", _timed_task.getEndDateTimeAsString());
+	}
 
-    @Test
-    public void checkTimedTaskSetDateTime() throws Exception {
-        timed_task.setDateTime("261014", "19:00");
-        assertEquals(timed_task.getStartDateTimeAsString(), "261014 19:00");
-    }
+	@Test
+	public void checkTimedTaskSetDateTime() throws Exception {
+		_timed_task.setDateTime("251214", "19:00");
+		assertEquals(_timed_task.getStartDateTimeAsString(), "251214 19:00");
+	}
 
-    @Test
-    public void checkTimedTaskToString() {
-        assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
-    }
+	@Test
+	public void checkTimedTaskToString() {
+		assertEquals(_timed_task.toString(),
+				"Do CS2103 online quiz from 121214 20:00 to 121214 22:00");
+	}
 
- /*
-    public void checkTimedTaskCloneMethod() {
-        TimedTask temp_ttask;
-        temp_ttask = timed_task.copy();
-        assertEquals(temp_ttask.getStartDateTimeAsString(), "241014 20:00");
-        assertEquals(temp_ttask.getEndDateTimeAsString(), "241014 22:00");
-    }
-    */
+	@Test
+	public void checkGetDetail() {
+		assertEquals(
+				"Name: Do CS2103 online quiz\nDescription: Quiz on testing\nStart Date and Time: 121214 20:00\nEnd Date and Time: 121214 22:00\n",
+				_timed_task.getDetail());
+	}
+	
+	@Test
+	public void checkToString() {
+		assertEquals("Do CS2103 online quiz from 121214 20:00 to 121214 22:00", _timed_task.toString());
+	}
+	
+	@Test
+	public void checkEquals() {
+	 	assertEquals(_timed_task_copy.equals(_timed_task), true);
+	}
+	
+	@Test
+	public void checkCopy() {
+		TimedTask test_copy = _timed_task.copy();
+    	assertEquals(test_copy.equals(_timed_task), true);
+	}
 }

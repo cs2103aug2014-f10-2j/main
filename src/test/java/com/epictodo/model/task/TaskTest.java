@@ -34,10 +34,12 @@ import static org.junit.Assert.assertEquals;
 //@author A0111683L
 public class TaskTest {
     private Task _task;
+    private Task _task_copy;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
+        _task_copy = new Task("Meeting at CLB", "Group Project", 2);
     }
 
     @Test
@@ -64,15 +66,25 @@ public class TaskTest {
         assertEquals(_task.getPriority(), 10);
     }
 
-    /*
     @Test
-    public void checkTaskCloneMethod() {
-        Task tempTask;
-        tempTask = _task.copy();
-        assertEquals(tempTask.getTaskName(), "Meeting at CLB");
-        assertEquals(tempTask.getTaskDescription(), "Group Project");
-        assertEquals(tempTask.getPriority(), 2);
-        assertEquals(tempTask.getIsDone(), false);
+    public void checkGetDetail() {
+    	assertEquals("Name: Meeting at CLB\nDescription: Group Project\n", _task.getDetail());
     }
-    */
+    
+    @Test
+    public void checkEquals() {
+    	assertEquals(_task_copy.equals(_task), true);
+    }
+    
+    @Test
+    public void checkToStringMethod() {
+    	assertEquals("Meeting at CLB", _task.toString());
+    }
+    
+    @Test
+    public void checkCopyMethod() {
+    	Task test_copy;
+    	test_copy = _task.copy();
+    	assertEquals(test_copy.equals(_task), true);
+    }
 }

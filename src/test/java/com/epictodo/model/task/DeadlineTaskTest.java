@@ -24,6 +24,8 @@
 
 package com.epictodo.model.task;
 
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.task.DeadlineTask;
 import com.epictodo.model.task.Task;
 
@@ -37,29 +39,40 @@ import static org.junit.Assert.assertEquals;
 //@author A0111683L
 public class DeadlineTaskTest {
     private Task _task;
-    private DeadlineTask deadline_task;
+    private DeadlineTask _deadline_task;
+    private DeadlineTask _deadline_task_copy;
 
     @Before
-    public void initialise() throws Exception {
+    public void initialise() throws InvalidDateException, InvalidTimeException, ParseException {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "241014", "10:00");
+        _deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "121214", "10:00");
+        _deadline_task_copy = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "121214", "10:00");
     }
 
     @Test
-    public void checkDeadlineTaskSetDateTime() throws Exception {
-        deadline_task.setDateTime("251014", "23:59");
-        assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
+    public void checkDeadlineTaskSetDateTime() throws InvalidDateException, InvalidTimeException, ParseException{
+        _deadline_task.setDateTime("131214", "23:59");
+        assertEquals(_deadline_task.getEndDateTimeAsString(), "131214 23:59");
     }
-
-    /*
+    
     @Test
-    public void checkDeadlineTaskCloneMethod() {
-        DeadlineTask tempDeadlineTask;
-        tempDeadlineTask = deadline_task.copy();
-        assertEquals(tempDeadlineTask.getTaskName(), "Do CS2103 homework");
-        assertEquals(tempDeadlineTask.getTaskDescription(), "Homework on testing");
-        assertEquals(tempDeadlineTask.getPriority(), 5);
-        assertEquals(tempDeadlineTask.getIsDone(), false);
+    public void checkGetDetail() {
+    	assertEquals("Name: Do CS2103 homework\nDescription: Homework on testing\nEnd Date and time: 121214 10:00\n", _deadline_task.getDetail());
     }
-    */
+    
+    @Test
+    public void checkEquals() throws InvalidDateException, InvalidTimeException {
+    	assertEquals(_deadline_task_copy.equals(_deadline_task), true);
+    }
+    
+    @Test
+    public void checkToString() {
+    	assertEquals("Do CS2103 homework by 121214 10:00", _deadline_task.toString());
+    }
+    
+    @Test
+    public void checkCopy() throws InvalidDateException, InvalidTimeException {
+    	DeadlineTask test_copy = _deadline_task.copy();
+    	assertEquals(test_copy.equals(_deadline_task), true);
+    }
 }
