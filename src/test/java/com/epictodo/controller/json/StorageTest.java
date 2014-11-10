@@ -16,7 +16,7 @@ import com.epictodo.model.task.Task;
 import com.epictodo.model.task.TimedTask;
 
 public class StorageTest {
-    private static final String file_name = "storage.txt";
+    private static final String _fileName = "storage.txt";
     private ArrayList<Task> task_list;
     FloatingTask floating_task = null;
     DeadlineTask deadline_task2 = null;
@@ -33,19 +33,21 @@ public class StorageTest {
 
         try {
             floating_task = new FloatingTask("Project Meeting", "2103 project meeting", 2);
+            floating_task.setUid(0);
             deadline_task2 = new DeadlineTask("CS2103 V0.4", "DT2 Desc", 4, "121214", "19:00");
+            floating_task.setUid(1);
             timed_task = new TimedTask("TimedTask 1", "TimedTask1Desc", 2, "121214", "10:00", 3);
+            floating_task.setUid(2);
         } catch (Exception e) {
         }
 
         task_list = new ArrayList<>();
-
         // load all tasks into task_list
         task_list.add(floating_task);
         task_list.add(deadline_task2);
         task_list.add(timed_task);
 
-        Storage.saveToJson(file_name, task_list);
+        Storage.saveToJson(_fileName, task_list);
     }
 
     @Test
@@ -54,7 +56,7 @@ public class StorageTest {
         ArrayList<Task> listOfTasks;
 
         // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
-        listOfTasks = Storage.loadDbFile(file_name);
+        listOfTasks = Storage.loadDbFile(_fileName);
         
         //grab the first time Task and compare it's endDateTimeAsString
         FloatingTask tt = (FloatingTask) listOfTasks.get(2);
@@ -67,7 +69,7 @@ public class StorageTest {
         ArrayList<Task> listOfTasks;
 
         // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
-        listOfTasks = Storage.loadDbFile(file_name);
+        listOfTasks = Storage.loadDbFile(_fileName);
 
         //grab the first time Task and compare it's endDateTimeAsString
         TimedTask tt = (TimedTask) listOfTasks.get(0);
@@ -80,7 +82,7 @@ public class StorageTest {
         ArrayList<Task> listOfTasks;
 
         // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
-        listOfTasks = Storage.loadDbFile(file_name);
+        listOfTasks = Storage.loadDbFile(_fileName);
 
         //grab the second deadline Task and compare it's endDateTimeAsString
         DeadlineTask tt = (DeadlineTask) listOfTasks.get(1);

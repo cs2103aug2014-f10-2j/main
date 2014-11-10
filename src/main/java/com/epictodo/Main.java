@@ -14,13 +14,13 @@ public class Main {
 			+ "/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n"
 			+ "        \\/|__|           \\/                      \\/       \n";
 
-	private static NLPEngine nlp_engine = NLPEngine.getInstance();
+	private static NLPEngine _nlpEngine = NLPEngine.getInstance();
 
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		// nlp_engine.mute();
+		 _nlpEngine.mute();
 
 		WorkDistributor.loadData();
 		bannerDisplay();
