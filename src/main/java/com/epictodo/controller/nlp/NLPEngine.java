@@ -157,6 +157,7 @@ public class NLPEngine {
      * @throws ParseException
      */
     public Response flexiAdd(String _sentence) throws ParseException {
+    	_response = new Response();
         boolean is_date_set = false;
         boolean is_time_set = false;
         boolean is_priority_set = false;
