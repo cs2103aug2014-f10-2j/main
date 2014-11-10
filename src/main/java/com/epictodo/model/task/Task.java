@@ -20,7 +20,7 @@ public class Task {
 
     public Task(String taskName, String taskDescription, int priority) {
         /*
-		 * New member: long uid
+         * New member: long uid
 		 */
         uid = -1; // -1 indicates an newly created Task object
 
@@ -92,7 +92,7 @@ public class Task {
         Boolean priority = false;
         Boolean isDone = false;
 
-        if (this.getTaskName().equals( task2.getTaskName())) {
+        if (this.getTaskName().equals(task2.getTaskName())) {
             taskName = true;
         }
         if (this.getUid() == task2.getUid()) {

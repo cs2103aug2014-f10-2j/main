@@ -1,9 +1,6 @@
 //@author A0112918H
 package com.epictodo.controller.worker;
 
-import java.text.ParseException;
-import java.util.logging.Logger;
-
 import com.epictodo.controller.nlp.NLPEngine;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
@@ -11,6 +8,9 @@ import com.epictodo.model.nlp.Response;
 import com.epictodo.model.nlp.Search;
 import com.epictodo.model.task.Task;
 import com.epictodo.util.TaskBuilder;
+
+import java.text.ParseException;
+import java.util.logging.Logger;
 
 public class CommandWorker {
     private static final String LOG_INVALID_DATE = "invalid date";
@@ -26,10 +26,10 @@ public class CommandWorker {
     private static Logger _logger = Logger.getLogger("System Log");
 
     /**
-     * Return a new Task base on the parsing information. 
+     * Return a new Task base on the parsing information.
      * if the instruction cannot be parsed, return null
      *
-     * @param instruction        user input without command.
+     * @param instruction user input without command.
      * @return Task
      */
     public static Task createTask(String instruction) {
@@ -38,7 +38,7 @@ public class CommandWorker {
         try {
             _response = _nlp_engine.flexiAdd(instruction);
         } catch (Exception ex) {
-        	_logger.info("Unable to parse user's input!");
+            _logger.info("Unable to parse user's input!");
             return newTask;
         }
         // NLP can replace the work below
@@ -51,7 +51,7 @@ public class CommandWorker {
         double taskDuration = _response.getTaskDuration();
 
         try {
-            if (taskName.equals("")|| taskName==null) {
+            if (taskName.equals("") || taskName == null) {
                 _logger.info(LOG_INVALID);
             } else if (taskDate == null) {
                 // Floating Task
@@ -79,7 +79,7 @@ public class CommandWorker {
      * Return keyword into ddmmyy format
      * If Nlp define keyword isn't any date, return null
      *
-     * @param keyword        keyword from search
+     * @param keyword keyword from search
      * @return result String as ddmmyy.
      */
     public static String getDateViaNlp(String keyword) {
@@ -96,10 +96,8 @@ public class CommandWorker {
         return ddmmyy;
     }
 
-
-
     /**
-     * return a string of task name base on NLP info 
+     * return a string of task name base on NLP info
      *
      * @return task name.
      */
@@ -119,7 +117,7 @@ public class CommandWorker {
     }
 
     /**
-     * return a string of task description base on NLP info 
+     * return a string of task description base on NLP info
      *
      * @return task description.
      */

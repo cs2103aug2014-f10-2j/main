@@ -1,12 +1,12 @@
 package com.epictodo.model.task;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 
-//@ author A0111683L
+import java.text.ParseException;
+import java.util.Date;
+
+//@author A0111683L
 public class TimedTask extends Task {
     /**
      * *********** Data members *********************
@@ -169,10 +169,10 @@ public class TimedTask extends Task {
     private boolean checkTimeIsValid(String time) throws InvalidTimeException {
         String regex = "[0-9]+";
         String hour = "";
-        try{
-        hour = time.substring(0, 2);
-        }catch(Exception e){
-        	throw new InvalidTimeException("");
+        try {
+            hour = time.substring(0, 2);
+        } catch (Exception e) {
+            throw new InvalidTimeException("");
         }
         // Check whether hour is made up of digits
         if (!hour.matches(regex)) {
@@ -268,9 +268,9 @@ public class TimedTask extends Task {
 
         //Step 7: Check whether date entered is in the future
         Date d = new Date();
-        Date currDate = new Date(d.getYear(),d.getMonth(),d.getDate());
+        Date currDate = new Date(d.getYear(), d.getMonth(), d.getDate());
         Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
-        if (!enteredDate.after(currDate)&& enteredDate.before(currDate)) {
+        if (!enteredDate.after(currDate) && enteredDate.before(currDate)) {
             throw new InvalidDateException(date);
         }
         return true;

@@ -15,16 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class Storage {
     private static Logger _logger = Logger.getLogger("--- Storage Parser Log ---");
+
     public enum TaskType {
         FLOATING, DEADLINE, TIMED
-    };
-
+    }
 
     /**
      * This method loads the Json file to ArrayList<Task> of memory objects
@@ -40,18 +38,17 @@ public class Storage {
 
         return _result;
     }
-    
-    
+
     /**
      * This method saves ArrayList<Task> from memory object to Json file.
      *
-     * @param file_name		fileName
-     * @param list			wholeList to be added
+     * @param file_name fileName
+     * @param list      wholeList to be added
      * @return true
      */
     public static boolean saveToJson(String file_name, ArrayList<Task> list) {
         assert file_name.equalsIgnoreCase(file_name);
-   
+
         Map<TaskType, List<Task>> _map = makeMap(list);
 
         try {
@@ -60,7 +57,7 @@ public class Storage {
             String json_result = _gson.toJson(_map);
 
             if (_map == null || _map.isEmpty()) {
-               file_writer.write("");
+                file_writer.write("");
             } else {
                 file_writer.write(json_result);
             }
@@ -105,7 +102,7 @@ public class Storage {
         _map.put(TaskType.FLOATING, floating_list);
         return _map;
     }
-    
+
     /**
      * This method instantiates a GSON Object.
      * Method will read JSON Object from memory and translates to JSON.
@@ -123,7 +120,7 @@ public class Storage {
 
         return _gson;
     }
-    
+
     /**
      * This method make use of makeTask to retrieve all of tasks from the storage file
      * Returns an arraylist of Task from the storage
@@ -152,9 +149,9 @@ public class Storage {
             return null;
         }
     }
-    
+
     /**
-     * This method reads the storage file and 
+     * This method reads the storage file and
      * convert all of them into a Map consist of floating task
      *
      * @param file
@@ -171,7 +168,7 @@ public class Storage {
     }
 
     /**
-     * This method reads the storage file and 
+     * This method reads the storage file and
      * convert all of them into a Map consist of deadline task
      *
      * @param file
@@ -188,7 +185,7 @@ public class Storage {
     }
 
     /**
-     * This method reads the storage file and 
+     * This method reads the storage file and
      * convert all of them into a Map consist of timed task
      *
      * @param file

@@ -1,15 +1,15 @@
 //@author A0112918H
 package com.epictodo.controller.worker;
 
-import java.util.ArrayList;
-
 import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.task.Task;
+
+import java.util.ArrayList;
 
 public class WorkDistributor {
     private static CRUDLogic _logic = new CRUDLogic();
     private final static String[] COMMAND_EXIT = {"exit", "quit"};
-    private final static String[] COMMAND_ADD = {"add", "create","+"};
+    private final static String[] COMMAND_ADD = {"add", "create", "+"};
     private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
     private final static String[] COMMAND_DELETE = {"delete", "remove", "-"};
     private final static String[] COMMAND_SEARCH = {"search", "find", "ls"};
@@ -18,9 +18,9 @@ public class WorkDistributor {
     private final static String[] COMMAND_UNDO = {"undo", "revert"};
     private final static String[] COMMAND_REDO = {"redo"};
     private final static String[] COMMAND_DONE = {"done", "mark"};
-    private final static String[] COMMAND_HELP = {"help","?"};
-    
-	private static final String MSG_HELP = "insert [Command]+[Instruction]\nCommandTypes are:\n\t\t1.Add/Create\n\t\t2.Search/Find\n\t\t3.Update/Change/Modify\n\t\t4.Display/Upcoming\n\t\t5.Undo/Revert\n\t\t6.Redo\n\t\t7.Displayall";
+    private final static String[] COMMAND_HELP = {"help", "?"};
+
+    private static final String MSG_HELP = "insert [Command]+[Instruction]\nCommandTypes are:\n\t\t1.Add/Create\n\t\t2.Search/Find\n\t\t3.Update/Change/Modify\n\t\t4.Display/Upcoming\n\t\t5.Undo/Revert\n\t\t6.Redo\n\t\t7.Displayall";
     private final static String MSG_INVALID_INPUT = "invalid input";
 
     enum CommandType {
@@ -93,11 +93,11 @@ public class WorkDistributor {
                 result = _logic.undoMostRecent();
                 return result;
             case REDO:
-            	result = _logic.redoMostRecent();
-            	return result;
+                result = _logic.redoMostRecent();
+                return result;
             case HELP:
-            	result = MSG_HELP;
-            	return result;
+                result = MSG_HELP;
+                return result;
             case INVALID:
                 // todo: defined all invalid cases
                 return MSG_INVALID_INPUT;
@@ -173,9 +173,9 @@ public class WorkDistributor {
     private static ArrayList<Task> searchThroughKeywords(String keyword) {
         ArrayList<Task> list = new ArrayList<Task>();
         Task tempTask = _logic.translateWorkingListId(keyword);
-        String date= null;
-        if(keyword.length()!=1){
-        	date = CommandWorker.getDateViaNlp(keyword);
+        String date = null;
+        if (keyword.length() != 1) {
+            date = CommandWorker.getDateViaNlp(keyword);
         }
         KeywordType keywordType = getKeywordType(tempTask, date);
 
@@ -225,8 +225,8 @@ public class WorkDistributor {
             return CommandType.REDO;
         } else if (matchCommand(command, COMMAND_DONE)) {
             return CommandType.DONE;
-        } else if (matchCommand(command, COMMAND_HELP)){
-        	return CommandType.HELP;
+        } else if (matchCommand(command, COMMAND_HELP)) {
+            return CommandType.HELP;
         } else {
             return CommandType.INVALID;
         }
@@ -292,17 +292,18 @@ public class WorkDistributor {
         String commandTypeString = instruc.trim().split("\\s+")[0];
         return commandTypeString;
     }
+
     /**
-     * return keyword type 
+     * return keyword type
      *
-     * @param task      Task from the option given from user.
-     * @param date		date given from NLP.
+     * @param task Task from the option given from user.
+     * @param date date given from NLP.
      * @return Keyword Type.
      */
     private static KeywordType getKeywordType(Task task, String date) {
         if (task != null) {
             return KeywordType.OPTION;
-        }else if (date != null) {
+        } else if (date != null) {
             return KeywordType.TIME;
         } else {
             return KeywordType.WORD;

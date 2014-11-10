@@ -79,7 +79,7 @@ public class NLPLoadEngine {
 
     /**
      * This method displays a progress while loading NLP models
-     * [Quick fix] inject this method into PrintStream OutputStream
+     * [Quick hack] inject this method into PrintStream OutputStream overriding warnings with progress bar
      */
     private void progressBar() {
         _counter++;
@@ -96,13 +96,6 @@ public class NLPLoadEngine {
             System.out.println("Loading...75%");
         }
     }
-
-    /**
-     * This method prints the progress bar to be displayed.
-     * [Hack] to inject into printstream overriding all red warnings on load with progress bar
-     *
-     * @param _percent
-     */
 
     public static NLPLoadEngine getInstance() {
         if (instance == null) {

@@ -1,10 +1,6 @@
 //@author A0112918H
 package com.epictodo.controller.worker;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Logger;
-
 import com.epictodo.controller.worker.WorkDistributor.CommandType;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
@@ -14,22 +10,26 @@ import com.epictodo.model.task.Task;
 import com.epictodo.model.task.TimedTask;
 import com.epictodo.util.TaskBuilder;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Logger;
+
 public class MenuWorker {
     private static final String LOG_SELECTED_TASK = "Task, %s is retrieved";
-	private static final String INSTRUCTION_ENTER_NAME = "Name ( %s ):";
-	private static final String INSTRUCTION_ENTER_DESCRIPTION = "Description ( %s ):";
-	private static final String INSTRUCTION_ENTER_PRIORITY = "priority ( %s ):";
-	private static final String INSTRUCTION_ENTER_START_DATE = "start Date ( %s ):";
-	private static final String INSTRUCTION_ENTER_START_TIME = "start Time ( %s ):";
-	private static final String INSTRUCTION_ENTER_ENDTIME = "end Time ( %s ):";
-	private static final String INSTRUCTION_ENTER_ENDDATE = "end Date ( %s ):";
-	private static final String INSTRUCTION_ENTER_DURATION = "duration in hours ( %s ):";
-	private static final String INSTRUCTION_SELECT_UPDATE_OPTION = "Enter your option to be updated (or 0 to menu): ";
+    private static final String INSTRUCTION_ENTER_NAME = "Name ( %s ):";
+    private static final String INSTRUCTION_ENTER_DESCRIPTION = "Description ( %s ):";
+    private static final String INSTRUCTION_ENTER_PRIORITY = "priority ( %s ):";
+    private static final String INSTRUCTION_ENTER_START_DATE = "start Date ( %s ):";
+    private static final String INSTRUCTION_ENTER_START_TIME = "start Time ( %s ):";
+    private static final String INSTRUCTION_ENTER_ENDTIME = "end Time ( %s ):";
+    private static final String INSTRUCTION_ENTER_ENDDATE = "end Date ( %s ):";
+    private static final String INSTRUCTION_ENTER_DURATION = "duration in hours ( %s ):";
+    private static final String INSTRUCTION_SELECT_UPDATE_OPTION = "Enter your option to be updated (or 0 to menu): ";
     private static final String INSTRUCTION_SELECT_DELETE_OPTION = "Enter your option to be deleted (or 0 to menu): ";
     private static final String INSTRUCTION_SELECT_MARK_OPTION = "Enter your option to be marked (or 0 to menu): ";
     private static final String INSTRUCTION_SELECT_SEARCH_OPTION = "Enter your option for details (or 0 to menu): ";
-    
-	private static final String MSG_UPDATE_INSTRUCTION = "---------------------------------\nplease update info or press [enter] to remain unchange\n---------------------------------";
+
+    private static final String MSG_UPDATE_INSTRUCTION = "---------------------------------\nplease update info or press [enter] to remain unchange\n---------------------------------";
 
     private static Logger _logger = Logger.getLogger("System Menu Log");
     private static Scanner _sc = null;
@@ -39,9 +39,9 @@ public class MenuWorker {
      * prompt user to select from them.
      * Ultimately, this will return the selected task or the only task
      * If there is no task found in the list, it return null
-     * 
-     * @param type	CommandType
-     * @param list List to select.
+     *
+     * @param type   CommandType
+     * @param list   List to select.
      * @param String to be displayed to the user
      * @return Task
      */
@@ -58,14 +58,14 @@ public class MenuWorker {
             return null;
         }
         Task t = list.get(option - 1);
-        _logger.info(String.format(LOG_SELECTED_TASK,t.getTaskName()));
+        _logger.info(String.format(LOG_SELECTED_TASK, t.getTaskName()));
         return t;
     }
 
     /**
      * This method prompt user to update their task
-     * Return the updatedTask Once the task is done 
-     * 
+     * Return the updatedTask Once the task is done
+     *
      * @param T original task
      * @return updatedTask
      */
@@ -95,8 +95,8 @@ public class MenuWorker {
             } else if (t instanceof FloatingTask) {
                 updatedTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
             }
-            if(updatedTask !=null) {
-            	updatedTask.setUid(t.getUid());
+            if (updatedTask != null) {
+                updatedTask.setUid(t.getUid());
             }
         } catch (InvalidDateException ide) {
             displayLine("invalid Date");
@@ -105,12 +105,12 @@ public class MenuWorker {
         }
         return updatedTask;
     }
-    
-    /**  
+
+    /**
      * This method displays instruction to select item
-     * 
-     * @param type	CommandType
-     * @param items String to be displayed to the user 
+     *
+     * @param type  CommandType
+     * @param items String to be displayed to the user
      */
     private static void displaySelectInstruction(CommandType type, String items) {
         // print out the possible result
@@ -128,7 +128,7 @@ public class MenuWorker {
 
     /**
      * This method read user's input
-     * 
+     *
      * @return user input
      */
     private static int retrieveInputOption() {
@@ -144,7 +144,7 @@ public class MenuWorker {
 
     /**
      * update task's end time
-     * 
+     *
      * @param t Task
      * @return endtime String
      */
@@ -156,7 +156,7 @@ public class MenuWorker {
 
     /**
      * update task's end Date
-     * 
+     *
      * @param t Task
      * @return endDate String
      */
@@ -168,7 +168,7 @@ public class MenuWorker {
 
     /**
      * update task's duration
-     * 
+     *
      * @param t Task
      * @return Duration double
      */
@@ -182,7 +182,7 @@ public class MenuWorker {
 
     /**
      * update task's start time
-     * 
+     *
      * @param t Task
      * @return endtime String
      */
@@ -195,7 +195,7 @@ public class MenuWorker {
 
     /**
      * update task's start date
-     * 
+     *
      * @param t Task
      * @return startdate String
      */
@@ -208,7 +208,7 @@ public class MenuWorker {
 
     /**
      * update task's priority
-     * 
+     *
      * @param t Task
      * @return priority String
      */
@@ -225,7 +225,7 @@ public class MenuWorker {
 
     /**
      * update task's Description
-     * 
+     *
      * @param t Task
      * @return Description String
      */
@@ -237,7 +237,7 @@ public class MenuWorker {
 
     /**
      * update task's name
-     * 
+     *
      * @param t Task
      * @return name String
      */
@@ -250,7 +250,7 @@ public class MenuWorker {
 
     /**
      * update field or remain unchanged
-     * 
+     *
      * @param t Task
      * @return updated String String
      */

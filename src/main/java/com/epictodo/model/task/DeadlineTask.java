@@ -1,10 +1,10 @@
 package com.epictodo.model.task;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
+
+import java.text.ParseException;
+import java.util.Date;
 
 //@author A0111683L
 public class DeadlineTask extends Task {
@@ -64,7 +64,7 @@ public class DeadlineTask extends Task {
         // Index 9 is the colon
         String timeHour = dateTime.substring(7, 9);
         String timeMinute = dateTime.substring(10);
-        return timeHour +":"+ timeMinute;
+        return timeHour + ":" + timeMinute;
     }
 
     /**
@@ -72,11 +72,11 @@ public class DeadlineTask extends Task {
      */
     public void setDateTime(String date, String time) throws ParseException, InvalidDateException, InvalidTimeException {
         // This checks whether date and time entered are of correct length
-    	if(time== null){
-    		// in case time is missing from user's input
-    		time = "10:00";
-    	}
-    	
+        if (time == null) {
+            // in case time is missing from user's input
+            time = "10:00";
+        }
+
         if (checkTimeIsValid(time) && checkDateIsValid(date)) {
             String dateTimeTemp = date + " " + time;
             long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
@@ -225,9 +225,9 @@ public class DeadlineTask extends Task {
 
         //Step 7: Check whether date entered is in the future
         Date d = new Date();
-        Date currDate = new Date(d.getYear(),d.getMonth(),d.getDate());
+        Date currDate = new Date(d.getYear(), d.getMonth(), d.getDate());
         Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
-        if (!enteredDate.after(currDate)&&enteredDate.before(currDate)) {
+        if (!enteredDate.after(currDate) && enteredDate.before(currDate)) {
             throw new InvalidDateException(date);
         }
         return true;
