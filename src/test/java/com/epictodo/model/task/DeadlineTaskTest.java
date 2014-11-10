@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.task;
 
+import com.epictodo.model.task.DeadlineTask;
 import com.epictodo.model.task.Task;
-import com.epictodo.model.task.TimedTask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,39 +35,31 @@ import java.text.ParseException;
 import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
-public class TimedTaskTest {
+public class DeadlineTaskTest {
     private Task _task;
-    private TimedTask timed_task;
+    private DeadlineTask deadline_task;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
+        deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "241014", "10:00");
     }
 
     @Test
-    public void checkSetDuration() {
-        timed_task.setDuration(4.0);
-        assertEquals(timed_task.getEndDateTimeAsString(), "251014 00:00");
+    public void checkDeadlineTaskSetDateTime() throws Exception {
+        deadline_task.setDateTime("251014", "23:59");
+        assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
     }
 
+    /*
     @Test
-    public void checkTimedTaskSetDateTime() throws Exception {
-        timed_task.setDateTime("261014", "19:00");
-        assertEquals(timed_task.getStartDateTimeAsString(), "261014 19:00");
-    }
-
-    @Test
-    public void checkTimedTaskToString() {
-        assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
-    }
-
- /*
-    public void checkTimedTaskCloneMethod() {
-        TimedTask temp_ttask;
-        temp_ttask = timed_task.copy();
-        assertEquals(temp_ttask.getStartDateTimeAsString(), "241014 20:00");
-        assertEquals(temp_ttask.getEndDateTimeAsString(), "241014 22:00");
+    public void checkDeadlineTaskCloneMethod() {
+        DeadlineTask tempDeadlineTask;
+        tempDeadlineTask = deadline_task.copy();
+        assertEquals(tempDeadlineTask.getTaskName(), "Do CS2103 homework");
+        assertEquals(tempDeadlineTask.getTaskDescription(), "Homework on testing");
+        assertEquals(tempDeadlineTask.getPriority(), 5);
+        assertEquals(tempDeadlineTask.getIsDone(), false);
     }
     */
 }

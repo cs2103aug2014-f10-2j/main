@@ -22,44 +22,36 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.task;
 
-import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
 import com.epictodo.model.task.Task;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.text.ParseException;
-
 import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
-public class DeadlineTaskTest {
+public class FloatingTaskTest {
     private Task _task;
-    private DeadlineTask deadline_task;
+    private FloatingTask floating_task;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        deadline_task = new DeadlineTask("Do CS2103 homework", "Homework on testing", 5, "241014", "10:00");
-    }
-
-    @Test
-    public void checkDeadlineTaskSetDateTime() throws Exception {
-        deadline_task.setDateTime("251014", "23:59");
-        assertEquals(deadline_task.getEndDateTimeAsString(), "251014 23:59");
+        floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
     }
 
     /*
     @Test
-    public void checkDeadlineTaskCloneMethod() {
-        DeadlineTask tempDeadlineTask;
-        tempDeadlineTask = deadline_task.copy();
-        assertEquals(tempDeadlineTask.getTaskName(), "Do CS2103 homework");
-        assertEquals(tempDeadlineTask.getTaskDescription(), "Homework on testing");
-        assertEquals(tempDeadlineTask.getPriority(), 5);
-        assertEquals(tempDeadlineTask.getIsDone(), false);
+    public void checkFloatingTaskCloneMethod() {
+        FloatingTask temp_ftask;
+        temp_ftask = floating_task.copy();
+        assertEquals(temp_ftask.getTaskName(), "Meeting at CLB");
+        assertEquals(temp_ftask.getTaskDescription(), "Group Project");
+        assertEquals(temp_ftask.getPriority(), 2);
+        assertEquals(temp_ftask.getIsDone(), false);
     }
     */
 }

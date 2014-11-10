@@ -1,4 +1,4 @@
-package com.epictodo.engine;
+package com.epictodo.controller.worker;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,7 +10,7 @@ import com.epictodo.controller.worker.CommandWorker;
 import com.epictodo.controller.worker.WorkDistributor;
 import com.epictodo.model.task.Task;
 
-public class engineTest {
+public class EngineTest {
 
 	static CRUDLogic logic  = null;
 	@Before

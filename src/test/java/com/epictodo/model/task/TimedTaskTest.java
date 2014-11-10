@@ -22,57 +22,52 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.task;
 
 import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
+
 import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
-public class TaskTest {
+public class TimedTaskTest {
     private Task _task;
+    private TimedTask timed_task;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
+        timed_task = new TimedTask("Do CS2103 online quiz", "Quiz on testing", 5, "241014", "20:00", 2.0);
     }
 
     @Test
-    public void checkIsDoneMethod() {
-        _task.setIsDone(true);
-        assertEquals(_task.getIsDone(), true);
+    public void checkSetDuration() {
+        timed_task.setDuration(4.0);
+        assertEquals(timed_task.getEndDateTimeAsString(), "251014 00:00");
     }
 
     @Test
-    public void checkSetTaskNameMethod() {
-        _task.setTaskName("newTask");
-        assertEquals(_task.getTaskName(), "newTask");
+    public void checkTimedTaskSetDateTime() throws Exception {
+        timed_task.setDateTime("261014", "19:00");
+        assertEquals(timed_task.getStartDateTimeAsString(), "261014 19:00");
     }
 
     @Test
-    public void checkSetTaskDescriptionMethod() {
-        _task.setTaskDescription("newTaskDescription");
-        assertEquals(_task.getTaskDescription(), "newTaskDescription");
+    public void checkTimedTaskToString() {
+        assertEquals(timed_task.toString(), "Do CS2103 online quiz from 241014 20:00 to 241014 22:00");
     }
 
-    @Test
-    public void checkSetPriorityMethod() {
-        _task.setPriority(10);
-        assertEquals(_task.getPriority(), 10);
-    }
-
-    /*
-    @Test
-    public void checkTaskCloneMethod() {
-        Task tempTask;
-        tempTask = _task.copy();
-        assertEquals(tempTask.getTaskName(), "Meeting at CLB");
-        assertEquals(tempTask.getTaskDescription(), "Group Project");
-        assertEquals(tempTask.getPriority(), 2);
-        assertEquals(tempTask.getIsDone(), false);
+ /*
+    public void checkTimedTaskCloneMethod() {
+        TimedTask temp_ttask;
+        temp_ttask = timed_task.copy();
+        assertEquals(temp_ttask.getStartDateTimeAsString(), "241014 20:00");
+        assertEquals(temp_ttask.getEndDateTimeAsString(), "241014 22:00");
     }
     */
 }

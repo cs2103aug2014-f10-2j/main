@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.task;
 
-import com.epictodo.model.task.FloatingTask;
 import com.epictodo.model.task.Task;
 
 import org.junit.Before;
@@ -33,25 +32,47 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 //@author A0111683L
-public class FloatingTaskTest {
+public class TaskTest {
     private Task _task;
-    private FloatingTask floating_task;
 
     @Before
     public void initialise() throws Exception {
         _task = new Task("Meeting at CLB", "Group Project", 2);
-        floating_task = new FloatingTask("Meeting at CLB", "Group Project", 2);
+    }
+
+    @Test
+    public void checkIsDoneMethod() {
+        _task.setIsDone(true);
+        assertEquals(_task.getIsDone(), true);
+    }
+
+    @Test
+    public void checkSetTaskNameMethod() {
+        _task.setTaskName("newTask");
+        assertEquals(_task.getTaskName(), "newTask");
+    }
+
+    @Test
+    public void checkSetTaskDescriptionMethod() {
+        _task.setTaskDescription("newTaskDescription");
+        assertEquals(_task.getTaskDescription(), "newTaskDescription");
+    }
+
+    @Test
+    public void checkSetPriorityMethod() {
+        _task.setPriority(10);
+        assertEquals(_task.getPriority(), 10);
     }
 
     /*
     @Test
-    public void checkFloatingTaskCloneMethod() {
-        FloatingTask temp_ftask;
-        temp_ftask = floating_task.copy();
-        assertEquals(temp_ftask.getTaskName(), "Meeting at CLB");
-        assertEquals(temp_ftask.getTaskDescription(), "Group Project");
-        assertEquals(temp_ftask.getPriority(), 2);
-        assertEquals(temp_ftask.getIsDone(), false);
+    public void checkTaskCloneMethod() {
+        Task tempTask;
+        tempTask = _task.copy();
+        assertEquals(tempTask.getTaskName(), "Meeting at CLB");
+        assertEquals(tempTask.getTaskDescription(), "Group Project");
+        assertEquals(tempTask.getPriority(), 2);
+        assertEquals(tempTask.getIsDone(), false);
     }
     */
 }

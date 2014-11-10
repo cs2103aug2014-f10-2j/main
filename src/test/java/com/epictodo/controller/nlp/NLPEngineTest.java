@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package com.epictodo.engine;
+package com.epictodo.controller.nlp;
 
 import com.epictodo.controller.nlp.NLPEngine;
 import com.epictodo.model.nlp.Response;
