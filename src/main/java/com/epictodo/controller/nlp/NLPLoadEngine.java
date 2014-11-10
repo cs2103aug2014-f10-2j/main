@@ -47,8 +47,8 @@ public class NLPLoadEngine {
     public LexicalizedParser LEXICAL_PARSER = null;
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
     private PrintStream _err = System.err;
-    private double COUNTER = 0;
-    private double LOAD_COUNT = 36.76;
+    private double _counter = 0;
+    private final double LOAD_COUNT = 3000;
 
     /**
      * This method mutes NLP API Error Messages temporarily
@@ -61,9 +61,23 @@ public class NLPLoadEngine {
     public void mute() {
         System.setErr(new PrintStream(new OutputStream() {
             public void write(int b) {
-                printProgressBar(COUNTER / LOAD_COUNT);
-                COUNTER++;
+            	loadSystem();
             }
+
+			private void loadSystem() {
+				_counter++;
+            	if (_counter/LOAD_COUNT == 1){
+            		System.out.println("System loading..");
+            	}else if (_counter/LOAD_COUNT == 0.1){
+            		System.out.println("10%");
+            	}else if (_counter/LOAD_COUNT == 0.25){
+            		System.out.println("25%");
+            	}else if (_counter/LOAD_COUNT == 0.50){
+            		System.out.println("50%");
+            	}else if (_counter/3000 == 0.75){
+            		System.out.println("75%");
+            	}
+			}
         }));
     }
 
@@ -85,34 +99,6 @@ public class NLPLoadEngine {
      *
      * @param _percent
      */
-    public void printProgressBar(double _percent) {
-        StringBuilder bar = new StringBuilder("[");
-
-        for (int i = 0; i < 50; i++) {
-            if (i < (_percent / 2)) {
-                bar.append("=");
-            } else if (i == (_percent / 2)) {
-                bar.append(">");
-            } else {
-                bar.append(" ");
-            }
-        }
-
-        try {
-            final String os = System.getProperty("os.name");
-            if (os.contains("Windows")) {
-                Runtime.getRuntime().exec("cls");
-            } else {
-                Runtime.getRuntime().exec("clear");
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        bar.append("]   Loading... " + _percent + "%     ");
-        System.out.print("\r" + bar.toString());
-    }
 
     public static NLPLoadEngine getInstance() {
         if (instance == null) {
