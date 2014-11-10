@@ -9,7 +9,7 @@ EpicTodo is a personal Task manager console-based application. EpicTodo is an ap
 > -- Kenneth, CEO of Eksklushift
 
 ### Version
-0.5.13
+0.5
 
 ### Tech
 
@@ -25,20 +25,18 @@ EpicTodo uses a number of open source projects to work properly:
 
 EpicTodo is currently extended with the following plugins
 
-* Github
+* [GitHub]
 
 ### Development
 
 Want to contribute? Great!
 
 EpicTodo uses [GitHub] for fast developing.
-Make a change in your file and instantanously see your updates!
+Make a change in your file and instantaneously see your updates!
 
 ### Todo's
 
- - Write Integration Tests
  - Rethink NLP models optimizations
- - Add Code Comments
  - Add more flexibility
  - Integrate flexiEdit into main integration
 
