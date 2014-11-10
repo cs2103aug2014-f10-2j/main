@@ -3,6 +3,7 @@ package com.epictodo;
 
 import java.util.Scanner;
 
+import com.epictodo.controller.nlp.NLPEngine;
 import com.epictodo.controller.worker.WorkDistributor;
 
 public class Main {
@@ -14,13 +15,13 @@ public class Main {
 			+ "/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n"
 			+ "        \\/|__|           \\/                      \\/       \n";
 
-	//private static NLPEngine _nlpEngine = NLPEngine.getInstance();
+	private static NLPEngine _nlpEngine = NLPEngine.getInstance();
 
 	// COMMAND INPUT
 	static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		// _nlpEngine.mute();
+		 _nlpEngine.mute();
 		
 		WorkDistributor.loadData();
 		bannerDisplay();
