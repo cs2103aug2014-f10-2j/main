@@ -97,22 +97,29 @@ public class NLPLoadEngine {
                 bar.append(" ");
             }
         }
+
         try {
-        	 final String os = System.getProperty("os.name");
-        	 if (os.contains("Windows"))
-             {
-                 Runtime.getRuntime().exec("cls");
-             }
-             else
-             {
-                 Runtime.getRuntime().exec("clear");
-             }
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            final String os = System.getProperty("os.name");
+            if (os.contains("Windows")) {
+                Runtime.getRuntime().exec("cls");
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         bar.append("]   Loading... " + _percent + "%     ");
         System.out.print("\r" + bar.toString());
+    }
+
+    public static NLPLoadEngine getInstance() {
+        if (instance == null) {
+            instance = new NLPLoadEngine();
+        }
+
+        return instance;
     }
 
     public NLPLoadEngine() {
@@ -131,14 +138,6 @@ public class NLPLoadEngine {
             _logger.log(Level.SEVERE, "Error loading models.");
             throw ex;
         }
-    }
-
-    public static NLPLoadEngine getInstance() {
-        if (instance == null) {
-            instance = new NLPLoadEngine();
-        }
-
-        return instance;
     }
 
     public CRFClassifier<CoreLabel> classifierModel() {

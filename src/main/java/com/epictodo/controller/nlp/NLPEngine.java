@@ -30,7 +30,6 @@ import com.epictodo.model.nlp.Response;
 import com.epictodo.model.nlp.Search;
 import com.epictodo.util.DateValidator;
 import com.epictodo.util.TimeValidator;
-
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.TypedDependency;
 

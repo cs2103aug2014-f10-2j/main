@@ -26,7 +26,6 @@
 package com.epictodo.controller.nlp;
 
 import com.epictodo.util.DateValidator;
-
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
