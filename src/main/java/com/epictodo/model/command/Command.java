@@ -11,170 +11,174 @@ import com.epictodo.model.task.Task;
  */
 public class Command implements Undoable {
 
-    /*
-     * Private attributes
-     */
-    private ArrayList<Task> _container; // the list of tasks to operate on
-    private CommandType _type; // the type of command
-    private Task _target; // the original task object
-    private Task _replacement; // the updated task object to replace the
-    // original in the list
-    private int _index; // the index where the original item resides in the list
-    /**
-     * Constructor
-     *
-     * @param container
-     * @param type
-     * @param target
-     */
-    public Command(ArrayList<Task> container, CommandType type, Task target) {
-        _container = container;
-        _type = type;
-        _target = target;
-        _replacement = null;
-        _index = -1;
-    }
-    // of tasks
+	/*
+	 * Private attributes
+	 */
+	private ArrayList<Task> _container; // the list of tasks to operate on
+	private CommandType _type; // the type of command
+	private Task _target; // the original task object
+	private Task _replacement; // the updated task object to replace the
+	private int _index; // the index where the original item resides in the list
 
 	/*
-     * Constructors
+	 * Constructor
 	 */
 
-    /**
-     * Constructor
-     *
-     * @param container
-     * @param type
-     * @param target
-     * @param replacement
-     */
-    public Command(ArrayList<Task> container, CommandType type, Task target,
-                   Task replacement) {
-        _container = container;
-        _type = type;
-        _target = target;
-        _replacement = replacement;
-        _index = -1;
-    }
-
-    /**
-     * Constructor
-     *
-     * @param container
-     * @param type
-     * @param target
-     * @param index
-     */
-    public Command(ArrayList<Task> container, CommandType type, Task target,
-                   int index) {
-        _container = container;
-        _type = type;
-        _target = target;
-        _replacement = null;
-        _index = index;
-    }
-
-    /**
-     * This method invokes the undo action on the list of tasks
-     */
-    public String undo() {
-        String result = "";
-
-        switch (_type) {
-            case ADD:
-                _container.remove(_target);
-                result = "adding task \"" + _target.getTaskName() + "\" is undone";
-                break;
-
-            case DELETE:
-                _container.add(_index, _target);
-
-                result = "deleting task \"" + _target.getTaskName()
-                        + "\" is undone";
-                break;
-
-            case UPDATE:
-                _container.set(_container.indexOf(_replacement), _target);
-
-                result = "updating task \"" + _target.getTaskName()
-                        + "\" is undone";
-                break;
-            case MARKDONE:
-                _container.get(_index).setIsDone(false);
-
-                result = "marking task \"" + _target.getTaskName()
-                        + "\"as done is undone";
-        }
-
-        return result;
-    }
+	/**
+	 * @param container
+	 * @param type
+	 * @param target
+	 */
+	public Command(ArrayList<Task> container, CommandType type, Task target) {
+		_container = container;
+		_type = type;
+		_target = target;
+		_replacement = null;
+		_index = -1;
+	}
 
 	/*
-     * Interface requirements
+	 * Constructors
 	 */
 
-    /**
-     * This method invokes the redo action
-     */
-    public String redo() {
-        String result = "";
+	/**
+	 * Constructor
+	 *
+	 * @param container
+	 * @param type
+	 * @param target
+	 * @param replacement
+	 */
+	public Command(ArrayList<Task> container, CommandType type, Task target,
+			Task replacement) {
+		_container = container;
+		_type = type;
+		_target = target;
+		_replacement = replacement;
+		_index = -1;
+	}
 
-        switch (_type) {
-            case ADD:
-                _container.add(_target);
-                result = "adding task \"" + _target.getTaskName() + "\" is redone";
+	/**
+	 * Constructor
+	 *
+	 * @param container
+	 * @param type
+	 * @param target
+	 * @param index
+	 */
+	public Command(ArrayList<Task> container, CommandType type, Task target,
+			int index) {
+		_container = container;
+		_type = type;
+		_target = target;
+		_replacement = null;
+		_index = index;
+	}
 
-                break;
+	/**
+	 * This method invokes the undo action on the list of tasks
+	 */
+	public String undo() {
+		String result = "";
 
-            case DELETE:
-                _container.remove(_index);
-                result = "deleting task \"" + _target.getTaskName()
-                        + "\" is redone";
-                break;
+		switch (_type) {
+		case ADD:
+			_container.remove(_target);
+			result = "adding task \"" + _target.getTaskName() + "\" is undone";
+			break;
 
-            case UPDATE:
-                _container.set(_container.indexOf(_target), _replacement);
-                result = "updating task \"" + _target.getTaskName()
-                        + "\" is redone";
-                break;
-            case MARKDONE:
-                _container.get(_index).setIsDone(true);
-                result = "marking task \"" + _target.getTaskName()
-                        + "\"as done is redone";
-        }
+		case DELETE:
+			_container.add(_index, _target);
 
-        return result;
-    }
+			result = "deleting task \"" + _target.getTaskName()
+					+ "\" is undone";
+			break;
 
-    /**
-     * This is a overriding toString method
-     */
-    public String toString() {
-        String desc = "command: ";
-        switch (_type) {
-            case ADD:
-                desc += "add ";
-                break;
-            case DELETE:
-                desc += "delete ";
-                break;
-            case UPDATE:
-                desc += "update ";
-                break;
-            case MARKDONE:
-                desc += "mark as done ";
-        }
-        desc += "\"" + _target.toString() + "\"";
-        if (_type == CommandType.UPDATE) {
-            desc += " to \"" + _replacement.toString() + " \"";
-        }
-        return desc;
-    }
+		case UPDATE:
+			_container.set(_container.indexOf(_replacement), _target);
 
-    /**
-     * The types of commands that are undoable
-     */
-    public enum CommandType {
-        ADD, DELETE, UPDATE, MARKDONE
-    }
+			result = "updating task \"" + _target.getTaskName()
+					+ "\" is undone";
+			break;
+			
+		case MARKDONE:
+			_container.get(_index).setIsDone(false);
+
+			result = "marking task \"" + _target.getTaskName()
+					+ "\"as done is undone";
+			
+			break;
+		}
+
+		return result;
+	}
+
+	/*
+	 * Interface requirements
+	 */
+
+	/**
+	 * This method invokes the redo action
+	 */
+	public String redo() {
+		String result = "";
+
+		switch (_type) {
+		case ADD:
+			_container.add(_target);
+			result = "adding task \"" + _target.getTaskName() + "\" is redone";
+
+			break;
+
+		case DELETE:
+			_container.remove(_index);
+			result = "deleting task \"" + _target.getTaskName()
+					+ "\" is redone";
+			break;
+
+		case UPDATE:
+			_container.set(_container.indexOf(_target), _replacement);
+			result = "updating task \"" + _target.getTaskName()
+					+ "\" is redone";
+			break;
+		case MARKDONE:
+			_container.get(_index).setIsDone(true);
+			result = "marking task \"" + _target.getTaskName()
+					+ "\"as done is redone";
+		}
+
+		return result;
+	}
+
+	/**
+	 * This is a overriding toString method
+	 */
+	public String toString() {
+		String desc = "command: ";
+		switch (_type) {
+		case ADD:
+			desc += "add ";
+			break;
+		case DELETE:
+			desc += "delete ";
+			break;
+		case UPDATE:
+			desc += "update ";
+			break;
+		case MARKDONE:
+			desc += "mark as done ";
+		}
+		desc += "\"" + _target.toString() + "\"";
+		if (_type == CommandType.UPDATE) {
+			desc += " to \"" + _replacement.toString() + " \"";
+		}
+		return desc;
+	}
+
+	/**
+	 * The types of commands that are undoable
+	 */
+	public enum CommandType {
+		ADD, DELETE, UPDATE, MARKDONE
+	}
 }
