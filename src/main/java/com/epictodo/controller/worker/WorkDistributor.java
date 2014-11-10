@@ -7,7 +7,8 @@ import com.epictodo.model.task.Task;
 import java.util.ArrayList;
 
 public class WorkDistributor {
-    private static CRUDLogic _logic = new CRUDLogic();
+    private static final String MSG_ENTER_COMMAND = "Please Enter Command";
+	private static CRUDLogic _logic = new CRUDLogic();
     private final static String[] COMMAND_EXIT = {"exit", "quit"};
     private final static String[] COMMAND_ADD = {"add", "create", "+"};
     private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
@@ -55,7 +56,7 @@ public class WorkDistributor {
      * @return Operation result Message.
      */
     public static String processCommand(String input) {
-        String result = "";
+        String result = MSG_ENTER_COMMAND;
         ArrayList<Task> list = null;
         Task t = null;
         // Clear expired timed tasks
@@ -106,7 +107,7 @@ public class WorkDistributor {
         }
 
         // todo handle invalid input here
-        return null;
+        return result;
     }
 
     /**
