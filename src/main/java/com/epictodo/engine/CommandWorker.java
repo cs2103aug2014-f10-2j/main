@@ -20,20 +20,23 @@ public class CommandWorker {
     private static Search _search = new Search();
     private static Logger _logger = Logger.getLogger("System Log");
 
-    /*
-     * This is the helper class to retrieve value from instruction
-     * This class will call TaskBuilder to return a proper task.
+    /**
+     * Return a new Task base on the parsing information. 
+     * if the instruction cannot be parsed, return null
+     *
+     * @param instruction        user input without command.
+     * @return Task
      */
-    public static Task createTask(String instruc) {
+    public static Task createTask(String instruction) {
         Task newTask = null;
 
         try {
-            _response = _nlp_engine.flexiAdd(instruc);
+            _response = _nlp_engine.flexiAdd(instruction);
         } catch (Exception ex) {
         	_logger.info("Unable to parse user's input!");
             return newTask;
         }
-
+        // NLP task name & description builder
         StringBuilder taskn_builder = new StringBuilder(CAPACITY);
         StringBuilder taskd_builder = new StringBuilder(CAPACITY);
 
@@ -51,15 +54,15 @@ public class CommandWorker {
                 _logger.info(LOG_INVALID);
             } else if (taskDate == null) {
                 // Floating Task
-                //    _logger.info(LOG_FLOATINGTASK);
+                _logger.info(LOG_FLOATINGTASK);
                 newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
             } else if (taskDuration > 0) {
                 // Timed Task
-                //    _logger.info(LOG_TIMEDTASK);
+                _logger.info(LOG_TIMEDTASK);
                 newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, startTime, taskDuration);
             } else if (taskDate != null) {
                 // Deadline Task
-                //	_logger.info(LOG_DEADLINETASK);
+                _logger.info(LOG_DEADLINETASK);
                 newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
             }
         } catch (InvalidTimeException ite) {
@@ -71,6 +74,13 @@ public class CommandWorker {
         return newTask;
     }
 
+    /**
+     * Return keyword into ddmmyy format
+     * If Nlp define keyword isn't any date, return null
+     *
+     * @param keyword        keyword from search
+     * @return result String as ddmmyy.
+     */
     public static String getDateViaNlp(String keyword) {
         String ddmmyy;
 
@@ -85,8 +95,15 @@ public class CommandWorker {
         return ddmmyy;
     }
 
-    public static KeywordType getKeywordType(Task t, String date) {
-        if (t != null) {
+    /**
+     * return keyword type 
+     *
+     * @param task      Task from the option given from user.
+     * @param date		date given from NLP.
+     * @return Keyword Type.
+     */
+    public static KeywordType getKeywordType(Task task, String date) {
+        if (task != null) {
             return KeywordType.OPTION;
         }
         if (date != null) {

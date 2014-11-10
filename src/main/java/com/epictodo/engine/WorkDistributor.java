@@ -164,7 +164,10 @@ public class WorkDistributor {
     private static ArrayList<Task> searchThroughKeywords(String keyword) {
         ArrayList<Task> list = new ArrayList<Task>();
         Task tempTask = _logic.translateWorkingListId(keyword);
-        String date = CommandWorker.getDateViaNlp(keyword);
+        String date= null;
+        if(keyword.length()!=1){
+        date = CommandWorker.getDateViaNlp(keyword);
+        }
         KeywordType keywordType = CommandWorker.getKeywordType(tempTask, date);
 
         switch (keywordType) {
