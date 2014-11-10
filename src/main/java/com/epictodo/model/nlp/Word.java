@@ -1,4 +1,4 @@
-//@author A0111875E-unused generated
+//@author generated-unused 
 /*
  * The MIT License (MIT)
  *

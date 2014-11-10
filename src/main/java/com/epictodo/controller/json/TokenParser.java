@@ -1,4 +1,4 @@
-//@author A0111875E - unused
+//@author A0111875E-unused
 package com.epictodo.controller.json;
 
 import com.google.gson.JsonElement;
