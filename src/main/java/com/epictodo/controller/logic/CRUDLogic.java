@@ -662,6 +662,7 @@ public class CRUDLogic {
 	private void addCommand(Command.CommandType type, Task target) {
 		Command comm = new Command(_items, type, target);
 		_undoList.add(comm);
+		_redoList.clear();
 	}
 
 	/**
@@ -676,6 +677,7 @@ public class CRUDLogic {
 			Task replacement) {
 		Command comm = new Command(_items, type, target, replacement);
 		_undoList.add(comm);
+		_redoList.clear();
 	}
 
 	/**
@@ -689,6 +691,7 @@ public class CRUDLogic {
 	private void addCommand(Command.CommandType type, Task target, int index) {
 		Command comm = new Command(_items, type, target, index);
 		_undoList.add(comm);
+		_redoList.clear();
 	}
 
 	/**
