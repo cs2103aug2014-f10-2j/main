@@ -1,10 +1,10 @@
 //@author A0112918H
 package com.epictodo.controller.worker;
 
+import java.util.ArrayList;
+
 import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.task.Task;
-
-import java.util.ArrayList;
 
 public class WorkDistributor {
     private static CRUDLogic _logic = new CRUDLogic();
@@ -171,7 +171,7 @@ public class WorkDistributor {
         if(keyword.length()!=1){
         	date = CommandWorker.getDateViaNlp(keyword);
         }
-        KeywordType keywordType = CommandWorker.getKeywordType(tempTask, date);
+        KeywordType keywordType = getKeywordType(tempTask, date);
 
         switch (keywordType) {
             case WORD:
@@ -283,5 +283,21 @@ public class WorkDistributor {
     private static String getCommand(String instruc) {
         String commandTypeString = instruc.trim().split("\\s+")[0];
         return commandTypeString;
+    }
+    /**
+     * return keyword type 
+     *
+     * @param task      Task from the option given from user.
+     * @param date		date given from NLP.
+     * @return Keyword Type.
+     */
+    private static KeywordType getKeywordType(Task task, String date) {
+        if (task != null) {
+            return KeywordType.OPTION;
+        }else if (date != null) {
+            return KeywordType.TIME;
+        } else {
+            return KeywordType.WORD;
+        }
     }
 }

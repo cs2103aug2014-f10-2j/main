@@ -1,6 +1,6 @@
+
 package com.epictodo.util;
 
-import com.epictodo.model.*;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.task.DeadlineTask;
@@ -8,15 +8,6 @@ import com.epictodo.model.task.FloatingTask;
 import com.epictodo.model.task.Task;
 import com.epictodo.model.task.TimedTask;
 
-/*
-    "start_date_time": 1412907000,
-    "end_date_time": 1412914200,
-    "task_name": "project meeting 2103",
-    "task_description": "Nothing much",
-    "priority": 2,
-    "is_done": false
-	HashMap<String, String> memory = new HashMap<>();
- */
 
 public class TaskBuilder {
 

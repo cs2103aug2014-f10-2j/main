@@ -1,18 +1,16 @@
 //@author A0112918H
 package com.epictodo.controller.worker;
 
+import java.text.ParseException;
+import java.util.logging.Logger;
+
 import com.epictodo.controller.nlp.NLPEngine;
-import com.epictodo.controller.worker.WorkDistributor.KeywordType;
-import com.epictodo.model.*;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.model.nlp.Response;
 import com.epictodo.model.nlp.Search;
 import com.epictodo.model.task.Task;
 import com.epictodo.util.TaskBuilder;
-
-import java.text.ParseException;
-import java.util.logging.Logger;
 
 public class CommandWorker {
     private static final String LOG_INVALID_DATE = "invalid date";
@@ -98,22 +96,7 @@ public class CommandWorker {
         return ddmmyy;
     }
 
-    /**
-     * return keyword type 
-     *
-     * @param task      Task from the option given from user.
-     * @param date		date given from NLP.
-     * @return Keyword Type.
-     */
-    public static KeywordType getKeywordType(Task task, String date) {
-        if (task != null) {
-            return KeywordType.OPTION;
-        }else if (date != null) {
-            return KeywordType.TIME;
-        } else {
-            return KeywordType.WORD;
-        }
-    }
+
 
     /**
      * return a string of task name base on NLP info 
