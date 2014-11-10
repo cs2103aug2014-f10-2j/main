@@ -593,6 +593,7 @@ public class NLPEngine {
      */
     public Delta flexiEdit(String _sentence) throws ParseException {
         boolean is_first = true;
+        boolean is_removed = false;
         int _index = 0;
 
         List<String> sentence_list = new ArrayList<>();
@@ -611,8 +612,12 @@ public class NLPEngine {
          *
          */
         for (int i = 0; i < sentence_list.size(); i++) {
-            if (sentence_list.get(i).equalsIgnoreCase("edit") || sentence_list.get(i).equalsIgnoreCase("change")) {
-                sentence_list.remove(i);
+            if (is_removed) {
+                if (sentence_list.get(i).equalsIgnoreCase("edit") || sentence_list.get(i).equalsIgnoreCase("change")) {
+                    sentence_list.remove(i);
+
+                    is_removed = true;
+                }
             }
 
             if (sentence_list.get(i).equalsIgnoreCase("to")) {
