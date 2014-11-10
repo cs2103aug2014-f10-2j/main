@@ -3,8 +3,8 @@ package com.epictodo.engine;
 
 import com.epictodo.engine.WorkDistributor.KeywordType;
 import com.epictodo.model.*;
-import com.epictodo.model.Exception.InvalidDateException;
-import com.epictodo.model.Exception.InvalidTimeException;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
 import com.epictodo.util.TaskBuilder;
 
 import java.text.ParseException;

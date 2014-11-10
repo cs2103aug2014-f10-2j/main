@@ -3,8 +3,8 @@ package com.epictodo.model;
 import java.text.ParseException;
 import java.util.Date;
 
-import com.epictodo.model.Exception.InvalidDateException;
-import com.epictodo.model.Exception.InvalidTimeException;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
 
 //@author A0111683L
 public class DeadlineTask extends Task {

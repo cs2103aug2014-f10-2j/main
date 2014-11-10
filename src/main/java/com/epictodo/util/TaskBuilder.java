@@ -1,8 +1,8 @@
 package com.epictodo.util;
 
 import com.epictodo.model.*;
-import com.epictodo.model.Exception.InvalidDateException;
-import com.epictodo.model.Exception.InvalidTimeException;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
 
 /*
     "start_date_time": 1412907000,
