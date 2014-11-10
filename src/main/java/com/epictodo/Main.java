@@ -6,39 +6,40 @@ import com.epictodo.engine.WorkDistributor;
 
 import java.util.Scanner;
 
-
 public class Main {
-    private static NLPEngine nlp_engine = NLPEngine.getInstance();
+	private static final String ASCII_ART_BANNER = "___________      .__         ___________        ___     \n"
+			+ "\\_   _____/_____ |__| ____   \\__    ___/___   __| _/____ \n"
+			+ " |  ____)_\\____ \\|  |/ ___\\    |    | /  _ \\ / __ |/  _ \\\n"
+			+ " |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n"
+			+ "/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n"
+			+ "        \\/|__|           \\/                      \\/       \n";
 
-    // COMMAND INPUT
-    static Scanner sc = new Scanner(System.in);
+	private static NLPEngine nlp_engine = NLPEngine.getInstance();
 
-    public static void main(String[] args) {
-       // nlp_engine.mute();
+	// COMMAND INPUT
+	static Scanner sc = new Scanner(System.in);
 
-        WorkDistributor.loadData();
-        bannerDisplay();
-        while (true) {
-            Display("\nEnter your command: ");
-            String instruc = sc.nextLine();
-            Display(WorkDistributor.processCommand(instruc));
-        }
-    }
+	public static void main(String[] args) {
+		// nlp_engine.mute();
 
-    private static void bannerDisplay() {
-        DisplayLine("___________      .__         ___________        ___     \n" +
-                "\\_   _____/_____ |__| ____   \\__    ___/___   __| _/____ \n" +
-                " |  ____)_\\____ \\|  |/ ___\\    |    | /  _ \\ / __ |/  _ \\\n" +
-                " |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n" +
-                "/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n" +
-                "        \\/|__|           \\/                      \\/       \n");
-    }
+		WorkDistributor.loadData();
+		bannerDisplay();
+		while (true) {
+			Display("\nEnter your command: ");
+			String instruc = sc.nextLine();
+			Display(WorkDistributor.processCommand(instruc));
+		}
+	}
 
-    private static void DisplayLine(String a) {
-        System.out.println(a);
-    }
+	private static void bannerDisplay() {
+		DisplayLine(ASCII_ART_BANNER);
+	}
 
-    private static void Display(String a) {
-        System.out.print(a);
-    }
+	private static void DisplayLine(String a) {
+		System.out.println(a);
+	}
+
+	private static void Display(String a) {
+		System.out.print(a);
+	}
 }
