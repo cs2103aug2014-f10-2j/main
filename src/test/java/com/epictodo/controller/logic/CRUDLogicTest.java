@@ -39,12 +39,12 @@ import static org.junit.Assert.assertEquals;
 
 public class CRUDLogicTest {
 	private CRUDLogic _logic = new CRUDLogic();
-	private CRUDLogic expected_crud = new CRUDLogic();
+	private CRUDLogic _expectedLogic = new CRUDLogic();
 	private Task _nulltask = null;
 	private Task _task1 = null;
 	private Task _task2 = null;
 	private ArrayList<Task> _tasklist;
-	private String expected = "";
+	private String _expected = "";
 
 	@Before
 	public void ini() throws Exception {
@@ -135,41 +135,41 @@ public class CRUDLogicTest {
 	@Test
     public void testUndoAdd1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
-    	expected = expected_crud.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	_expectedLogic.createTask(_task1.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
     public void testUndoAdd2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task2);
-    	expected_crud.createTask(_task2.copy());
-    	expected = expected_crud.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	_expectedLogic.createTask(_task2.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
     public void testUndoDelete1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.deleteTask(_task1);
-    	expected_crud.deleteTask(_task1);
-    	expected = expected_crud.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	_expectedLogic.deleteTask(_task1);
+    	_expected = _expectedLogic.undoMostRecent();
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
     public void testUndoDelete2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.createTask(_task2);
-    	expected_crud.createTask(_task2.copy());
+    	_expectedLogic.createTask(_task2.copy());
     	_logic.deleteTask(_task1);
-    	expected_crud.deleteTask(_task1.copy());
+    	_expectedLogic.deleteTask(_task1.copy());
     	_logic.deleteTask(_task2);
-    	expected_crud.deleteTask(_task2.copy());
-    	expected = expected_crud.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	_expectedLogic.deleteTask(_task2.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
@@ -189,98 +189,98 @@ public class CRUDLogicTest {
     @Test
     public void testUndoUpdate1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException{
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.updateTask(_task1, _task2);
-    	expected_crud.updateTask(_task1, _task2);
-    	expected = expected_crud.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	_expectedLogic.updateTask(_task1, _task2);
+    	_expected = _expectedLogic.undoMostRecent();
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
     public void testUndoUpdate2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException{
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.updateTask(_task1, _task2);
-    	expected_crud.updateTask(_task1, _task2);
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.undoMostRecent();
+    	_expectedLogic.updateTask(_task1, _task2);
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.undoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.undoMostRecent());
+    	assertEquals(_expected, _logic.undoMostRecent());
     }
     
     @Test
     public void testRedoAdd1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expectedLogic.createTask(_task1.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
     
     @Test
     public void testRedoAdd2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task2);
-    	expected_crud.createTask(_task2.copy());
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expectedLogic.createTask(_task2.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
     
     @Test
     public void testRedoDelete1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.deleteTask(_task1);
-    	expected_crud.deleteTask(_task1);
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expectedLogic.deleteTask(_task1);
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
     
     @Test
     public void testRedoDelete2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException {
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.createTask(_task2);
-    	expected_crud.createTask(_task2.copy());
+    	_expectedLogic.createTask(_task2.copy());
     	_logic.deleteTask(_task1);
-    	expected_crud.deleteTask(_task1.copy());
+    	_expectedLogic.deleteTask(_task1.copy());
     	_logic.deleteTask(_task2);
-    	expected_crud.deleteTask(_task2.copy());
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expectedLogic.deleteTask(_task2.copy());
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
     
     @Test
     public void testRedoUpdate1() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException{
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.updateTask(_task1, _task2);
-    	expected_crud.updateTask(_task1, _task2);
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expectedLogic.updateTask(_task1, _task2);
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
     
     @Test
     public void testRedoUpdate2() throws NullPointerException, ParseException, InvalidDateException, InvalidTimeException{
     	_logic.createTask(_task1);
-    	expected_crud.createTask(_task1.copy());
+    	_expectedLogic.createTask(_task1.copy());
     	_logic.updateTask(_task1, _task2);
-    	expected_crud.updateTask(_task1, _task2);
-    	expected = expected_crud.undoMostRecent();
-    	expected = expected_crud.undoMostRecent();
+    	_expectedLogic.updateTask(_task1, _task2);
+    	_expected = _expectedLogic.undoMostRecent();
+    	_expected = _expectedLogic.undoMostRecent();
     	_logic.undoMostRecent();
-    	expected = expected_crud.redoMostRecent();
+    	_expected = _expectedLogic.redoMostRecent();
     	_logic.undoMostRecent();
-    	assertEquals(expected, _logic.redoMostRecent());
+    	assertEquals(_expected, _logic.redoMostRecent());
     }
 }
