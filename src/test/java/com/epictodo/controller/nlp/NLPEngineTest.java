@@ -25,9 +25,7 @@
 
 package com.epictodo.controller.nlp;
 
-import com.epictodo.controller.nlp.NLPEngine;
 import com.epictodo.model.nlp.Response;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,7 +45,6 @@ public class NLPEngineTest {
      * Test assumptions:
      * Date has to change if testing for date.
      * Date will always compare with Today's Date
-     *
      */
 
     @Test

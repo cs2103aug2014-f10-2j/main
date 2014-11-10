@@ -31,8 +31,8 @@ import org.junit.Test;
 import java.text.ParseException;
 
 public class DateValidatorTest {
-    private final DateValidator date_validator = new DateValidator();
     private static final double DELTA = 1e-15;
+    private final DateValidator date_validator = new DateValidator();
 
     /**
      * convertDateFormat Valid Test Case

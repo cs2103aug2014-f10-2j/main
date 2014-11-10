@@ -31,8 +31,8 @@ import org.junit.Test;
 import java.text.ParseException;
 
 public class TimeValidatorTest {
-    private final TimeValidator time_validator = new TimeValidator();
     private static final double DELTA = 1e-15;
+    private final TimeValidator time_validator = new TimeValidator();
 
     /**
      * Valid Time Test Cases
