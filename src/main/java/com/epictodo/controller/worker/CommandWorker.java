@@ -21,7 +21,7 @@ public class CommandWorker {
     private static final String LOG_INVALID = "invalid command!";
     private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
-    private static Response _response = new Response();
+    private static Response _response;
     private static Search _search = new Search();
     private static Logger _logger = Logger.getLogger("System Log");
 
@@ -34,7 +34,7 @@ public class CommandWorker {
      */
     public static Task createTask(String instruction) {
         Task newTask = null;
-
+        _response = new Response();
         try {
             _response = _nlp_engine.flexiAdd(instruction);
         } catch (Exception ex) {

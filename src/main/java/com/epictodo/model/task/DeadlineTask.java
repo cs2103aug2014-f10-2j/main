@@ -121,6 +121,7 @@ public class DeadlineTask extends Task {
             e.printStackTrace();
         }
         cloned.setUid(t.getUid());
+		cloned.setIsDone(getIsDone());
         return cloned;
     }
 

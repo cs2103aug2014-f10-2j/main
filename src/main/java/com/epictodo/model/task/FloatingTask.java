@@ -54,6 +54,7 @@ public class FloatingTask extends Task {
 
         cloned = new FloatingTask(t);
         cloned.setUid(t.getUid());
+		cloned.setIsDone(getIsDone());
         return cloned;
     }
 }
