@@ -345,9 +345,6 @@ public class DateValidator {
         String result_end;
         int num_days;
 
-        System.out.print("BEGIN: " + date_begin);
-        System.out.println("END: " + date_end);
-
         Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
         Matcher date_matcher_begin = date_pattern.matcher(date_begin);
 
@@ -501,6 +498,24 @@ public class DateValidator {
      */
     public boolean checkDateFormat(String _date) throws ParseException {
         Pattern date_pattern = Pattern.compile(DATE_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method checks and validates if the integer passed is in the format of dd/MM/yyyy
+     *
+     * @param _date
+     * @return boolean
+     * @throws ParseException
+     */
+    public boolean checkDateFormat2(String _date) throws ParseException {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN_2);
         Matcher date_matcher = date_pattern.matcher(_date);
 
         if (!date_matcher.matches()) {
