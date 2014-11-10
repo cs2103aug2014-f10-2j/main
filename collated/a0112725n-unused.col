@@ -1,0 +1,114 @@
+//@author: a0112725n-unused
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\logic\CRUDLogic.java
+	 */
+
+
+    /**
+     * This method returns tasks based on whether it has been marked as done
+     *
+     * @param boolean when true = Marked as done
+     */
+    public ArrayList<Task> getTasksByStatus(boolean done)
+            throws ParseException, InvalidDateException, InvalidTimeException {
+        ArrayList<Task> resultList = new ArrayList<Task>();
+        for (int i = 0; i < size(); i++) {
+            if (_items.get(i).getIsDone() == done) {
+                resultList.add(_items.get(i).copy());
+            }
+        }
+
+        updateWorkingList(resultList); // update the working list
+
+        return resultList;
+    }
+
+    /**
+     * This method returns a list of tasks based on the priority set
+     *
+     * @param p the priority enum
+     * @return the ArrayList containing the selected tasks
+     */
+    public ArrayList<Task> getTasksByPriority(int p)
+            throws IllegalArgumentException, ParseException,
+            InvalidDateException, InvalidTimeException {
+        ArrayList<Task> resultList = new ArrayList<Task>();
+
+		/*
+		 * Exception handling to make sure the priority is within valid range
+		 */
+        if (p < CONFIG_PRIORITY_MIN || p > CONFIG_PRIORITY_MAX) {
+            throw new IllegalArgumentException(MSG_ILLEGAL_PRIORITY);
+        }
+        for (int i = 0; i < size(); i++) {
+            if (_items.get(i).getPriority() == p && !_items.get(i).getIsDone()) {
+                resultList.add(_items.get(i).copy());
+            }
+        }
+
+        updateWorkingList(resultList); // update the working list
+
+        return resultList;
+    }
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\logic\CRUDLogic.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\logic\CRUDLogic.java
+	 */
+
+
+    /**
+     * This method adds an Floating Task to the list
+     *
+     * @param ft the FloatingTask obj
+     * @return The result in a String
+     */
+    public String createTask(FloatingTask ft) throws NullPointerException {
+        return createTask(ft);
+    }
+
+    /**
+     * This method adds an Deadline Task to the list
+     *
+     * @param dt the DeadlineTask obj
+     * @return The result in a String
+     */
+    public String createTask(DeadlineTask dt) throws NullPointerException {
+        return createTask(dt);
+    }
+
+    /**
+     * This method adds an Floating Task to the list
+     *
+     * @param tt the TimedTask obj
+     * @return The result in a String
+     */
+    public String createTask(TimedTask tt) throws NullPointerException {
+        return createTask(tt);
+    }
+
+    /**
+     * This method displays the content of all the tasks that matches the
+     * keyword in names
+     *
+     * @param keyword
+     * @return
+     */
+    public String searchForTasks(String keyword) {
+        return convertListToString(getTasksByName(keyword));
+    }
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\logic\CRUDLogic.java
+
+
+
+
+

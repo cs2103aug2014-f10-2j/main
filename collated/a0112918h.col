@@ -1,0 +1,1339 @@
+//@author: a0112918h
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\json\Storage.java
+	 */
+
+package com.epictodo.controller.json;
+
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+public class Storage {
+    private static Logger _logger = Logger.getLogger("--- Storage Parser Log ---");
+
+    public enum TaskType {
+        FLOATING, DEADLINE, TIMED
+    }
+
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     * Construct them into MAP <TaskType, List<Task>>
+     *
+     * @param list
+     * @return _result
+     */
+    public static ArrayList<Task> loadDbFile(String file_name) {
+        File f = new File(file_name);
+        Gson _gson = instantiateObject();
+        ArrayList<Task> _result = makeArrayList(f, _gson);
+
+        return _result;
+    }
+
+    /**
+     * This method saves ArrayList<Task> from memory object to Json file.
+     *
+     * @param file_name fileName
+     * @param list      wholeList to be added
+     * @return true
+     */
+    public static boolean saveToJson(String file_name, ArrayList<Task> list) {
+        assert file_name.equalsIgnoreCase(file_name);
+
+        Map<TaskType, List<Task>> _map = makeMap(list);
+
+        try {
+            FileWriter file_writer = new FileWriter(file_name);
+            Gson _gson = instantiateObject();
+            String json_result = _gson.toJson(_map);
+
+            if (_map == null || _map.isEmpty()) {
+                file_writer.write("");
+            } else {
+                file_writer.write(json_result);
+            }
+
+            file_writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     * Construct them into MAP <TaskType, List<Task>>
+     *
+     * @param list
+     * @return _result
+     */
+    private static Map<TaskType, List<Task>> makeMap(ArrayList<Task> list) {
+        ArrayList<Task> timed_list = new ArrayList<>();
+        ArrayList<Task> deadline_list = new ArrayList<>();
+        ArrayList<Task> floating_list = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            Task _task = list.get(i);
+            if (_task instanceof TimedTask) {
+                timed_list.add(_task);
+            }
+            if (_task instanceof DeadlineTask) {
+                deadline_list.add(_task);
+            }
+            if (_task instanceof FloatingTask) {
+                floating_list.add(_task);
+            }
+        }
+
+        Map<TaskType, List<Task>> _map = new HashMap<>();
+        _map.put(TaskType.TIMED, timed_list);
+        _map.put(TaskType.DEADLINE, deadline_list);
+        _map.put(TaskType.FLOATING, floating_list);
+        return _map;
+    }
+
+    /**
+     * This method instantiates a GSON Object.
+     * Method will read JSON Object from memory and translates to JSON.
+     *
+     * @return _gson
+     */
+    private static Gson instantiateObject() {
+        GsonBuilder gson_builder = new GsonBuilder();
+        gson_builder.setPrettyPrinting()
+                .serializeNulls()
+                .disableHtmlEscaping()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+
+        Gson _gson = gson_builder.create();
+
+        return _gson;
+    }
+
+    /**
+     * This method make use of makeTask to retrieve all of tasks from the storage file
+     * Returns an arraylist of Task from the storage
+     *
+     * @param file
+     * @param _gson
+     * @return _result
+     */
+    private static ArrayList<Task> makeArrayList(File file, Gson _gson) {
+        ArrayList<Task> _result = new ArrayList<>();
+
+        try {
+            Map<TaskType, List<Task>> timed_result = makeTimedTaskList(file, _gson);
+            Map<TaskType, List<Task>> deadline_result = makeDeadlineTaskList(file,
+                    _gson);
+            Map<TaskType, List<Task>> floatingt_result = makeFloatingTaskList(
+                    file, _gson);
+
+            _result.addAll(timed_result.get(TaskType.TIMED));
+            _result.addAll(deadline_result.get(TaskType.DEADLINE));
+            _result.addAll(floatingt_result.get(TaskType.FLOATING));
+            return _result;
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * This method reads the storage file and
+     * convert all of them into a Map consist of floating task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of floating task
+     */
+    private static Map<TaskType, List<Task>> makeFloatingTaskList(File file, Gson _gson) throws FileNotFoundException {
+        FileReader _reader;
+        _reader = new FileReader(file);
+        TypeToken<Map<TaskType, List<FloatingTask>>> f_token = new TypeToken<Map<TaskType, List<FloatingTask>>>() {
+        };
+        Map<TaskType, List<Task>> floatingt_result = _gson.fromJson(_reader, f_token.getType());
+        return floatingt_result;
+    }
+
+    /**
+     * This method reads the storage file and
+     * convert all of them into a Map consist of deadline task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of deadline task
+     */
+    private static Map<TaskType, List<Task>> makeDeadlineTaskList(File f, Gson _gson) throws FileNotFoundException {
+        FileReader _reader;
+        _reader = new FileReader(f);
+        TypeToken<Map<TaskType, List<DeadlineTask>>> dd_token = new TypeToken<Map<TaskType, List<DeadlineTask>>>() {
+        };
+        Map<TaskType, List<Task>> deadline_result = _gson.fromJson(_reader, dd_token.getType());
+        return deadline_result;
+    }
+
+    /**
+     * This method reads the storage file and
+     * convert all of them into a Map consist of timed task
+     *
+     * @param file
+     * @param _gson
+     * @return Map of timed task
+     */
+    private static Map<TaskType, List<Task>> makeTimedTaskList(File file, Gson _gson) throws FileNotFoundException {
+        FileReader _reader = new FileReader(file);
+        TypeToken<Map<TaskType, List<TimedTask>>> t_token = new TypeToken<Map<TaskType, List<TimedTask>>>() {
+        };
+        Map<TaskType, List<Task>> timed_result = _gson.fromJson(_reader, t_token.getType());
+        return timed_result;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\json\Storage.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\CommandWorker.java
+	 */
+
+package com.epictodo.controller.worker;
+
+import com.epictodo.controller.nlp.NLPEngine;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
+import com.epictodo.model.nlp.Response;
+import com.epictodo.model.nlp.Search;
+import com.epictodo.model.task.Task;
+import com.epictodo.util.TaskBuilder;
+
+import java.text.ParseException;
+import java.util.logging.Logger;
+
+public class CommandWorker {
+    private static final String LOG_INVALID_DATE = "invalid date";
+    private static final String LOG_INVALID_TIME = "invalid time";
+    private static final String LOG_DEADLINETASK = "Creating DeadLine task...";
+    private static final String LOG_TIMEDTASK = "Creating Timed task...";
+    private static final String LOG_FLOATINGTASK = "Creating floating task...";
+    private static final String LOG_INVALID = "invalid command!";
+    private static final int CAPACITY = 100;
+    private static NLPEngine _nlp_engine = NLPEngine.getInstance();
+    private static Response _response = new Response();
+    private static Search _search = new Search();
+    private static Logger _logger = Logger.getLogger("System Log");
+
+    /**
+     * Return a new Task base on the parsing information.
+     * if the instruction cannot be parsed, return null
+     *
+     * @param instruction user input without command.
+     * @return Task
+     */
+    public static Task createTask(String instruction) {
+        Task newTask = null;
+
+        try {
+            _response = _nlp_engine.flexiAdd(instruction);
+        } catch (Exception ex) {
+            _logger.info("Unable to parse user's input!");
+            return newTask;
+        }
+        // NLP can replace the work below
+        String taskName = getTaskNameViaNlp();
+        String taskDesc = getTaskDescViaNlp();
+        String taskDate = _response.getTaskDate();
+        String taskTime = _response.getTaskTime();
+        String startTime = _response.getStartTime();
+        int taskPriority = _response.getPriority();
+        double taskDuration = _response.getTaskDuration();
+
+        try {
+            if (taskName.equals("") || taskName == null) {
+                _logger.info(LOG_INVALID);
+            } else if (taskDate == null) {
+                // Floating Task
+                _logger.info(LOG_FLOATINGTASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
+            } else if (taskDuration > 0) {
+                // Timed Task
+                _logger.info(LOG_TIMEDTASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, startTime, taskDuration);
+            } else if (taskDate != null) {
+                // Deadline Task
+                _logger.info(LOG_DEADLINETASK);
+                newTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskDate, taskTime);
+            }
+        } catch (InvalidTimeException ite) {
+            _logger.info(LOG_INVALID_TIME);
+        } catch (InvalidDateException ide) {
+            _logger.info(LOG_INVALID_DATE);
+        }
+
+        return newTask;
+    }
+
+    /**
+     * Return keyword into ddmmyy format
+     * If Nlp define keyword isn't any date, return null
+     *
+     * @param keyword keyword from search
+     * @return result String as ddmmyy.
+     */
+    public static String getDateViaNlp(String keyword) {
+        String ddmmyy;
+
+        try {
+            _search = _nlp_engine.flexiSearch(keyword);
+        } catch (ParseException ex) {
+            _logger.info(LOG_INVALID);
+        }
+
+        ddmmyy = _search.getSearchDate();
+
+        return ddmmyy;
+    }
+
+    /**
+     * return a string of task name base on NLP info
+     *
+     * @return task name.
+     */
+    private static String getTaskNameViaNlp() {
+        StringBuilder taskn_builder = new StringBuilder(CAPACITY);
+        boolean is_first = true;
+        for (String task_name : _response.getTaskName()) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                taskn_builder.append(' ');
+            }
+
+            taskn_builder.append(task_name);
+        }
+        return taskn_builder.toString();
+    }
+
+    /**
+     * return a string of task description base on NLP info
+     *
+     * @return task description.
+     */
+    private static String getTaskDescViaNlp() {
+
+        StringBuilder taskd_builder = new StringBuilder(CAPACITY);
+        boolean is_first = true;
+
+        for (String task_desc : _response.getTaskDesc()) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                taskd_builder.append(' ');
+            }
+
+            taskd_builder.append(task_desc);
+        }
+        return taskd_builder.toString();
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\CommandWorker.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\MenuWorker.java
+	 */
+
+package com.epictodo.controller.worker;
+
+import com.epictodo.controller.worker.WorkDistributor.CommandType;
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
+import com.epictodo.util.TaskBuilder;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Logger;
+
+public class MenuWorker {
+    private static final String LOG_SELECTED_TASK = "Task, %s is retrieved";
+    private static final String INSTRUCTION_ENTER_NAME = "Name ( %s ):";
+    private static final String INSTRUCTION_ENTER_DESCRIPTION = "Description ( %s ):";
+    private static final String INSTRUCTION_ENTER_PRIORITY = "priority ( %s ):";
+    private static final String INSTRUCTION_ENTER_START_DATE = "start Date ( %s ):";
+    private static final String INSTRUCTION_ENTER_START_TIME = "start Time ( %s ):";
+    private static final String INSTRUCTION_ENTER_ENDTIME = "end Time ( %s ):";
+    private static final String INSTRUCTION_ENTER_ENDDATE = "end Date ( %s ):";
+    private static final String INSTRUCTION_ENTER_DURATION = "duration in hours ( %s ):";
+    private static final String INSTRUCTION_SELECT_UPDATE_OPTION = "Enter your option to be updated (or 0 to menu): ";
+    private static final String INSTRUCTION_SELECT_DELETE_OPTION = "Enter your option to be deleted (or 0 to menu): ";
+    private static final String INSTRUCTION_SELECT_MARK_OPTION = "Enter your option to be marked (or 0 to menu): ";
+    private static final String INSTRUCTION_SELECT_SEARCH_OPTION = "Enter your option for details (or 0 to menu): ";
+
+    private static final String MSG_UPDATE_INSTRUCTION = "---------------------------------\nplease update info or press [enter] to remain unchange\n---------------------------------";
+
+    private static Logger _logger = Logger.getLogger("System Menu Log");
+    private static Scanner _sc = null;
+
+    /**
+     * This method displays the task list information and
+     * prompt user to select from them.
+     * Ultimately, this will return the selected task or the only task
+     * If there is no task found in the list, it return null
+     *
+     * @param type   CommandType
+     * @param list   List to select.
+     * @param String to be displayed to the user
+     * @return Task
+     */
+    public static Task selectItemFromList(CommandType type, ArrayList<Task> list, String items) throws IndexOutOfBoundsException {
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+
+        _sc = new Scanner(System.in);
+        displaySelectInstruction(type, items);
+
+        int option = retrieveInputOption();
+        if (option == 0) {
+            return null;
+        }
+        Task t = list.get(option - 1);
+        _logger.info(String.format(LOG_SELECTED_TASK, t.getTaskName()));
+        return t;
+    }
+
+    /**
+     * This method prompt user to update their task
+     * Return the updatedTask Once the task is done
+     *
+     * @param T original task
+     * @return updatedTask
+     */
+    public static Task updateTask(Task t) {
+        if (t == null) return null;
+        Task updatedTask = null;
+        String taskName, taskDesc, taskStartDate, taskStartTime, taskEndDate, taskEndTime;
+        int taskPriority;
+        double taskDuration;
+        _sc = new Scanner(System.in);
+        taskName = updateTaskName(t);
+        taskDesc = updateTaskDesc(t);
+        taskPriority = updateTaskPriority(t);
+
+        try {
+            if (t instanceof TimedTask) {
+                taskStartDate = updateStartDate(t);
+                taskStartTime = updateStartTime(t);
+                taskDuration = updateTaskDuration(t);
+                updatedTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskStartDate, taskStartTime, taskDuration);
+
+            } else if (t instanceof DeadlineTask) {
+                taskEndDate = updateTaskEndDate(t);
+                taskEndTime = updateTaskEndTime(t);
+                updatedTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority, taskEndDate, taskEndTime);
+
+            } else if (t instanceof FloatingTask) {
+                updatedTask = TaskBuilder.buildTask(taskName, taskDesc, taskPriority);
+            }
+            if (updatedTask != null) {
+                updatedTask.setUid(t.getUid());
+            }
+        } catch (InvalidDateException ide) {
+            displayLine("invalid Date");
+        } catch (InvalidTimeException ite) {
+            displayLine("invalid Time");
+        }
+        return updatedTask;
+    }
+
+    /**
+     * This method displays instruction to select item
+     *
+     * @param type  CommandType
+     * @param items String to be displayed to the user
+     */
+    private static void displaySelectInstruction(CommandType type, String items) {
+        // print out the possible result
+        displayLine(items);
+        if (type == CommandType.DELETE) {
+            display(INSTRUCTION_SELECT_DELETE_OPTION);
+        } else if (type == CommandType.UPDATE) {
+            display(INSTRUCTION_SELECT_UPDATE_OPTION);
+        } else if (type == CommandType.SEARCH) {
+            display(INSTRUCTION_SELECT_SEARCH_OPTION);
+        } else if (type == CommandType.DONE) {
+            display(INSTRUCTION_SELECT_MARK_OPTION);
+        }
+    }
+
+    /**
+     * This method read user's input
+     *
+     * @return user input
+     */
+    private static int retrieveInputOption() {
+        int option = 0;
+        try {
+            option = _sc.nextInt();
+        } catch (Exception e) {
+            return -2;
+        }
+
+        return option;
+    }
+
+    /**
+     * update task's end time
+     *
+     * @param t Task
+     * @return endtime String
+     */
+    private static String updateTaskEndTime(Task t) {
+        display(String.format(INSTRUCTION_ENTER_ENDTIME, ((DeadlineTask) t).getTime()));
+        String endTime = getUpdatedInfo(_sc, ((DeadlineTask) t).getTime());
+        return endTime;
+    }
+
+    /**
+     * update task's end Date
+     *
+     * @param t Task
+     * @return endDate String
+     */
+    private static String updateTaskEndDate(Task t) {
+        display(String.format(INSTRUCTION_ENTER_ENDDATE, ((DeadlineTask) t).getDate()));
+        String endDate = getUpdatedInfo(_sc, ((DeadlineTask) t).getDate());
+        return endDate;
+    }
+
+    /**
+     * update task's duration
+     *
+     * @param t Task
+     * @return Duration double
+     */
+    private static double updateTaskDuration(Task t) {
+        double taskDuration;
+        display(String.format(INSTRUCTION_ENTER_DURATION, ((TimedTask) t).getDuration()));
+        String d = getUpdatedInfo(_sc, String.valueOf(((TimedTask) t).getDuration()));
+        taskDuration = Double.valueOf(d);
+        return taskDuration;
+    }
+
+    /**
+     * update task's start time
+     *
+     * @param t Task
+     * @return endtime String
+     */
+    private static String updateStartTime(Task t) {
+        String startTime;
+        display(String.format(INSTRUCTION_ENTER_START_TIME, ((TimedTask) t).getStartTime()));
+        startTime = getUpdatedInfo(_sc, ((TimedTask) t).getStartTime());
+        return startTime;
+    }
+
+    /**
+     * update task's start date
+     *
+     * @param t Task
+     * @return startdate String
+     */
+    private static String updateStartDate(Task t) {
+        String startDate;
+        display(String.format(INSTRUCTION_ENTER_START_DATE, ((TimedTask) t).getStartDate()));
+        startDate = getUpdatedInfo(_sc, ((TimedTask) t).getStartDate());
+        return startDate;
+    }
+
+    /**
+     * update task's priority
+     *
+     * @param t Task
+     * @return priority String
+     */
+    private static int updateTaskPriority(Task t) {
+        display(String.format(INSTRUCTION_ENTER_PRIORITY, t.getPriority()));
+        String p = getUpdatedInfo(_sc, String.valueOf(t.getPriority()));
+        try {
+            int taskPriority = Integer.valueOf(p);
+            return taskPriority;
+        } catch (Exception e) {
+            return t.getPriority();
+        }
+    }
+
+    /**
+     * update task's Description
+     *
+     * @param t Task
+     * @return Description String
+     */
+    private static String updateTaskDesc(Task t) {
+        display(String.format(INSTRUCTION_ENTER_DESCRIPTION, t.getTaskDescription()));
+        String taskDesc = getUpdatedInfo(_sc, t.getTaskDescription());
+        return taskDesc;
+    }
+
+    /**
+     * update task's name
+     *
+     * @param t Task
+     * @return name String
+     */
+    private static String updateTaskName(Task t) {
+        displayLine(MSG_UPDATE_INSTRUCTION);
+        display(String.format(INSTRUCTION_ENTER_NAME, t.getTaskName()));
+        String taskName = getUpdatedInfo(_sc, t.getTaskName());
+        return taskName;
+    }
+
+    /**
+     * update field or remain unchanged
+     *
+     * @param t Task
+     * @return updated String String
+     */
+    private static String getUpdatedInfo(Scanner s, String unchanged) {
+        String update = s.nextLine();
+        if (update == null || update.equals("")) {
+            update = unchanged;
+        }
+        return update;
+    }
+
+    private static void displayLine(String a) {
+        System.out.println(a);
+    }
+
+    private static void display(String a) {
+        System.out.print(a);
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\MenuWorker.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\WorkDistributor.java
+	 */
+
+package com.epictodo.controller.worker;
+
+import com.epictodo.controller.logic.CRUDLogic;
+import com.epictodo.model.task.Task;
+
+import java.util.ArrayList;
+
+public class WorkDistributor {
+    private static CRUDLogic _logic = new CRUDLogic();
+    private final static String[] COMMAND_EXIT = {"exit", "quit"};
+    private final static String[] COMMAND_ADD = {"add", "create", "+"};
+    private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
+    private final static String[] COMMAND_DELETE = {"delete", "remove", "-"};
+    private final static String[] COMMAND_SEARCH = {"search", "find", "ls"};
+    private final static String[] COMMAND_DISPLAY = {"display", "upcoming"};
+    private final static String[] COMMAND_DISPLAYALL = {"all", "displayall", "showall"};
+    private final static String[] COMMAND_UNDO = {"undo", "revert"};
+    private final static String[] COMMAND_REDO = {"redo"};
+    private final static String[] COMMAND_DONE = {"done", "mark"};
+    private final static String[] COMMAND_HELP = {"help", "?"};
+
+    private static final String MSG_HELP = "insert [Command]+[Instruction]\nCommandTypes are:\n\t\t1.Add/Create\n\t\t2.Search/Find\n\t\t3.Update/Change/Modify\n\t\t4.Display/Upcoming\n\t\t5.Undo/Revert\n\t\t6.Redo\n\t\t7.Displayall";
+    private final static String MSG_INVALID_INPUT = "invalid input";
+
+    enum CommandType {
+        DISPLAY, DISPLAYALL, ADD, DELETE, UPDATE, SEARCH, EXIT, INVALID, NULL, UNDO, REDO, DONE, HELP
+    }
+
+    enum KeywordType {
+        WORD, TIME, OPTION
+    }
+
+    /**
+     * Return true if the storage is detected and loaded
+     * If error or files not found, false is returned.
+     *
+     * @param zone Zone of position.
+     * @return Lateral location.
+     * @throws IllegalArgumentException If zone is <= 0.
+     */
+    public static boolean loadData() {
+        try {
+            return _logic.loadFromFile();
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Return message after every command is operated
+     * If command is not operated successfully, "invalid input" is returned.
+     *
+     * @param input User input
+     * @return Operation result Message.
+     */
+    public static String processCommand(String input) {
+        String result = "";
+        ArrayList<Task> list = null;
+        Task t = null;
+        // Clear expired timed tasks
+        _logic.clearExpiredTask();
+
+        CommandType command = defineCommandType(input);
+        input = getInstruction(input);
+
+        switch (command) {
+            case DISPLAY:
+                return _logic.displayIncompleteTaskList();
+            case DISPLAYALL:
+                return _logic.displayAllTaskList();
+            case ADD:
+                t = CommandWorker.createTask(input);
+                result = _logic.createTask(t);
+                return result;
+
+            case DELETE:
+            case DONE:
+            case UPDATE:
+            case SEARCH:
+
+                list = searchThroughKeywords(input);
+                if (list.size() == 0) {
+                    return "Cannnot find '" + input + "'";
+                }
+                result = selectItemProcess(list, command);
+                return result;
+
+            case EXIT:
+                System.exit(0);
+                break;
+            case UNDO:
+                result = _logic.undoMostRecent();
+                return result;
+            case REDO:
+                result = _logic.redoMostRecent();
+                return result;
+            case HELP:
+                result = MSG_HELP;
+                return result;
+            case INVALID:
+                // todo: defined all invalid cases
+                return MSG_INVALID_INPUT;
+            default:
+                break;
+        }
+
+        // todo handle invalid input here
+        return null;
+    }
+
+    /**
+     * Calls MenuWorker to prompt for user input
+     * Return operation result message
+     *
+     * @param list        list of possible option from the search result
+     * @param commandType Defined user command type
+     * @return result message.
+     */
+    private static String selectItemProcess(ArrayList<Task> list, CommandType commandType) {
+        String result = null;
+        Task tempTask = null;
+        try {
+            tempTask = MenuWorker.selectItemFromList(commandType, list,
+                    _logic.convertListToString(list));
+        } catch (IndexOutOfBoundsException iobe) {
+            return MSG_INVALID_INPUT;
+        }
+        result = processCommand(commandType, tempTask);
+        return result;
+    }
+
+    /**
+     * Calls CRUDLogic class to process the task
+     * Return proper result message given from CRUDLogic
+     *
+     * @param command System defined command type
+     * @param task    Y coordinate of position.
+     * @return Operation result message
+     */
+    private static String processCommand(CommandType command, Task task) {
+        String result = "";
+        switch (command) {
+            case DELETE:
+                result = _logic.deleteTask(task);
+                break;
+            case DONE:
+                result = _logic.markAsDone(task);
+                break;
+            case UPDATE:
+                Task updatedTask = MenuWorker.updateTask(task);
+                if (updatedTask != null) {
+                    result = _logic.updateTask(task, updatedTask);
+                }
+                break;
+            case SEARCH:
+                result = _logic.searchDetail(task);
+                break;
+
+            default:
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * Calls CRUDLogic search by using the keywords
+     * Return a list of tasks from the searches
+     *
+     * @param keyword the key words from user input
+     * @return list of possible tasks base on the search result.
+     */
+    private static ArrayList<Task> searchThroughKeywords(String keyword) {
+        ArrayList<Task> list = new ArrayList<Task>();
+        Task tempTask = _logic.translateWorkingListId(keyword);
+        String date = null;
+        if (keyword.length() != 1) {
+            date = CommandWorker.getDateViaNlp(keyword);
+        }
+        KeywordType keywordType = getKeywordType(tempTask, date);
+
+        switch (keywordType) {
+            case WORD:
+                list = _logic.getTasksByName(keyword);
+                break;
+            case TIME:
+                list = _logic.getTasksByDate(date);
+                break;
+            case OPTION:
+                list.add(tempTask);
+                break;
+        }
+        return list;
+    }
+
+    /**
+     * Return CommandType base on the command given from the input
+     *
+     * @param input user input
+     * @return Command type
+     */
+    private static CommandType defineCommandType(String input) {
+        //retrieve command key from the user input
+        String command = getCommand(input);
+        //match them with proper command type
+        if (compareString(command, ""))
+            return CommandType.NULL;
+        else if (matchCommand(command, COMMAND_ADD)) {
+            return CommandType.ADD;
+        } else if (matchCommand(command, COMMAND_DELETE)) {
+            return CommandType.DELETE;
+        } else if (matchCommand(command, COMMAND_UPDATE)) {
+            return CommandType.UPDATE;
+        } else if (matchCommand(command, COMMAND_SEARCH)) {
+            return CommandType.SEARCH;
+        } else if (matchCommand(command, COMMAND_DISPLAY)) {
+            return CommandType.DISPLAY;
+        } else if (matchCommand(command, COMMAND_DISPLAYALL)) {
+            return CommandType.DISPLAYALL;
+        } else if (matchCommand(command, COMMAND_EXIT)) {
+            return CommandType.EXIT;
+        } else if (matchCommand(command, COMMAND_UNDO)) {
+            return CommandType.UNDO;
+        } else if (matchCommand(command, COMMAND_REDO)) {
+            return CommandType.REDO;
+        } else if (matchCommand(command, COMMAND_DONE)) {
+            return CommandType.DONE;
+        } else if (matchCommand(command, COMMAND_HELP)) {
+            return CommandType.HELP;
+        } else {
+            return CommandType.INVALID;
+        }
+    }
+
+    /**
+     * Return true when the command matches with the vocab or its synonyms
+     * if it does not match with each other, false is returned
+     *
+     * @param command System define command.
+     * @param vocabs  command key and its synonyms
+     * @return Boolean.
+     */
+    private static boolean matchCommand(String command, final String[] vocabs) {
+        for (int i = 0; i < vocabs.length; i++) {
+            if (compareString(command, vocabs[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return true if both strings are the same
+     *
+     * @param text1 First String to be compared.
+     * @param text2 Second String to be compared.
+     * @return true/false
+     */
+    private static boolean compareString(String text1, String text2) {
+        return (text1.equalsIgnoreCase(text2));
+    }
+
+    /**
+     * Return instruction by removing command from user input
+     *
+     * @param input user input
+     * @return instruction
+     * @throws IllegalArgumentException If zone is <= 0.
+     */
+    private static String getInstruction(String input) {
+        return input.substring(getCommandLength(input), input.length()).trim();
+    }
+
+    /**
+     * Return command length.
+     *
+     * @param instruc user's input.
+     * @return commands length.
+     */
+    private static int getCommandLength(String instruc) {
+        String commandTypeString = instruc.trim().split("\\s+")[0];
+        return commandTypeString.length();
+    }
+
+    /**
+     * Return command type.
+     *
+     * @param instruc user's input.
+     * @return commands.
+     */
+    private static String getCommand(String instruc) {
+        String commandTypeString = instruc.trim().split("\\s+")[0];
+        return commandTypeString;
+    }
+
+    /**
+     * return keyword type
+     *
+     * @param task Task from the option given from user.
+     * @param date date given from NLP.
+     * @return Keyword Type.
+     */
+    private static KeywordType getKeywordType(Task task, String date) {
+        if (task != null) {
+            return KeywordType.OPTION;
+        } else if (date != null) {
+            return KeywordType.TIME;
+        } else {
+            return KeywordType.WORD;
+        }
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\worker\WorkDistributor.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\Main.java
+	 */
+
+package com.epictodo;
+
+import com.epictodo.controller.nlp.NLPEngine;
+import com.epictodo.controller.worker.WorkDistributor;
+
+import java.util.Scanner;
+
+public class Main {
+
+    private static final String ASCII_ART_BANNER = "\n___________      .__         ___________        ___     \n"
+            + "\\_   _____/_____ |__| ____   \\__    ___/___   __| _/____ \n"
+            + " |  ____)_\\____ \\|  |/ ___\\    |    | /  _ \\ / __ |/  _ \\\n"
+            + " |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n"
+            + "/_______  /   __/|__|\\___ >    |____| \\____/\\____ |\\____/ 	\n"
+            + "        \\/|__|           \\/                      \\/       \n";
+
+    private static NLPEngine _nlpEngine = NLPEngine.getInstance();
+
+    // COMMAND INPUT
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        _nlpEngine.mute();
+
+        WorkDistributor.loadData();
+        bannerDisplay();
+        while (true) {
+            Display("\nEnter your command: ");
+            String instruc = sc.nextLine();
+            Display(WorkDistributor.processCommand(instruc));
+        }
+    }
+
+    private static void bannerDisplay() {
+        DisplayLine(ASCII_ART_BANNER);
+    }
+
+    private static void DisplayLine(String a) {
+        System.out.println(a);
+    }
+
+    private static void Display(String a) {
+        System.out.print(a);
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\Main.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\TaskBuilder.java
+	 */
+
+package com.epictodo.util;
+
+import com.epictodo.model.exception.InvalidDateException;
+import com.epictodo.model.exception.InvalidTimeException;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
+
+public class TaskBuilder {
+
+    public static Task buildTask(String taskName, String taskDescription,
+                                 int priority, String ddmmyy, String time, double duration)
+            throws InvalidDateException, InvalidTimeException {
+
+        Task tt = null;
+        tt = new TimedTask(taskName, taskDescription, priority, ddmmyy, time,
+                duration);
+        return tt;
+    }
+
+    public static Task buildTask(String taskName, String taskDescription,
+                                 int priority, String ddmmyy, String time)
+            throws InvalidDateException, InvalidTimeException {
+        Task dt = null;
+        dt = new DeadlineTask(taskName, taskDescription, priority, ddmmyy, time);
+        return dt;
+    }
+
+    public static Task buildTask(String taskName, String taskDescription,
+                                 int priority) {
+        Task ft = null;
+        ft = new FloatingTask(taskName, taskDescription, priority);
+        return ft;
+    }
+
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\TaskBuilder.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\json\StorageTest.java
+	 */
+
+package com.epictodo.controller.json;
+
+import static org.junit.Assert.assertEquals;
+
+import java.awt.geom.FlatteningPathIterator;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
+
+public class StorageTest {
+    private static final String _fileName = "storage.txt";
+    private ArrayList<Task> task_list;
+    FloatingTask floating_task = null;
+    DeadlineTask deadline_task2 = null;
+    TimedTask timed_task = null;
+    /*
+     * There will be 
+     * 2 Floating Task, 
+     * 2 deadLined Task
+     * 2 Timed Task
+     */
+    @Before
+    public void initialize() throws IOException {
+
+
+        try {
+            floating_task = new FloatingTask("Project Meeting", "2103 project meeting", 2);
+            floating_task.setUid(0);
+            deadline_task2 = new DeadlineTask("CS2103 V0.4", "DT2 Desc", 4, "121214", "19:00");
+            floating_task.setUid(1);
+            timed_task = new TimedTask("TimedTask 1", "TimedTask1Desc", 2, "121214", "10:00", 3);
+            floating_task.setUid(2);
+        } catch (Exception e) {
+        }
+
+        task_list = new ArrayList<>();
+        // load all tasks into task_list
+        task_list.add(floating_task);
+        task_list.add(deadline_task2);
+        task_list.add(timed_task);
+
+        Storage.saveToJson(_fileName, task_list);
+    }
+
+    @Test
+    public void floatingTaskTest() throws IOException {
+        // new loadDBTest
+        ArrayList<Task> listOfTasks;
+
+        // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
+        listOfTasks = Storage.loadDbFile(_fileName);
+        
+        //grab the first time Task and compare it's endDateTimeAsString
+        FloatingTask tt = (FloatingTask) listOfTasks.get(2);
+        assertEquals(floating_task.equals(tt),true);
+    }
+    
+    @Test
+    public void timedTaskTest() throws IOException {
+        // new loadDBTest
+        ArrayList<Task> listOfTasks;
+
+        // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
+        listOfTasks = Storage.loadDbFile(_fileName);
+
+        //grab the first time Task and compare it's endDateTimeAsString
+        TimedTask tt = (TimedTask) listOfTasks.get(0);
+        assertEquals(timed_task.equals(tt),true);
+    }
+
+    @Test
+    public void deadLineTaskTest() throws IOException {
+        // new loadDBTest
+        ArrayList<Task> listOfTasks;
+
+        // load the Json and deserialized them as an ArrayList<Task> and return it in listOfTasks
+        listOfTasks = Storage.loadDbFile(_fileName);
+
+        //grab the second deadline Task and compare it's endDateTimeAsString
+        DeadlineTask tt = (DeadlineTask) listOfTasks.get(1);
+        assertEquals(deadline_task2.equals(tt),true);
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\json\StorageTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\worker\CommandWorkerTest.java
+	 */
+
+
+package com.epictodo.controller.worker;
+
+import static org.junit.Assert.assertEquals;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.junit.Test;
+
+import com.epictodo.controller.nlp.NLPEngine;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.Task;
+
+public class CommandWorkerTest {
+	
+	private static NLPEngine nlp_engine = NLPEngine.getInstance();
+
+	
+	/*
+	 * This method test if the nlp is returning a proper date format when today is entered
+	 */
+	@Test
+	public void testGetDateViaNlp() {
+		
+		DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
+		Date date = new Date();
+		String today = dateFormat.format(date);
+		String keyword = "today";
+		String ddmmyy = CommandWorker.getDateViaNlp(keyword);
+		assertEquals(ddmmyy, today);
+		
+	}
+	
+	/*
+	 * This method test if Add works when a specific instruction is given
+	 */
+	@Test
+	public void testAddCommandTest() {
+		try{
+		DeadlineTask expected_Task = new DeadlineTask("prepare ma1521 cheatsheet", "12/12/14 23:59" ,5 ,"121214", "23:59");
+		String input = "prepare ma1521 cheatsheet by 12/12/14 23:59";
+		Task t = CommandWorker.createTask(input);
+		assertEquals(t, true);
+		}
+		catch(Exception e){
+			
+		}
+	}
+	
+	
+
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\worker\CommandWorkerTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\worker\WorkDistributorTest.java
+	 */
+
+
+package com.epictodo.controller.worker;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.epictodo.controller.json.Storage;
+import com.epictodo.controller.logic.CRUDLogic;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
+
+public class WorkDistributorTest {
+	//private static NLPEngine nlp_engine = NLPEngine.getInstance();
+	static CRUDLogic _logic  = null;
+    private static final String _fileName = "storage.txt";
+    private ArrayList<Task> task_list;
+    
+    FloatingTask floating_task = null;
+    DeadlineTask deadline_task = null;
+    TimedTask timed_task = null;
+	
+    @Before
+    public void initialize() throws IOException {
+    	 _logic = new CRUDLogic();
+
+        try {
+            floating_task = new FloatingTask("Project Meeting", "2103 project meeting", 2);
+            floating_task.setUid(0);
+            deadline_task = new DeadlineTask("CS2103 V0.4", "DT2 Desc", 4, "121214", "19:00");
+            floating_task.setUid(1);
+            timed_task = new TimedTask("TimedTask 1", "TimedTask1Desc", 2, "121214", "10:00", 3);
+            floating_task.setUid(2);
+        } catch (Exception e) {
+        }
+
+        task_list = new ArrayList<>();
+        // load all tasks into task_list
+        task_list.add(floating_task);
+        task_list.add(deadline_task);
+        task_list.add(timed_task);
+
+        Storage.saveToJson(_fileName, task_list);
+    }
+	
+	
+	@Test
+	public void workDistributorTest() throws IOException {
+		WorkDistributor.loadData();
+		String expected = "1. Project Meeting\r\n2. TimedTask 1 from 121214 10:00 to 121214 13:00\r\n3. CS2103 V0.4 by 121214 19:00\r\n";
+		String result = WorkDistributor.processCommand("display");
+		assertEquals(expected,result);
+	}
+	
+	@Test
+	public void searchDisplayList() throws IOException {
+		WorkDistributor.loadData();
+		String expected = "Name: Project Meeting\nDescription: 2103 project meeting\n";
+		String result = WorkDistributor.processCommand("display");
+		result = WorkDistributor.processCommand("search 1");
+		assertEquals(expected,result);
+	}
+	
+	@Test
+	public void deleteDisplayedList() throws IOException {
+		WorkDistributor.loadData();
+		String expected = "task \"Project Meeting\" is removed";
+		String result = WorkDistributor.processCommand("display");
+		result = WorkDistributor.processCommand("delete 1");
+		assertEquals(expected,result);
+	}
+	
+	@Test
+	public void markDisplayedList () throws IOException {
+		WorkDistributor.loadData();
+		String expected = "task \"Project Meeting\" is marked as done";
+		String result = WorkDistributor.processCommand("display");
+		result = WorkDistributor.processCommand("mark 1");
+		assertEquals(expected,result);
+	}
+
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\worker\WorkDistributorTest.java
+
+
+
+
+

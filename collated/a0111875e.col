@@ -1,0 +1,3014 @@
+//@author: a0111875e
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\GrammaticalParser.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.trees.*;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class GrammaticalParser {
+    private LexicalizedParser lexicalized_parser;// = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+    private TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
+    private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
+    private GrammaticalStructure grammartical_structure;
+    private List<TypedDependency> typed_dependency_list;
+
+    public GrammaticalParser() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+
+        lexicalized_parser = load_engine.LEXICAL_PARSER;
+        lexicalized_parser.setOptionFlags(new String[]{"-maxLength", "80", "-retainTmpSubcategories"});
+    }
+
+    /**
+     * This method will return the grammatical Tree structure of the sentence parsed
+     *
+     * @param _sentence
+     * @return _tree
+     */
+    public Tree buildGrammarStructure(String _sentence) {
+        Tree _tree = lexicalized_parser.parse(_sentence);
+
+        return _tree;
+    }
+
+    /**
+     * This method will return the weight of each grammatical token of the sentence parsed
+     *
+     * @param _sentence
+     * @return typed_dependency_list
+     */
+    public List<TypedDependency> grammarAnalyzer(String _sentence) {
+        Tree _tree = lexicalized_parser.parse(_sentence);
+        grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
+        typed_dependency_list = grammartical_structure.typedDependenciesCCprocessed();
+
+        return typed_dependency_list;
+    }
+
+    /**
+     * This method will grammartize the sentence and extract individual tokens into a List<String>
+     *
+     * @param _tree
+     * @param _sentence
+     * @return _grammar
+     */
+    public List<String> grammartize(Tree _tree, String _sentence) {
+        List<String> _grammar = new LinkedList<>();
+        _tree = lexicalized_parser.parse(_sentence);
+        grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
+        typed_dependency_list = grammartical_structure.typedDependenciesCCprocessed();
+
+        for (int i = 0; i < typed_dependency_list.size(); i++) {
+            _grammar.add(typed_dependency_list.get(i).dep().nodeString());
+        }
+
+        return _grammar;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\GrammaticalParser.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\Lemmatizer.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class Lemmatizer {
+    protected StanfordCoreNLP _pipeline;
+
+    public Lemmatizer() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+        this._pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method will lemmatize the sentence into individual lemmatized tokens before storing into List<String>
+     *
+     * @param _sentence
+     * @return _lemmas
+     */
+    public List<String> lemmatize(String _sentence) {
+        List<String> _lemmas = new LinkedList<>();
+        Annotation annotate_sentence = new Annotation(_sentence);
+        _pipeline.annotate(annotate_sentence);
+
+        // Iterate over all of the sentences found
+        List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);
+        for (CoreMap sentence : sentences) {
+            // Iterate over all tokens in a sentence
+            for (CoreLabel _tokens : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                // Retrieve and add lemma for each word into a List of lemmas
+                _lemmas.add(_tokens.get(CoreAnnotations.LemmaAnnotation.class));
+            }
+        }
+
+        return _lemmas;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\Lemmatizer.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\NLPEngine.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import com.epictodo.model.nlp.Delta;
+import com.epictodo.model.nlp.Response;
+import com.epictodo.model.nlp.Search;
+import com.epictodo.util.DateValidator;
+import com.epictodo.util.TimeValidator;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.trees.TypedDependency;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.text.ParseException;
+import java.util.*;
+
+public class NLPEngine {
+    protected static StanfordCoreNLP _pipeline;
+    private static NLPEngine instance = null;
+    private TimeValidator time_validator = TimeValidator.getInstance();
+    private DateValidator date_validator = DateValidator.getInstance();
+    private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
+    private SentenceStructure sentence_struct = new SentenceStructure();
+    private GrammaticalParser grammartical_parser = new GrammaticalParser();
+    private Response _response = new Response();
+    private Delta _delta = new Delta();
+    private Search _search = new Search();
+    private PrintStream _err = System.err;
+    private int CAPACITY = 1000;
+    private final String DATE_PATTERN = "(\\d+)";
+
+    public NLPEngine() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+        _pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
+    public static NLPEngine getInstance() {
+        if (instance == null) {
+            instance = new NLPEngine();
+        }
+
+        return instance;
+    }
+
+    /**
+     * This method mutes NLP API Error Messages temporarily
+     * This works for all console messages
+     * <p/>
+     * Usage:
+     * <p/>
+     * mute();
+     */
+    public void mute() {
+        System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+            }
+        }));
+    }
+
+    /**
+     * This method restores NLP API Error Messages to be displayed
+     * This method works for all console messages.
+     * <p/>
+     * Usage:
+     * <p/>
+     * restore();
+     */
+    public void restore() {
+        System.setErr(_err);
+    }
+
+    /**
+     * This method understands the natural input from an input sentence
+     * The sentence is analyzed and important information will be extracted and returned
+     * <p/>
+     * Assumptions:
+     * 1. PERSON name has to start with a capital letter. For example, "Kenneth"
+     * 2. Priority is determined by weekly basis from today's date. Priority increases every week.
+     * <p/>
+     * 3. Time has to strictly follow the format (hh:mm)
+     * 3.1 10:00 is accepted
+     * 3.2 1000 is not accepted
+     * <p/>
+     * 4. PERSON name cannot be named after a month (for example, April, May, June) -> Registers as a DATE
+     * 5. PERSON name cannot be named after a day (for example, Sunday) -> Registers as a DATE
+     * <p/>
+     * 6. Time period: Day cannot be placed after the time period
+     * 6.1. Tuesday 2 weeks later (PASSED) - gets the Tuesday 2 weeks later
+     * 6.2. 2 weeks later Tuesday (FAILED) - gets 2 weeks later from today's date
+     * <p/>
+     * 7. There can be only 2 time input which will be allowed to be parsed in. Additional time will be rejected.
+     * 7.1. from 10:00 to 14:00 then 18:00 > reflects only [10:00, 14:00] as start_time and end_time
+     * <p/>
+     * 8. If users input date in quick date for example, (01/12/2014 -> dd/MM/yyyy)
+     * 8.1. [Issue] Manual correction of storing through validation
+     * <p/>
+     * 9. Chinese names will be read as two different PERSON. For example, Jie Ning will be read as 'Jie', 'Ning'
+     * 10. Supports one short date, for example '14/11/2014'
+     * <p/>
+     * Usage:
+     * <p/>
+     * 1. flexiAdd("meeting with Damith on project submission Tuesday 2 weeks later at 10:34");
+     * 2. flexiAdd("project submission for cs2103 next Tuesday from 10:00 to 14:00 to Damith");
+     * <p/>
+     * Output:
+     * <p/>
+     * 1.
+     * Task Name: meeting submission
+     * Task Desc: Damith Tuesday 2 weeks later at 10:34
+     * Task Date: 181114
+     * Task Time: 10:34
+     * Task Priority: 8
+     * Task Start Time: null
+     * Task End Time: null
+     * Task Duration: 0.0
+     * <p/>
+     * 2.
+     * Task Name: submission cs2103
+     * Task Desc: Damith 10:00 14:00 next Tuesday
+     * Task Date: 111114
+     * Task Time: null
+     * Task Priority: 9
+     * Task Start Time: 10:00
+     * Task End Time: 14:00
+     * Task Duration: 4.0
+     *
+     * @param _sentence
+     * @throws ParseException
+     */
+    public Response flexiAdd(String _sentence) throws ParseException {
+        boolean is_date_set = false;
+        boolean is_time_set = false;
+        boolean is_priority_set = false;
+        String tomorrow_date;
+        String date_value;
+        String time_value;
+        String _priority;
+        String start_time;
+        String end_time;
+        double _duration;
+        int num_days;
+
+        List<String> analyzed_results = new ArrayList<>();
+        List<String> task_name = new ArrayList<>();
+        List<String> task_desc = new ArrayList<>();
+        List<String> task_date = new ArrayList<>();
+        List<String> task_time = new ArrayList<>();
+        List<String> date_list = new ArrayList<>();
+
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
+
+        // Initialize Sentence Structure & Sentence Analysis to Map
+        Map<String, String> sentence_struct_map = sentence_struct.sentenceDependencies(_sentence);
+        Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer(_sentence);
+        Map<String, String> sentence_token_map = sentence_analysis.sentenceAnalyzer(_sentence);
+        LinkedHashMap<String, LinkedHashSet<String>> entities_map = sentence_analysis.nerEntitiesExtractor(_sentence);
+        List<TypedDependency> grammar_struct_map = grammartical_parser.grammarAnalyzer(_sentence);
+
+        /**
+         * Name Entity Recognition (NER) map
+         * For loop to traverse key:value of NER map to retrieve keywords to be processed
+         *
+         * Example: root, nn, dobj, nsubj, aux, xcomp, prep, num, etc.
+         *
+         */
+        for (Map.Entry<String, LinkedHashSet<String>> map_result : entities_map.entrySet()) {
+            String _key = map_result.getKey();
+            LinkedHashSet<String> _value = map_result.getValue();
+        }
+
+        /**
+         * Sentence analyzer to analyze the text for keywords
+         * For loop to traverse the following:
+         *
+         * 1. (TIME) - stores TIME's (value) key to check if it's a single or multiple TIME value
+         * 1.1. Checks if key is valid time before storing.
+         * 1.2. "at" maybe classified as a valid TIME but we do not want to register this
+         *
+         * 2. (PERSON) - stores PERSON name to be processed in Task Description
+         * 2.1. PERSON does not accept 'Prof' as an actual person, rather an entity
+         *
+         * 3. (LOCATION) - stores LOCATION name if it exists.
+         * 3.1. TOKYO, SINGAPORE are actual LOCATION
+         * 3.2. COM1, LT15, SR1 are not an actual LOCATION stored in our model (can be implemented using Classifier in future)
+         *
+         */
+        for (Map.Entry<String, String> map_result : sentence_token_map.entrySet()) {
+            String _key = map_result.getKey();
+            String _value = map_result.getValue();
+
+            if (_value.equalsIgnoreCase("TIME")) {
+                if (time_validator.validate(_key)) {
+                    task_time.add(_key);
+                }
+            }
+
+            if (_value.equalsIgnoreCase("NUMBER")) {
+                if (date_validator.validateDateExpression(_key)) {
+                    date_value = date_validator.fixShortDate(_key);
+                    task_date.add(date_value);
+                    num_days = date_validator.compareDate(date_value);
+
+                    // Checks if date distance is >= 0 or <= 1 of 1 day
+                    if (num_days >= 0 && num_days <= 1) {
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    } else { // Check if TaskDate has been set previously, prevent override
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+                    is_date_set = true;
+                } else {
+                    date_value = date_validator.nlpShortDate(_key);
+                    task_date.add(date_value);
+                    num_days = date_validator.compareDate(date_value);
+
+                    // Checks if date distance is >= 0 or <= 1 of 1 day
+                    if (num_days >= 0 && num_days <= 1) {
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    } else { // Check if TaskDate has been set previously, prevent override
+                        _priority = date_validator.determinePriority(date_value);
+                        date_value = date_validator.genericDateFormat(date_value);
+
+                        if (_response.getTaskDate() == null) {
+                            _response.setTaskDate(date_value);
+                        }
+
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+                    is_date_set = true;
+                }
+            }
+
+            if (_value.equalsIgnoreCase("PERSON")) {
+                if (!_key.equalsIgnoreCase("Prof")) {
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                } else {
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                }
+            } else if (_value.equalsIgnoreCase("LOCATION")) {
+                task_desc.add(_key);
+                analyzed_results.add(_key);
+            } else if (_value.equalsIgnoreCase("ORGANIZATION")) {
+                task_desc.add(_key);
+                analyzed_results.add(_key);
+            }
+        }
+
+        /**
+         * This algorithm checks if the time values stored are more than or equals to 2
+         * There can be instances where users input 3 or more time variables, but the first 2 will be registered
+         *
+         * This algorithm will getTimeDuration before storing start_time, end_time & _duration to _response
+         */
+        if (task_time.size() != 0 && task_time.size() >= 2) {
+            start_time = task_time.get(0);
+            end_time = task_time.get(1);
+
+            _duration = time_validator.getTimeDuration(start_time, end_time);
+            _response.setStartTime(start_time);
+            _response.setEndTime(end_time);
+            _response.setTaskDuration(_duration);
+
+            is_time_set = true;
+        } else if (task_time.size() != 0 && task_time.size() < 2) {
+            _response.setTaskTime(task_time.get(0));
+
+            is_time_set = true;
+        }
+
+        /**
+         * Date time analyzer map to analyze date time values to be stored
+         * This algorithm will check for TOMORROW date & time distance.
+         *
+         * If that case happens, the result will be parsed to getDateInFormat & getTimeInFormat to handle such cases
+         * Otherwise, the result will be parsed to validateDate & validateTime to handle the more generic cases
+         */
+        for (Map.Entry<String, String> map_result : date_time_map.entrySet()) {
+            String _key = map_result.getKey();
+            String _value = map_result.getValue();
+
+            if (!is_date_set) {
+                tomorrow_date = date_validator.convertDateFormat(_value);
+                num_days = date_validator.compareDate(tomorrow_date);
+
+                // Checks if date distance is >= 0 or <= 1 of 1 day
+                if (num_days >= 0 && num_days <= 1) {
+                    _priority = date_validator.determinePriority(tomorrow_date);
+                    date_value = date_validator.genericDateFormat(tomorrow_date);
+                    time_value = date_validator.getTimeInFormat(_value);
+
+                    if (!is_date_set) { // Check if TaskDate has been set previously, prevent override
+                        if (date_value.length() == 5) {
+                            date_list.add(0, "0");
+
+                            Scanner _scanner = new Scanner(date_value);
+                            while (_scanner.hasNext()) {
+                                date_list.add(_scanner.next());
+                            }
+                            _scanner.close();
+
+                            for (String date : date_list) {
+                                string_builder.append(date);
+                            }
+
+                            _response.setTaskDate(string_builder.toString());
+                            is_date_set = true;
+                        } else {
+                            _response.setTaskDate(date_value);
+                            is_date_set = true;
+                        }
+                    }
+
+                    if (!is_time_set) {
+                        _response.setTaskTime(time_value);
+                        is_time_set = true;
+                    }
+
+                    if (!is_priority_set) {
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+//                _response.setTaskDate(date_value);
+//                _response.setTaskTime(time_value);
+//                _response.setPriority(Integer.parseInt(_priority));
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                    analyzed_results.add(date_value);
+                    analyzed_results.add(time_value);
+                    analyzed_results.add(_priority);
+                } else { // Check if TaskDate has been set previously, prevent override
+                    _priority = date_validator.determinePriority(_value);
+                    date_value = date_validator.genericDateFormat(tomorrow_date);
+                    time_value = date_validator.validateTime(_value);
+
+                    if (!is_date_set) {
+                        if (date_value.length() == 5) {
+                            date_list.add(0, "0");
+
+                            Scanner _scanner = new Scanner(date_value);
+                            while (_scanner.hasNext()) {
+                                date_list.add(_scanner.next());
+                            }
+                            _scanner.close();
+
+                            for (String date : date_list) {
+                                string_builder.append(date);
+                            }
+
+                            _response.setTaskDate(string_builder.toString());
+                            is_date_set = true;
+                        } else {
+                            _response.setTaskDate(date_value);
+                            is_date_set = true;
+                        }
+                    }
+
+                    if (!is_time_set) {
+                        _response.setTaskTime(time_value);
+                        is_time_set = true;
+                    }
+
+                    if (!is_priority_set) {
+                        _response.setPriority(Integer.parseInt(_priority));
+                        is_priority_set = true;
+                    }
+
+//                _response.setTaskDate(date_value);
+//                _response.setTaskTime(time_value);
+//                _response.setPriority(Integer.parseInt(_priority));
+                    task_desc.add(_key);
+                    analyzed_results.add(_key);
+                    analyzed_results.add(date_value);
+                    analyzed_results.add(time_value);
+                    analyzed_results.add(_priority);
+                }
+            }
+        }
+
+        /**
+         * Sentence Dependencies map to analyze and return the dependencies of the sentence structure
+         * This algorithm checks the dependencies relationship in the tree structure, and returns the results
+         */
+        for (Map.Entry<String, String> map_result : sentence_struct_map.entrySet()) {
+            String _key = map_result.getKey();
+            String _value = map_result.getValue();
+
+            if ((_key.equalsIgnoreCase("root") || _key.equalsIgnoreCase("dep") || _key.equalsIgnoreCase("dobj") ||
+                    _key.equalsIgnoreCase("prep_on") || _key.equalsIgnoreCase("prep_for") || _key.equalsIgnoreCase("nn") ||
+                    _key.equalsIgnoreCase("xcomp")) &&
+                    (_value.equalsIgnoreCase("aux"))) {
+                task_name.add(_value);
+                analyzed_results.add(_value);
+            }
+        }
+
+        /**
+         * Grammartical Struct map analyzes and return the relationship and dependencies of the grammartical structure
+         * This algorithm checks for
+         *
+         * 1. root: the grammatical relation that points to the root of the sentence
+         * 1.1. Remove words like 'be'
+         * 1.2. Remove words that are already added into the list
+         * 2. nn: noun compound modifier is any noun that serves to modify the head noun
+         * 2.1. Remove words that is stored already in Task Description
+         * 3. nsubj: nominal subject is a noun phrase which is the syntactic subject of a clause
+         *    aux: auxiliary is a non-main verb of the clause
+         *    xcomp: open clausal complement  is a clausal complement without
+         *           its own subject, whose reference is determined by an external subject
+         *    dobj: direct object is the noun phrase which is the (accusative) object of the verb
+         * 3.1. Add words that does not already exist in Task Name
+         * 4. amod: adjectival modifier is any adjectival phrase that serves to modify the meaning of the NP
+         * 4.1. Remove words like 'next'
+         * 5. prep:  prepositional modifier of a verb, adjective, or noun is any prepositional phrase that serves to
+         *           modify the meaning of the verb, adjective, noun, or even another prepositon
+         * 5.1. Check Task Time size is more than 1 or less than 2
+         * 5.2. Remove Task Time accordingly
+         * 6. dep: dependent is when the system is unable to determine a more precise
+         *         dependency relation between two words
+         * 6.1. Remove words like 'regarding'
+         * 7. aux: is a non-main verb of the clause, e.g., a modal auxiliary, or a form of
+         *         "be", "do" or "have" in a periphrastic tense
+         * 7.1. Remove words like 'to'
+         *
+         * This algorithm ensures that NLP maintains a certain integrity to making sense while parsing the sentence
+         *
+         */
+        for (TypedDependency type_dependency : grammar_struct_map) {
+            String reln_key = type_dependency.reln().getShortName();
+            String dep_value = type_dependency.dep().nodeString();
+
+            if (reln_key.equalsIgnoreCase("root")) {
+                if (task_name.contains("Be") || task_name.contains("be")) {
+                    task_name.remove(dep_value);
+                } else if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                } else {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("nn")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+
+                if (task_desc.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("nsubj") || reln_key.equalsIgnoreCase("aux") ||
+                    reln_key.equalsIgnoreCase("xcomp") || reln_key.equalsIgnoreCase("dobj")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("amod") && !dep_value.equalsIgnoreCase("next")) {
+                if (!task_name.contains(dep_value)) {
+                    task_name.add(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("prep")) {
+                if (!task_name.contains(dep_value) && (!date_validator.checkDateFormat(dep_value) && !date_validator.checkDateFormat2(dep_value))) {
+                    task_name.add(dep_value);
+                }
+
+                if (task_time.size() > 0 && task_time.size() < 2) {
+                    if (dep_value.contains(task_time.get(0))) {
+                        task_name.remove(dep_value);
+                    }
+                } else if (task_time.size() >= 2 && task_time.size() < 3) {
+                    if (dep_value.contains(task_time.get(0)) || dep_value.contains(task_time.get(1))) {
+                        task_name.remove(dep_value);
+                    }
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("dep") && dep_value.equalsIgnoreCase("regarding")) {
+                if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
+            }
+
+            if (reln_key.equalsIgnoreCase("aux") && dep_value.equalsIgnoreCase("to")) {
+                if (task_name.contains(dep_value)) {
+                    task_name.remove(dep_value);
+                }
+            }
+        }
+
+        _response.setTaskName(task_name);
+        _response.setTaskDesc(task_desc);
+
+        return _response;
+    }
+
+    /**
+     * This method understands the natural input from user's input to edit a task
+     * The algorithm analyzes the sentence given, the following are executed.
+     * 1. Detects the Task to be edited and the DELTA change of the sentence
+     * 2. Process the DELTA changes to flexiAdd in order to analyze the data to be stored
+     * 3. Returns a DELTA which consists of a RESPONSE data type to be replaced with the original Task
+     * <p/>
+     * Assumptions:
+     * 1. Users are required to search for the exact TaskName to be edited
+     * 2. Sentence will analyze the format of "[ORIGINAL_TASK] to [DELTA]"
+     * 2.1. Everything before 'to' will be considered as ORIGINAL_TASK to be replaced
+     * 2.2. Everything after 'to' will be considered as DELTA to replace with
+     * <p/>
+     * Usage:
+     * 1. flexisEdit("edit project submission to project report submission by next Thursday at 15:30");
+     * [project submission] - ORIGINAL_TASK
+     * [project report submission by next Thursday at 15:30] - DELTA
+     * <p/>
+     * Output:
+     * 1.
+     * Delta Change: project submission
+     * Task Name: project report submission next
+     * Task Desc: next Thursday at 15:30
+     * Task Date: 131114
+     * Task Time: 15:30
+     * Task Priority: 9
+     * Task Start Time: 12:00
+     * Task End Time: 14:00
+     * Task Duration: 2.0
+     *
+     * @param _sentence
+     * @return _delta
+     * @throws ParseException
+     */
+    public Delta flexiEdit(String _sentence) throws ParseException {
+        boolean is_first = true;
+        boolean is_removed = false;
+        int _index = 0;
+
+        List<String> sentence_list = new ArrayList<>();
+        List<String> delta_list = new ArrayList<>();
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
+
+        Scanner _scanner = new Scanner(_sentence);
+        while (_scanner.hasNext()) {
+            sentence_list.add(_scanner.next());
+        }
+        _scanner.close();
+
+        /**
+         * This algorithm removes words like 'edit' or 'change' which suggests editing of Task
+         * The algorithm gets the index of 'to' and stores that index in order to identify ORIGINAL_TASK & DELTA
+         *
+         */
+        for (int i = 0; i < sentence_list.size(); i++) {
+            if (is_removed) {
+                if (sentence_list.get(i).equalsIgnoreCase("edit") || sentence_list.get(i).equalsIgnoreCase("change")) {
+                    sentence_list.remove(i);
+
+                    is_removed = true;
+                }
+            }
+
+            if (sentence_list.get(i).equalsIgnoreCase("to")) {
+                _index = i;
+                sentence_list.remove(i);
+                i = sentence_list.size();
+            }
+        }
+
+        /**
+         * Removes ORIGINAL_TASK & adds to delta_list
+         *
+         */
+        for (int i = 0; i < _index; i++) {
+            delta_list.add(sentence_list.get(0));
+            sentence_list.remove(0);
+        }
+
+        /**
+         * Concatenate sentence List into a String before storing DELTA
+         *
+         */
+        for (String word : sentence_list) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                string_builder.append(' ');
+            }
+
+            string_builder.append(word);
+        }
+
+        _delta.setTaskName(delta_list);
+        _delta.setDeltaChange(flexiAdd(string_builder.toString()));
+
+        return _delta;
+    }
+
+    /**
+     * This method analyzes the sentence structure into SUTIME Annotation.
+     * The algorithm facilitates natural language for searching by date.
+     * <p/>
+     * For instance, "search today" > retrieves today task
+     * <p/>
+     * Usage:
+     * 1. flexiSearch("search today");
+     *
+     * @param _sentence
+     * @throws ParseException
+     */
+    public Search flexiSearch(String _sentence) throws ParseException {
+        String date_value;
+        String parse_date;
+        StringBuilder string_builder = new StringBuilder(CAPACITY);
+
+        // Initialize Date Analysis to Map
+        Map<String, String> date_map = sentence_analysis.dateTimeAnalyzer(_sentence);
+        List<String> date_list = new ArrayList<>();
+
+        if (_sentence.isEmpty() || _sentence.equalsIgnoreCase(null) || _sentence.equals("")) {
+            _search.setSearchDate(null);
+        }
+
+        if (_sentence.matches(DATE_PATTERN)) {
+            parse_date = date_validator.nlpShortDate(_sentence);
+            parse_date = date_validator.genericDateFormat(parse_date);
+
+            if (parse_date.length() == 5) {
+                date_list.add(0, "0");
+
+                Scanner _scanner = new Scanner(parse_date);
+                while (_scanner.hasNext()) {
+                    date_list.add(_scanner.next());
+                }
+                _scanner.close();
+
+                for (String date : date_list) {
+                    string_builder.append(date);
+                }
+
+                _search.setSearchDate(string_builder.toString());
+            } else {
+                _search.setSearchDate(parse_date);
+            }
+        } else {
+            /**
+             * Date analyzer analyzes the sentence in order to map the analyze date values to be searched
+             * This algorithm will check for TOMORROW date & time distance.
+             *
+             */
+            for (Map.Entry<String, String> map_result : date_map.entrySet()) {
+                String _value = map_result.getValue();
+
+                date_value = date_validator.convertDateFormat(_value);
+                date_value = date_validator.genericDateFormat(date_value);
+
+                _search.setSearchDate(date_value);
+            }
+        }
+
+        return _search;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\NLPEngine.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\NLPLoadEngine.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.time.TimeAnnotator;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class NLPLoadEngine {
+    public StanfordCoreNLP _pipeline;
+    private static NLPLoadEngine instance = null;
+    private static final String CLASSIFIER_MODEL = "classifiers/english.muc.7class.distsim.crf.ser.gz";
+    private static final String ENGLISHPCFG_MODEL = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
+    public static CRFClassifier<CoreLabel> CLASSIFIER = null;
+    public LexicalizedParser LEXICAL_PARSER = null;
+    private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
+    private PrintStream _err = System.err;
+    private double _counter = 0;
+    private final double LOAD_COUNT = 3000;
+
+    /**
+     * This method mutes NLP API Error Messages temporarily
+     * This works for all console messages
+     * <p/>
+     * Usage:
+     * <p/>
+     * mute();
+     */
+    private void mute() {
+        System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                progressBar();
+            }
+        }));
+    }
+
+    /**
+     * This method restores NLP API Error Messages to be displayed
+     * This method works for all console messages.
+     * <p/>
+     * Usage:
+     * <p/>
+     * restore();
+     */
+    private void restore() {
+        System.setErr(_err);
+    }
+
+    /**
+     * This method displays a progress while loading NLP models
+     * [Quick hack] inject this method into PrintStream OutputStream overriding warnings with progress bar
+     */
+    private void progressBar() {
+        _counter++;
+
+        if (_counter / LOAD_COUNT == 0) {
+            System.out.println("Initializing...");
+        } else if (_counter / LOAD_COUNT == 0.1) {
+            System.out.println("Loading...10%");
+        } else if (_counter / LOAD_COUNT == 0.25) {
+            System.out.println("Loading...25%");
+        } else if (_counter / LOAD_COUNT == 0.50) {
+            System.out.println("Loading...50%");
+        } else if (_counter / 3000 == 0.75) {
+            System.out.println("Loading...75%");
+        }
+    }
+
+    public static NLPLoadEngine getInstance() {
+        if (instance == null) {
+            instance = new NLPLoadEngine();
+        }
+
+        return instance;
+    }
+
+    public NLPLoadEngine() {
+        this.mute();
+        Properties _properties = new Properties();
+        _properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+
+        try {
+            CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+            LEXICAL_PARSER = LexicalizedParser.loadModel(ENGLISHPCFG_MODEL);
+            _pipeline = new StanfordCoreNLP(_properties, true);
+            _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
+
+            _logger.log(Level.INFO, "Successfully loaded models.");
+        } catch (RuntimeException ex) {
+            _logger.log(Level.SEVERE, "Error loading models.");
+            throw ex;
+        }
+    }
+
+    public CRFClassifier<CoreLabel> classifierModel() {
+        return CLASSIFIER;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\NLPLoadEngine.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentenceAnalysis.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import com.epictodo.util.DateValidator;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.time.TimeAnnotations;
+import edu.stanford.nlp.time.TimeExpression;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+public class SentenceAnalysis {
+    protected StanfordCoreNLP _pipeline;
+    private NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+    private DateValidator date_validator = DateValidator.getInstance();
+
+    public SentenceAnalysis() {
+        this._pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method analyzes the date and time format in a sentence
+     * The analyzer will extract the date and time structure from the sentence into tokens
+     *
+     * @param _sentence
+     * @return _results
+     */
+    public Map<String, String> dateTimeAnalyzer(String _sentence) throws ParseException {
+        Map<String, String> _results = new TreeMap<>();
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        String _prev;
+        String _current = "";
+        String _latest = "";
+
+        Annotation _document = new Annotation(_sentence);
+        _document.set(CoreAnnotations.DocDateAnnotation.class, date_validator.getTodayDate());
+        _pipeline.annotate(_document);
+        List<CoreMap> timex_annotations = _document.get(TimeAnnotations.TimexAnnotations.class);
+
+        for (CoreMap _tokens : timex_annotations) {
+            _tokens.get(CoreAnnotations.TokensAnnotation.class);
+            _prev = _tokens.get(TimeExpression.Annotation.class).getTemporal().toString();
+
+            /**
+             * Algorithm to check if the date is the latest date or an earlier date
+             * Checks to get the latest date into the results
+             *
+             * This is a simple check for cases like:
+             * 1. next Tuesday from 1:00pm to 4:00pm.
+             *    -> this will result in changing the date of 1:00pm & 4:00pm to next Tuesday instead of Today's date
+             * 2. If today is Tuesday, "on Wednesday at 9am"
+             *    -> this will result in identifying that today is 'Tuesday'
+             *    -> return tomorrow's date at 9:00am
+             *    -> for example, "2014-10-29-WXX-3T09:00"
+             * 3. 3 days later at 10am
+             *    -> this will correctly identify 3 days laters' date
+             *    -> for example, "2014-10-31T10:00"
+             * 4. 3 days later from 10am to 15:00pm
+             *    -> this will break the sentence into tokens as following into a Map
+             *    -> for example, "{3pm=2014-10-31, 3 days later=2014-10-31, 10am=2014-10-31}"
+             */
+            if (_current.equals("")) _latest = _current = _prev;
+            else if (!_current.equals("")) {
+                Date date_prev = date_format.parse(_prev);
+                Date date_current = date_format.parse(_current);
+
+                if (date_prev.compareTo(date_current) <= 0) {
+                    _latest = _current;
+                }
+            }
+
+            _results.put(_tokens.toString(), _latest);
+        }
+
+        return _results;
+    }
+
+    /**
+     * This method analyzes the sentence structure and returns a Map of word token and NER token
+     *
+     * @param _sentence
+     * @return _results
+     */
+    public Map<String, String> sentenceAnalyzer(String _sentence) {
+        Map<String, String> _results = new TreeMap<>();
+        Annotation _document = new Annotation(_sentence);
+        _document.set(CoreAnnotations.DocDateAnnotation.class, date_validator.getTodayDate());
+        _pipeline.annotate(_document);
+        List<CoreMap> _sentences = _document.get(CoreAnnotations.SentencesAnnotation.class);
+
+        for (CoreMap sentence : _sentences) {
+            // Traverse the tokens of words in the current sentence
+            for (CoreLabel _tokens : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                // Text of the token
+                String word = _tokens.get(CoreAnnotations.TextAnnotation.class);
+                // POS tag of the token
+                String pos = _tokens.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                // NER label of the token
+                String ner = _tokens.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+
+                _results.put(word, ner);
+            }
+        }
+
+        return _results;
+    }
+
+    /**
+     * This method identify and extract NER entities such as Name, Person, Date, Time, Organization, Location
+     *
+     * @param _sentence
+     * @return _results
+     */
+    public LinkedHashMap<String, LinkedHashSet<String>> nerEntitiesExtractor(String _sentence) {
+        LinkedHashMap<String, LinkedHashSet<String>> _results = new <String, LinkedHashSet<String>>LinkedHashMap();
+        CRFClassifier<CoreLabel> _classifier = load_engine.CLASSIFIER; //CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+        List<List<CoreLabel>> _classify = _classifier.classify(_sentence);
+
+        for (List<CoreLabel> _tokens : _classify) {
+            for (CoreLabel _token : _tokens) {
+                String _word = _token.word();
+                String _category = _token.get(CoreAnnotations.AnswerAnnotation.class);
+
+                if (!"O".equals(_category)) {
+                    if (_results.containsKey(_category)) {
+                        // Key already exists, insert to LinkedHashMap
+                        _results.get(_category).add(_word);
+                    } else {
+                        LinkedHashSet<String> _temp = new LinkedHashSet<>();
+                        _temp.add(_word);
+                        _results.put(_category, _temp);
+                    }
+                }
+            }
+        }
+
+        return _results;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentenceAnalysis.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentenceStructure.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import com.epictodo.util.TimeValidator;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
+import edu.stanford.nlp.trees.*;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class SentenceStructure {
+    protected StanfordCoreNLP _pipeline;
+    private static Logger _logger = Logger.getLogger("--- SentenceStructure Log ---");
+    private TreebankLanguagePack treebank_languagepack = new PennTreebankLanguagePack();
+    private GrammaticalStructureFactory grammarical_structure_factory = treebank_languagepack.grammaticalStructureFactory();
+    private GrammaticalStructure grammartical_structure;
+    private TypedDependency type_dependency;
+
+    public SentenceStructure() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+        this._pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method extracts the dependency name from the sentence tokens based on the dependency node relation
+     *
+     * @param _sentence
+     * @param dependency_reln
+     * @return dependency_obj
+     */
+    public Map<String, String> sentenceDependencies(String _sentence) {
+        Map<String, String> dependency_obj = new HashMap<>();
+        // Create an empty Annotation with the sentence
+        Annotation annotate_sentence = new Annotation(_sentence);
+
+        // Run all annotation
+        _pipeline.annotate(annotate_sentence);
+        List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);
+
+        for (CoreMap sentence : sentences) {
+            // Traverse the words in the current sentence
+            for (CoreLabel _token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                // Text of the token
+                _token.get(CoreAnnotations.TextAnnotation.class);
+                // Part-of-Speech of the token
+                _token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                // Named Entity of the token
+                _token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+            }
+
+            // Parsed tree of the current sentence
+            Tree _tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+
+            // Semantic graph dependency of the current sentence
+            SemanticGraph _dependencies = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+
+            grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
+            Collection<TypedDependency> collection_typedependency = grammartical_structure.typedDependenciesCollapsed();
+            Object[] _list = collection_typedependency.toArray();
+
+            for (Object _object : _list) {
+                type_dependency = (TypedDependency) _object;
+
+                dependency_obj.put(type_dependency.reln().toString(), type_dependency.dep().nodeString());
+//                if (type_dependency.reln().equals(dependency_reln)) {
+//                    dependency_obj.put(type_dependency.reln().toString(), type_dependency.dep().nodeString());
+//                }
+            }
+        }
+
+        return dependency_obj;
+    }
+
+    /**
+     * This method extracts the date & time of the sentence tokens to be parsed
+     *
+     * @param _sentence
+     * @return dependency_obj
+     */
+    public List<String> dateTimeDepExtract(String _sentence) {
+        List<String> dependency_obj = new LinkedList<>();
+        // Create an empty Annotation with the sentence
+        Annotation annotate_sentence = new Annotation(_sentence);
+
+        // Run all annotation
+        _pipeline.annotate(annotate_sentence);
+        List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);
+
+        for (CoreMap sentence : sentences) {
+            // Traverse the words in the current sentence
+            for (CoreLabel _token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                // Text of the token
+                _token.get(CoreAnnotations.TextAnnotation.class);
+                // Part-of-Speech of the token
+                _token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                // Named Entity of the token
+                _token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+            }
+
+            // Parsed tree of the current sentence
+            Tree _tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+
+            // Semantic graph dependency of the current sentence
+            SemanticGraph _dependencies = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+
+            grammartical_structure = grammarical_structure_factory.newGrammaticalStructure(_tree);
+            Collection<TypedDependency> collection_typedependency = grammartical_structure.typedDependenciesCollapsed();
+            Object[] _list = collection_typedependency.toArray();
+
+            for (Object _object : _list) {
+                type_dependency = (TypedDependency) _object;
+
+                if (checkDateFormat(type_dependency.dep().nodeString()) == true || checkTimeFormat(type_dependency.dep().nodeString())) {
+                    dependency_obj.add(type_dependency.dep().nodeString());
+                }
+            }
+        }
+
+        return dependency_obj;
+    }
+
+    /**
+     * This method checks the given string if it's in the date format based on Regex matches
+     *
+     * @param _sentence
+     * @return boolean
+     */
+    private boolean checkDateFormat(String _sentence) {
+        if (_sentence.length() > 4 && _sentence.matches("[0-9]+")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * This method checks on the given string if it's in the time format based on Regex matches
+     * Time format must be strictly be kept to hhmmh / hhmmhr / hhmmhrs
+     * <p/>
+     * Example:
+     * 0900h, 1030hr, 1330hrs (PASSED)
+     * 0900, 1030 h, 1330pm (FAILED)
+     *
+     * @param _sentence
+     * @return boolean
+     */
+    private boolean checkTimeFormat(String _sentence) {
+        TimeValidator time_valid = new TimeValidator();
+
+        if (time_valid.validate(_sentence) == true) {
+            if (_sentence.length() > 4 && (_sentence.matches("[0-9]+h") || _sentence.matches("[0-9]+h\\S*") || _sentence.matches("[0-9]+hr") ||
+                    _sentence.matches("[0-9]+hrs") || _sentence.matches("[0-9]+am") || _sentence.matches("[0-9]+pm"))) {
+                return true;
+            }
+        } else {
+            _logger.log(Level.WARNING, "Time format doesn't match (hhmmhr / hhmmhrs)");
+
+            return false;
+        }
+
+        return false;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentenceStructure.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentimentAnalysis.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.util.List;
+
+public class SentimentAnalysis {
+    protected StanfordCoreNLP _pipeline;
+
+    public SentimentAnalysis() {
+        NLPLoadEngine load_engine = NLPLoadEngine.getInstance();
+        this._pipeline = load_engine._pipeline;
+    }
+
+    /**
+     * This method will sentimentalyze the sentiments of a sentence structure.
+     *
+     * @param _sentence
+     * @return _sentiment
+     */
+    public String sentimentalyze(String _sentence) {
+        int sentiment_score = 0;
+        int average_score = 0;
+        int _count = 0;
+        int sentiment;
+        String _sentiment = "";
+
+        // Create an empty Annotation with the sentence
+        Annotation annotate_sentence = new Annotation(_sentence);
+
+        // Run all annotation
+        _pipeline.annotate(annotate_sentence);
+        Annotation process_sentence = _pipeline.process(_sentence);
+        List<CoreMap> sentences = annotate_sentence.get(CoreAnnotations.SentencesAnnotation.class);
+
+        if (_sentence != null || _sentence.length() < 0) {
+            for (CoreMap sentence : sentences) {
+                // Traverse the words in the current sentence
+                for (CoreLabel _token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                    // Text of the token
+                    _token.get(CoreAnnotations.TextAnnotation.class);
+                    // Part-of-Speech of the token
+                    _token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                    // Named Entity of the token
+                    _token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+                }
+
+                // Sentiment Analyzer of the sentence
+                _sentiment = sentence.get(SentimentCoreAnnotations.ClassName.class);
+            }
+
+            for (CoreMap sentence : process_sentence.get(CoreAnnotations.SentencesAnnotation.class)) {
+                Tree _tree = sentence.get(SentimentCoreAnnotations.AnnotatedTree.class);
+                sentiment = RNNCoreAnnotations.getPredictedClass(_tree);
+
+                _count++;
+                average_score += sentiment;
+            }
+
+            sentiment_score = (average_score / _count);
+            _sentiment = calculateSentiment(sentiment_score);
+        }
+
+        return _sentiment;
+    }
+
+    /**
+     * This method displays the sentiment score ratings of each sentiment
+     * The sentiment score is mapped to an individual sentiment
+     *
+     * @param _sentiment
+     * @return
+     */
+    private String calculateSentiment(int _sentiment) {
+        switch (_sentiment) {
+            case 0:
+                return "Very Negative";
+            case 1:
+                return "Negative";
+            case 2:
+                return "Neutral";
+            case 3:
+                return "Positive";
+            case 4:
+                return "Very Positive";
+            default:
+                return "";
+        }
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\controller\nlp\SentimentAnalysis.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\DateValidator.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.util;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class DateValidator {
+    private static final String GENERIC_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])";
+    private static final String DATE_PATTERN = "(\\d+)";
+    private static final String DATE_PATTERN_2 = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
+    private static final String TIMEX_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+)";
+    private static final String TIMEX_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(\\S+)";
+    private static final String TIME_PATTERN = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])-(\\S+T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
+    private static final String TIME_PATTERN_2 = "((19|20)(\\d{2}))-([1-9]|0[1-9]|1[0-2])-(0[1-9]|[1-9]|[12][0-9]|3[01])(T)(([01]?[0-9]|2[0-3]):[0-5][0-9])";
+    private static DateValidator instance = null;
+    private Calendar _calendar = Calendar.getInstance();
+
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
+    public static DateValidator getInstance() {
+        if (instance == null) {
+            instance = new DateValidator();
+        }
+
+        return instance;
+    }
+
+    /**
+     * This method is the same as getDateInFormat except it's parsed format is different
+     * FUTURE Date is parsed from exactDate() which will return exactly the format of yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * convertDateFormat("2014-11-09"); > 2014-11-09
+     * convertDateFormat("2014-11-23T14:30"); > 2014-11-23
+     * convertDateFormat("2014-11-11-WXX-2"); > 2011-11-11
+     * convertDateFormat("2014-11-18-WXX-2T10:00"); > 2014-11-18
+     *
+     * @param _date
+     * @return _result
+     * @throws ParseException
+     */
+    public String convertDateFormat(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String _result;
+        String[] exact_date = extractDate(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                _result = exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0];
+
+                return _result;
+            }
+        }
+
+        _result = exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0];
+
+        return _result;
+    }
+
+    /**
+     * This method validates the date and parse to the following format (yyyy-MM-dd)
+     * This will return with the format of ddMMyy
+     * <p/>
+     * Usage:
+     * <p/>
+     * genericDateFormat("2014-11-09"); > 091114
+     *
+     * @param _date
+     * @return _result
+     */
+    public String genericDateFormat(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+//        int num_days;
+        String _result;
+
+        Pattern date_pattern = Pattern.compile(GENERIC_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+//        num_days = calculateDays(today_date, next_date);
+
+        // Algorithm causing a bug for tomorrow's date
+//        if (next_date.after(today_date) || next_date.equals(today_date)) {
+//            if (num_days >= 0 && num_days <= 1) {
+//                while (date_matcher.find()) {
+//                    _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+//
+//                    return _result;
+//                }
+//            }
+//        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+        }
+
+        return _result;
+    }
+
+    /**
+     * This method validates the date and parse to the following format (ddMMyy)
+     * This works for general cases where the day difference is more than 2 days.
+     * This method is similar to getDateInFormat
+     * <p/>
+     * Usage:
+     * validateDate("2014-11-18-WXX-2T10:00"); > 181114
+     *
+     * @param _date
+     * @return
+     */
+    public String validateDate(String _date) {
+        String _result;
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return null;
+        }
+
+        _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+
+        return _result;
+    }
+
+    /**
+     * This method validates the time and parse to the following format (hh:mm)
+     * This will return the time from the given string in the format of hh:mm
+     * <p/>
+     * Usage:
+     * <p/>
+     * getTimeInFormat("10:30"); > 10:30
+     * getTimeInFormat("2014-11-23T14:30"); > 14:30
+     * getTimeInFormat("2014-11-18-WXX-2T10:00"); > 10:00
+     *
+     * @param _time
+     * @return _result
+     * @throws ParseException
+     */
+    public String getTimeInFormat(String _time) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String _result;
+        String[] exact_date = extractDate(_time);
+
+        Pattern date_pattern = Pattern.compile(TIME_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(_time);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher.find()) {
+                    _result = date_matcher.group(7);
+
+                    return _result;
+                }
+            }
+        }
+
+        if (!date_matcher.matches()) {
+            return null;
+        } else {
+            _result = date_matcher.group(7);
+        }
+
+        return _result;
+    }
+
+    /**
+     * This method validates the token from NLP SUTIME Annotation based on our predefined regex expression
+     * This method is parsed to get the time only
+     * <p/>
+     * Usage:
+     * <p/>
+     * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
+     * validateTime("2014-11-18-WXX-2T10:00"); > 10:00
+     *
+     * @param _time
+     * @return
+     */
+    public String validateTime(String _time) {
+        String _result;
+        Pattern date_pattern = Pattern.compile(TIME_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_time);
+
+        if (!date_matcher.matches()) {
+            return null;
+        }
+
+        _result = date_matcher.group(7);
+
+        return _result;
+    }
+
+    /**
+     * Validate date format with regular expression
+     *
+     * @param date date address for validation
+     * @return true valid date format, false invalid date format
+     */
+    public boolean validateDateExpression(final String date) {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(date);
+
+        if (date_matcher.matches()) {
+            date_matcher.reset();
+
+            if (date_matcher.find()) {
+                String _day = date_matcher.group(1);
+                String _month = date_matcher.group(2);
+                int _year = Integer.parseInt(date_matcher.group(3));
+
+                if (_day.equals("31") &&
+                        (_month.equals("4") || _month.equals("6") || _month.equals("9") ||
+                                _month.equals("11") || _month.equals("04") || _month.equals("06") ||
+                                _month.equals("09"))) {
+                    return false; // only 1,3,5,7,8,10,12 has 31 days
+                } else if (_month.equals("2") || _month.equals("02")) {
+                    // leap year
+                    if (_year % 4 == 0) {
+                        if (_day.equals("30") || _day.equals("31")) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        if (_day.equals("29") || _day.equals("30") || _day.equals("31")) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This method will check if date matches dd/MM/yyyy.
+     * The algorithm converts that into readable date of format yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * fixShortDate("01/11/2014"); > 2014-11-01
+     * fixShortDate("32/11/2014"); > 2014-12-2 (Exception case, automatically calculate date forward)
+     *
+     * @param _date
+     * @return _result
+     * @throws ParseException
+     */
+    public String fixShortDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String _result;
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+
+        return _result;
+    }
+
+    /**
+     * This method will check if date matches ddMMyy.
+     * The algorithm converts that into readable date of format yyyy-MM-dd
+     * <p/>
+     * Usage:
+     * <p/>
+     * nlpShortDate("011214"); > 2014-12-01
+     *
+     * @param _date
+     * @return _result
+     * @throws ParseException
+     */
+    public String nlpShortDate(String _date) throws ParseException {
+        assert _date.length() == 6;
+
+        SimpleDateFormat date_format = new SimpleDateFormat("ddMMyy", Locale.ENGLISH);
+        String _result;
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+
+        return _result;
+    }
+
+    public String compareDateTime(String date_begin, String date_end) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String result_begin;
+        String result_end;
+        int num_days;
+
+        Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
+        Matcher date_matcher_begin = date_pattern.matcher(date_begin);
+
+        Date today_date = date_format.parse(date_begin);
+        Date next_date = date_format.parse(date_end);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date) || next_date.equals(today_date)) {
+            if (num_days >= 0 && num_days <= 1) {
+                while (date_matcher_begin.find()) {
+                    result_begin = date_matcher_begin.group(5) + date_matcher_begin.group(6) + date_matcher_begin.group(4) + date_matcher_begin.group(3);
+
+                    return result_begin;
+                }
+            }
+        }
+
+        if (!date_matcher_begin.matches()) {
+            return null;
+        } else {
+            result_begin = date_matcher_begin.group(5) + date_matcher_begin.group(6) + date_matcher_begin.group(4) + date_matcher_begin.group(3);
+        }
+
+        return result_begin;
+    }
+
+    /**
+     * This method extracts the date based on the format of yyyy-MM-dd
+     * This will return an Array of String results containing DAY, MONTH, YEAR
+     * <p/>
+     * Usage:
+     * <p/>
+     * extractDate("2014-11-09"); > [09, 11, 2014]
+     * extractDate("2014-11-23T14:30"); > [23, 11, 2014]
+     * extractDate("2014-11-11-WXX-2"); > [11, 11, 2014]
+     * extractDate("2014-11-18-WXX-2T10:00"); > [18, 11, 2014]
+     *
+     * @param _date
+     * @return _list
+     * @throws ParseException
+     */
+    public String[] extractDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String[] _list = new String[3];
+        _calendar.setTime(date_format.parse(_date));
+
+        int _year = _calendar.get(Calendar.YEAR);
+        int _month = _calendar.get(Calendar.MONTH) + 1;
+        int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+
+        _list[0] = String.valueOf(_day);
+        _list[1] = String.valueOf(_month);
+        _list[2] = String.valueOf(_year);
+
+        return _list;
+    }
+
+    /**
+     * This method determines the priority of a task based on natural processing
+     * This artificial natural processing calculates the days difference
+     * <p/>
+     * The priority is determined by the number of weeks apart from today's date
+     * The current rule of this determiner decreases the priority each week from today's date
+     * The closer the date is to today's date holds the highest priority and decreases each week
+     * <p/>
+     * Assumptions:
+     * 1. User can override the priority based on their preferred choice
+     * 2. Priority is set based on this determiner algorithm, may not accurately reflect user's intentions
+     * 3. Priority range from 1 - 9. 1 represents the least of priority, 9 represents the most urgent of priority
+     * <p/>
+     * The higher the priority the more urgent the task is
+     * The default priority is set to '2'
+     * <p/>
+     * Usage: (example based on TODAY's Date = 2014-11-01)
+     * <p/>
+     * determinePriority("2014-11-08") > 9
+     * determinePriority("2014-11-20") > 8
+     * determinePriority("2014-11-23") > 7
+     * determinePriority("2014-12-07") > 5
+     *
+     * @param _date
+     * @return
+     * @throws ParseException
+     */
+    public String determinePriority(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+        String[] exact_date = extractDate(_date);
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(exact_date[2] + "-" + exact_date[1] + "-" + exact_date[0]);
+        num_days = calculateDays(today_date, next_date);
+
+        if (next_date.after(today_date)) {
+            if (num_days >= 0 && num_days <= 7) {
+                return "9";
+            } else if (num_days > 7 && num_days <= 14) {
+                return "8";
+            } else if (num_days > 14 && num_days <= 21) {
+                return "7";
+            } else if (num_days > 21 && num_days <= 28) {
+                return "6";
+            } else if (num_days > 28 && num_days <= 35) {
+                return "5";
+            } else if (num_days > 35 && num_days <= 42) {
+                return "5";
+            } else if (num_days > 42 && num_days <= 49) {
+                return "4";
+            } else if (num_days > 49 && num_days <= 56) {
+                return "3";
+            } else if (num_days > 56) {
+                return "2";
+            }
+        } else if (next_date.before(today_date)) {
+            return "Date is invalid!";
+        }
+
+        return "2";
+    }
+
+    /**
+     * This method compares 2 dates, TODAY and FUTURE
+     * This method enables flexiAdd() to determine the number of days between dates in order to process the result
+     * <p/>
+     * Usage: (example based on TODAY's Date = 2014-11-01)
+     * <p/>
+     * compareDate("2014-11-03") > 2
+     * compareDate("2014-11-20") > 19
+     *
+     * @param _date
+     * @return num_days
+     * @throws ParseException
+     */
+    public int compareDate(String _date) throws ParseException {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+        int num_days;
+
+        Date today_date = date_format.parse(getTodayDate());
+        Date next_date = date_format.parse(_date);
+        num_days = calculateDays(today_date, next_date);
+
+        return num_days;
+    }
+
+    /**
+     * This method checks and validates if the integer passed is in the format of ddMMyy
+     *
+     * @param _date
+     * @return boolean
+     * @throws ParseException
+     */
+    public boolean checkDateFormat(String _date) throws ParseException {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method checks and validates if the integer passed is in the format of dd/MM/yyyy
+     *
+     * @param _date
+     * @return boolean
+     * @throws ParseException
+     */
+    public boolean checkDateFormat2(String _date) throws ParseException {
+        Pattern date_pattern = Pattern.compile(DATE_PATTERN_2);
+        Matcher date_matcher = date_pattern.matcher(_date);
+
+        if (!date_matcher.matches()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method returns today's date
+     *
+     * @return
+     */
+    public String getTodayDate() {
+        Date _date = new Date();
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+
+        return date_format.format(_date);
+    }
+
+    /**
+     * This method calculates the number of days difference from today's date
+     * This method is the core algorithm of the day calculation which is used in determinePriority() method
+     * <p/>
+     * Usage:
+     * <p/>
+     * calculateDays(2014-11-01, 2014-11-05); > 4
+     * calculateDays(2014-11-01, 2014-11-10); > 9
+     *
+     * @param today_date
+     * @param next_date
+     * @return
+     */
+    private int calculateDays(Date today_date, Date next_date) {
+        return (int) ((next_date.getTime() - today_date.getTime()) / (24 * 60 * 60 * 1000));
+    }
+
+    /**
+     * This method returns a double value of the duration between two time
+     * <p/>
+     * Usage:
+     * getTimeDuration("08:00", "10:00"); > 2.0
+     * getTimeDuration("10:00", "14:00"); > 4.0
+     *
+     * @param start_date
+     * @param end_date
+     * @return diff_hours
+     * @throws ParseException
+     */
+    public double getDateDuration(String start_date, String end_date) throws ParseException {
+        SimpleDateFormat time_format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date_start;
+        Date date_end;
+
+        date_start = time_format.parse(start_date);
+        date_end = time_format.parse(end_date);
+
+        // get time in milliseconds
+        long time_diff = date_end.getTime() - date_start.getTime();
+
+        long diff_seconds = time_diff / 1000 % 60;
+        long diff_minutes = time_diff / (60 * 1000) % 60;
+        long diff_hours = time_diff / (60 * 60 * 1000) % 24;
+        long diff_days = time_diff / (24 * 60 * 60 * 1000);
+
+        return diff_days;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\DateValidator.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\TimeValidator.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.util;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class TimeValidator {
+    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]"; //"([01]?[0-9]|2[0-3]):[0-5][0-9]\\S+";
+    private static final String TIME24HOURS_PATTERN2 = "([01]?[0-9]|2[0-3])[0-5][0-9]";
+    private static TimeValidator instance = null;
+    private Pattern _pattern;
+    private Matcher _matcher;
+
+    public TimeValidator() {
+        _pattern = Pattern.compile(TIME24HOURS_PATTERN);
+    }
+
+    /**
+     * This method ensures that there will only be one running instance
+     *
+     * @return
+     */
+    public static TimeValidator getInstance() {
+        if (instance == null) {
+            instance = new TimeValidator();
+        }
+
+        return instance;
+    }
+
+    /**
+     * This method validates the time from a given string
+     * If time matches the regex expression, it will return a true.
+     * <p/>
+     * Usage:
+     * validate("10:00"); > true
+     * validate("Friday"); > false
+     * validate("24:10"); > false
+     * validate("00:10"); > true
+     *
+     * @param _time
+     * @return boolean
+     */
+    public boolean validate(final String _time) {
+        assert _time.length() == 5;
+        _matcher = _pattern.matcher(_time);
+
+//        String time = _time;
+//        time = time.replaceAll(TIME24HOURS_PATTERN, "");
+
+//        String corrected_time = time;
+//
+//        try {
+//            corrected_time = new StringBuffer(corrected_time).insert(corrected_time.length() - 2, ":").toString();
+//        } catch (StringIndexOutOfBoundsException ex) {
+//            throw ex;
+//        }
+
+        /**
+         * Algorithm to provide a natural response when a negative input was entered.
+         * Time validation will ask users if that was the correct input, otherwise users can correct the error.
+         */
+//        if (_matcher.matches() == true) {
+//            return _matcher.matches();
+//        } else if (_matcher.matches() == true && !_time.matches(TIME24HOURS_PATTERN) && _time.matches(TIME24HOURS_PATTERN2)) {
+//            System.out.println("Did you meant " + time + "hrs?");
+//        } else if (_time.matches(TIME24HOURS_PATTERN2)) {
+//            System.out.println("Did you meant " + corrected_time + "hrs?");
+//        }
+
+        return _matcher.matches();
+    }
+
+    /**
+     * This method returns a double value of the duration between two time
+     * <p/>
+     * Usage:
+     * getTimeDuration("08:00", "10:00"); > 2.0
+     * getTimeDuration("10:00", "14:00"); > 4.0
+     *
+     * @param start_time
+     * @param end_time
+     * @return diff_hours
+     * @throws ParseException
+     */
+    public double getTimeDuration(String start_time, String end_time) throws ParseException {
+        SimpleDateFormat time_format = new SimpleDateFormat("HH:mm");
+        Date date_start;
+        Date date_end;
+
+        date_start = time_format.parse(start_time);
+        date_end = time_format.parse(end_time);
+
+        // get time in milliseconds
+        long time_diff = date_end.getTime() - date_start.getTime();
+
+        long diff_seconds = time_diff / 1000 % 60;
+        long diff_minutes = time_diff / (60 * 1000) % 60;
+        long diff_hours = time_diff / (60 * 60 * 1000) % 24;
+        long diff_days = time_diff / (24 * 60 * 60 * 1000);
+
+        return diff_hours;
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\util\TimeValidator.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\nlp\NLPEngineTest.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import static org.junit.Assert.*;
+
+import com.epictodo.model.nlp.Response;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class NLPEngineTest {
+    private final NLPEngine nlp_engine = NLPEngine.getInstance();
+
+    @BeforeClass
+    public static void initialize() {
+    }
+
+    /**
+     * Test assumptions:
+     * Date has to change if testing for date.
+     * Date will always compare with Today's Date
+     */
+
+    @Test
+    public void flexiAddTest() throws ParseException {
+        String sentence = "project submission for cs2103 on monday by 23:59";
+        Response expected = new Response();
+        expected.setTaskTime("23:59");
+        Response results = nlp_engine.flexiAdd(sentence);
+
+        assertEquals(expected.equals(results),true);
+    }
+
+    @Test
+    public void flexiAddTest2() throws ParseException {
+        List<String> task_name = new ArrayList<>();
+        task_name.add("submission");
+        task_name.add("cs2103");
+        task_name.add("project");
+        task_name.add("monday");
+        String sentence = "project submission for cs2103 on monday by 23:59";
+        Response expected = new Response();
+        expected.setTaskName(task_name);
+        Response results = nlp_engine.flexiAdd(sentence);
+
+        Assert.assertEquals(expected.getTaskName(), results.getTaskName());
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\nlp\NLPEngineTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\nlp\SentenceAnalysisTest.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.controller.nlp;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.text.ParseException;
+import java.util.Map;
+
+public class SentenceAnalysisTest {
+    private SentenceAnalysis sentence_analysis = new SentenceAnalysis();
+
+    @Test
+    public void DateAnalysisTest() throws ParseException {
+        Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer("project meeting next monday");
+
+        for (Map.Entry<String, String> map_result : date_time_map.entrySet()) {
+            String _key = map_result.getKey();
+
+            Assert.assertEquals("next monday", _key);
+        }
+    }
+
+    @Test
+    public void DateAnalysisTest2() throws ParseException {
+        Map<String, String> date_time_map = sentence_analysis.dateTimeAnalyzer("project meeting Tuesday 2 weeks later at 15:00");
+
+        for (Map.Entry<String, String> map_result : date_time_map.entrySet()) {
+            String _key = map_result.getKey();
+
+            Assert.assertEquals("Tuesday 2 weeks later at 15:00", _key);
+        }
+    }
+
+    @Test
+    public void SentenceAnalysisTest() throws ParseException {
+        Map<String, String> sentence_map = sentence_analysis.sentenceAnalyzer("submit project report to Damith for cs2103 by Monday");
+
+        Assert.assertEquals(-1348032563, sentence_map.hashCode());
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\controller\nlp\SentenceAnalysisTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\util\DateValidatorTest.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.text.ParseException;
+
+public class DateValidatorTest {
+    private static final double DELTA = 1e-15;
+    private final DateValidator date_validator = new DateValidator();
+
+    /**
+     * convertDateFormat Valid Test Case
+     *
+     * @throws ParseException
+     */
+
+    @Test
+    public void DateCompareTest() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-11-26");
+        Assert.assertEquals("2014-11-26", result);
+    }
+
+    @Test
+    public void DateCompareTest2() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-11-26T23:59");
+        Assert.assertEquals("2014-11-26", result);
+    }
+
+    @Test
+    public void DateCompareTest3() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-11-26-WXX-2");
+        Assert.assertEquals("2014-11-26", result);
+    }
+
+    @Test
+    public void DateCompareTest4() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-11-26-WXX-2T23:59");
+        Assert.assertEquals("2014-11-26", result);
+    }
+
+    /**
+     * convertDateFormat Invalid Test Case
+     *
+     * @throws ParseException
+     */
+
+    @Test(expected = AssertionError.class)
+    public void InvalidDateCompareTest() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-11-32");
+        Assert.assertEquals("2014-11-32", result);
+    }
+
+    @Test
+    public void InvalidDateCompareTest2() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-10-26");
+        Assert.assertEquals("2014-10-26", result);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidDateCompareTest3() throws ParseException {
+        String result = date_validator.convertDateFormat("2014-13-26T14:30");
+        Assert.assertEquals("2014-13-26", result);
+    }
+
+    /**
+     * genericDateFormat Valid Test Cases
+     * <p/>
+     * Result > ddMMyy
+     */
+
+    @Test
+    public void GenericDateTest() throws ParseException {
+        String results = date_validator.genericDateFormat("2014-11-26");
+        Assert.assertEquals("261114", results);
+    }
+
+    @Test
+    public void GenericDateTest2() throws ParseException {
+        String results = date_validator.genericDateFormat("2014-11-13");
+        Assert.assertEquals("131114", results);
+    }
+
+    /**
+     * genericDateFormat Invalid Test Cases
+     */
+
+    @Test(expected = AssertionError.class)
+    public void InvalidGenericDateTest() throws ParseException {
+        String results = date_validator.genericDateFormat("2014-11-26T23:59");
+        Assert.assertEquals("261114", results);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidGenericDateTest2() throws ParseException {
+        String results = date_validator.genericDateFormat("2014-11-26-WXX-2");
+        Assert.assertEquals("261114", results);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidGenericDateTest3() throws ParseException {
+        String results = date_validator.genericDateFormat("2014-11-26-WXX-2T23:59");
+        Assert.assertEquals("261114", results);
+    }
+
+    /**
+     * ValidDateTest Valid Test Cases
+     */
+
+    @Test
+    public void ValidDateTest() throws ParseException {
+        String results = date_validator.validateDate("2014-12-26-WXX-2");
+        Assert.assertEquals("261214", results);
+    }
+
+    @Test
+    public void ValidDateTest2() throws ParseException {
+        String results = date_validator.validateDate("2014-12-13-WXX-2T10:00");
+        Assert.assertEquals("131214", results);
+    }
+
+    /**
+     * ValidDateTest Invalid Test Cases
+     */
+
+    @Test
+    public void InvalidDateTest() throws ParseException {
+        String results = date_validator.validateDate("2014-12-13");
+        Assert.assertEquals(null, results);
+    }
+
+    @Test
+    public void InvalidDateTest2() throws ParseException {
+        String results = date_validator.validateDate("2014-12-13T23:59");
+        Assert.assertEquals(null, results);
+    }
+
+    /**
+     * GetTimeInFormat Test Cases
+     */
+
+    @Test
+    public void TimeInFormatTest() throws ParseException {
+        String results = date_validator.getTimeInFormat("2014-11-23T14:30");
+        Assert.assertEquals("14:30", results);
+    }
+
+    /**
+     * GetTimeInFormat Invalid Test Case
+     */
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeInFormatTest2() throws ParseException {
+        String results = date_validator.getTimeInFormat("2014-12-26-WXX-2T23:59");
+        Assert.assertEquals("23:59", results);
+    }
+
+    /**
+     * ValidateTime Test Cases
+     */
+
+    @Test
+    public void validateTimeTest() {
+        String results = date_validator.validateTime("2014-12-26-WXX-2T10:00");
+        Assert.assertEquals("10:00", results);
+    }
+
+    /**
+     * Invalid ValidateTime Test Case
+     */
+
+    @Test
+    public void InvalidTimeTest() {
+        String results = date_validator.validateTime("2014-12-26T23:59");
+        Assert.assertEquals(null, results);
+    }
+
+    @Test
+    public void InvalidTimeTest2() {
+        String results = date_validator.validateTime("23:59");
+        Assert.assertEquals(null, results);
+    }
+
+    /**
+     * Validate Date Expression Test Cases
+     */
+
+    @Test
+    public void ValidateDateExpTest() {
+        boolean valid = date_validator.validateDateExpression("26/10/2014");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test
+    public void ValidateDateExpTest2() {
+        boolean valid = date_validator.validateDateExpression("32/10/2014");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void ValidateDateExpTest3() {
+        boolean valid = date_validator.validateDateExpression("26/13/2014");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void ValidateDateExpTest4() {
+        boolean valid = date_validator.validateDateExpression("2014/12/26");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void ValidateDateExpTest5() {
+        boolean valid = date_validator.validateDateExpression("2014-12-26");
+        Assert.assertEquals(false, valid);
+    }
+
+    /**
+     * FixShortDate Test Cases
+     */
+    @Test
+    public void FixDateTest() throws ParseException {
+        String results = date_validator.fixShortDate("26/10/2014");
+        Assert.assertEquals("2014-10-26", results);
+    }
+
+    @Test
+    public void FixDateTest2() throws ParseException {
+        String results = date_validator.fixShortDate("26/13/2014");
+        Assert.assertEquals("2015-1-26", results);
+    }
+
+    @Test
+    public void FixDateTest3() throws ParseException {
+        String results = date_validator.fixShortDate("34/12/2014");
+        Assert.assertEquals("2015-1-3", results);
+    }
+
+    /**
+     * ExtractDate Test Cases
+     */
+
+    @Test
+    public void ExtractDateTest() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-10-26");
+        String[] results = date_validator.extractDate("2014-10-26");
+        Assert.assertEquals(expected[0], results[0]);
+    }
+
+    @Test
+    public void ExtractDateTest2() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-10-26");
+        String[] results = date_validator.extractDate("2014-10-26");
+        Assert.assertEquals(expected[1], results[1]);
+    }
+
+    @Test
+    public void ExtractDateTest3() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-10-26");
+        String[] results = date_validator.extractDate("2014-10-26");
+        Assert.assertEquals(expected[2], results[2]);
+    }
+
+    @Test
+    public void ExtractDateTest4() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-11-26T23:59");
+        String[] results = date_validator.extractDate("2014-11-26T23:59");
+        Assert.assertEquals(expected[0], results[0]);
+    }
+
+    @Test
+    public void ExtractDateTest5() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-11-26-WXX-2");
+        String[] results = date_validator.extractDate("2014-11-26-WXX-2");
+        Assert.assertEquals(expected[0], results[0]);
+    }
+
+    @Test
+    public void ExtractDateTest6() throws ParseException {
+        String[] expected = date_validator.extractDate("2014-11-26-WXX-2T23:59");
+        String[] results = date_validator.extractDate("2014-11-26-WXX-2T23:59");
+        Assert.assertEquals(expected[0], results[0]);
+    }
+
+    /**
+     * DeterminePriority Test Cases
+     * <p/>
+     * Test Assumptions:
+     * 1. Test must be adjusted accordingly to Today's Date
+     * 2. Test Date cannot be from the past
+     */
+
+    @Test
+    public void DeterminPriorityTest() throws ParseException {
+        String priority = date_validator.determinePriority("2014-11-26");
+        Assert.assertEquals("7", priority);
+    }
+
+    @Test
+    public void DeterminPriorityTest2() throws ParseException {
+        String priority = date_validator.determinePriority("2014-12-26");
+        Assert.assertEquals("4", priority);
+    }
+
+    @Test
+    public void DeterminPriorityTest3() throws ParseException {
+        String priority = date_validator.determinePriority("2014-10-26");
+        Assert.assertEquals("Date is invalid!", priority);
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\util\DateValidatorTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\util\TimeValidatorTest.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.text.ParseException;
+
+public class TimeValidatorTest {
+    private static final double DELTA = 1e-15;
+    private final TimeValidator time_validator = new TimeValidator();
+
+    /**
+     * Valid Time Test Cases
+     */
+
+    @Test
+    public void ValidTimeTest() {
+        boolean valid = time_validator.validate("01:30");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test
+    public void ValidTimeTest2() {
+        boolean valid = time_validator.validate("23:59");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test
+    public void ValidTimeTest3() {
+        boolean valid = time_validator.validate("00:00");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test
+    public void ValidTimeTest4() {
+        boolean valid = time_validator.validate("00:59");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test
+    public void ValidTimeTest5() {
+        boolean valid = time_validator.validate("13:00");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void ValidTimeTest6() {
+        boolean valid = time_validator.validate("0:30");
+        Assert.assertEquals(true, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void ValidTimeTest7() {
+        boolean valid = time_validator.validate("2:0");
+        Assert.assertEquals(true, valid);
+    }
+
+    /**
+     * Invalid Time Test Cases
+     */
+
+    @Test
+    public void InvalidTimeTest() {
+        boolean valid = time_validator.validate("24:00");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void InvalidTimeTest2() {
+        boolean valid = time_validator.validate("00:60");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void InvalidTimeTest3() {
+        boolean valid = time_validator.validate("12:60");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeTest4() {
+        boolean valid = time_validator.validate("101:00");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeTest5() {
+        boolean valid = time_validator.validate("0:0");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeTest6() {
+        boolean valid = time_validator.validate("14:5");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void InvalidTimeTest7() {
+        boolean valid = time_validator.validate("21:90");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test
+    public void InvalidTimeTest8() {
+        boolean valid = time_validator.validate("99:99");
+        Assert.assertEquals(false, valid);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeTest9() {
+        boolean valid = time_validator.validate("2359");
+        Assert.assertEquals(false, valid);
+    }
+
+    /**
+     * Valid Time Duration Test Cases
+     */
+
+    @Test
+    public void ValidTimeDurationTest() throws ParseException {
+        double duration = time_validator.getTimeDuration("08:00", "10:00");
+        Assert.assertEquals(2.0, duration, DELTA);
+    }
+
+    @Test
+    public void ValidTimeDurationTest2() throws ParseException {
+        double duration = time_validator.getTimeDuration("08:00", "21:00");
+        Assert.assertEquals(13.0, duration, DELTA);
+    }
+
+    @Test
+    public void ValidTimeDurationTest3() throws ParseException {
+        double duration = time_validator.getTimeDuration("8:00", "10:00");
+        Assert.assertEquals(2.0, duration, DELTA);
+    }
+
+    @Test
+    public void ValidTimeDurationTest4() throws ParseException {
+        double duration = time_validator.getTimeDuration("00:00", "10:00");
+        Assert.assertEquals(10.0, duration, DELTA);
+    }
+
+    /**
+     * Invalid Time Duration Test Cases
+     */
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeDurationTest() throws ParseException {
+        double duration = time_validator.getTimeDuration("24:00", "10:00");
+        Assert.assertEquals(10.0, duration, DELTA);
+    }
+
+    @Test
+    public void InvalidTimeDurationTest2() throws ParseException {
+        double duration = time_validator.getTimeDuration("00:90", "10:00");
+        Assert.assertEquals(8.0, duration, DELTA);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void InvalidTimeDurationTest3() throws ParseException {
+        double duration = time_validator.getTimeDuration("99:99", "10:00");
+        Assert.assertEquals(0.0, duration, DELTA);
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\test\java\com\epictodo\util\TimeValidatorTest.java
+
+
+
+
+

@@ -1,0 +1,163 @@
+//@author: generated-unused
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Sentence.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.model.nlp;
+
+public class Sentence {
+    public final String _text;
+
+    public Sentence(String _text) {
+        this._text = _text;
+    }
+
+    public String getText() {
+        return _text;
+    }
+
+    @Override
+    public String toString() {
+        return "Sentence { " + "text = '" + _text + "\'" + " }";
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Sentence.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Syllable.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.model.nlp;
+
+public class Syllable {
+    private final String _text;
+
+    public Syllable(String _text) {
+        this._text = _text;
+    }
+
+    public String getText() {
+        return _text;
+    }
+
+    @Override
+    public String toString() {
+        return "Syllable { " + "text = '" + _text + '\'' + " }";
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Syllable.java
+
+
+
+
+
+	/**
+	 * origin: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Word.java
+	 */
+
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Kenneth Ham
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.epictodo.model.nlp;
+
+public class Word {
+    private final String _text;
+
+    public Word(String _text) {
+        this._text = _text;
+    }
+
+    public String getText() {
+        return _text;
+    }
+
+    @Override
+    public String toString() {
+        return "Word { " + "text = '" + _text + "\'" + " }";
+    }
+}
+
+	// End of segment: D:\My Documents\EclipseWorkspace\main\src\main\java\com\epictodo\model\nlp\Word.java
+
+
+
+
+
