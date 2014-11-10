@@ -46,6 +46,8 @@ public class NLPLoadEngine {
     public LexicalizedParser LEXICAL_PARSER = null;
     private Logger _logger = Logger.getLogger("--- NLP LoadEngine Log ---");
     private PrintStream _err = System.err;
+    private double COUNTER = 0;
+    private double LOAD_COUNT = 36.76;
 
     /**
      * This method mutes NLP API Error Messages temporarily
@@ -58,6 +60,8 @@ public class NLPLoadEngine {
     public void mute() {
         System.setErr(new PrintStream(new OutputStream() {
             public void write(int b) {
+                printProgressBar(COUNTER / LOAD_COUNT);
+                COUNTER++;
             }
         }));
     }
@@ -74,6 +78,29 @@ public class NLPLoadEngine {
         System.setErr(_err);
     }
 
+    /**
+     * This method prints the progress bar to be displayed.
+     * [Hack] to inject into printstream overriding all red warnings on load with progress bar
+     *
+     * @param _percent
+     */
+    public void printProgressBar(double _percent) {
+        StringBuilder bar = new StringBuilder("[");
+
+        for (int i = 0; i < 50; i++) {
+            if (i < (_percent / 2)) {
+                bar.append("=");
+            } else if (i == (_percent / 2)) {
+                bar.append(">");
+            } else {
+                bar.append(" ");
+            }
+        }
+
+        bar.append("]   Loading... " + _percent + "%     ");
+        System.out.print("\r" + bar.toString());
+    }
+
     public NLPLoadEngine() {
         this.mute();
         Properties _properties = new Properties();
@@ -81,12 +108,10 @@ public class NLPLoadEngine {
 
         try {
             CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
-            System.out.println("loading 1");
             LEXICAL_PARSER = LexicalizedParser.loadModel(ENGLISHPCFG_MODEL);
-            System.out.println("loading 2");
             _pipeline = new StanfordCoreNLP(_properties, true);
             _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
-            System.out.println("loading 3");
+
             _logger.log(Level.INFO, "Successfully loaded models.");
         } catch (RuntimeException ex) {
             _logger.log(Level.SEVERE, "Error loading models.");
