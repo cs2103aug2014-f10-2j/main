@@ -92,13 +92,13 @@ public class Task {
         Boolean priority = false;
         Boolean isDone = false;
 
-        if (this.getTaskName() == task2.getTaskName()) {
+        if (this.getTaskName().equals( task2.getTaskName())) {
             taskName = true;
         }
         if (this.getUid() == task2.getUid()) {
             uid = true;
         }
-        if (this.getTaskDescription() == task2.getTaskDescription()) {
+        if (this.getTaskDescription().equals(task2.getTaskDescription())) {
             taskDescription = true;
         }
         if (this.getPriority() == task2.getPriority()) {
