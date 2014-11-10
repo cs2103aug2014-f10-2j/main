@@ -240,7 +240,7 @@ public class CommandWorker {
     private static final String LOG_INVALID = "invalid command!";
     private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
-    private static Response _response = new Response();
+    private static Response _response;
     private static Search _search = new Search();
     private static Logger _logger = Logger.getLogger("System Log");
 
@@ -253,7 +253,7 @@ public class CommandWorker {
      */
     public static Task createTask(String instruction) {
         Task newTask = null;
-
+        _response = new Response();
         try {
             _response = _nlp_engine.flexiAdd(instruction);
         } catch (Exception ex) {
@@ -658,7 +658,8 @@ import com.epictodo.model.task.Task;
 import java.util.ArrayList;
 
 public class WorkDistributor {
-    private static CRUDLogic _logic = new CRUDLogic();
+    private static final String MSG_ENTER_COMMAND = "Please Enter Command";
+	private static CRUDLogic _logic = new CRUDLogic();
     private final static String[] COMMAND_EXIT = {"exit", "quit"};
     private final static String[] COMMAND_ADD = {"add", "create", "+"};
     private final static String[] COMMAND_UPDATE = {"update", "change", "modify"};
@@ -706,7 +707,7 @@ public class WorkDistributor {
      * @return Operation result Message.
      */
     public static String processCommand(String input) {
-        String result = "";
+        String result = MSG_ENTER_COMMAND;
         ArrayList<Task> list = null;
         Task t = null;
         // Clear expired timed tasks
@@ -757,7 +758,7 @@ public class WorkDistributor {
         }
 
         // todo handle invalid input here
-        return null;
+        return result;
     }
 
     /**
