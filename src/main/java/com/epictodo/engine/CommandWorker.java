@@ -1,3 +1,4 @@
+//@author A0112918H
 package com.epictodo.engine;
 
 import com.epictodo.engine.WorkDistributor.KeywordType;
@@ -36,13 +37,9 @@ public class CommandWorker {
         	_logger.info("Unable to parse user's input!");
             return newTask;
         }
-        // NLP task name & description builder
-        StringBuilder taskn_builder = new StringBuilder(CAPACITY);
-        StringBuilder taskd_builder = new StringBuilder(CAPACITY);
-
         // NLP can replace the work below
-        String taskName = getTaskNameViaNlp(taskn_builder);
-        String taskDesc = getTaskDescViaNlp(taskd_builder);
+        String taskName = getTaskNameViaNlp();
+        String taskDesc = getTaskDescViaNlp();
         String taskDate = _response.getTaskDate();
         String taskTime = _response.getTaskTime();
         String startTime = _response.getStartTime();
@@ -113,7 +110,13 @@ public class CommandWorker {
         }
     }
 
-    private static String getTaskNameViaNlp(StringBuilder taskn_builder) {
+    /**
+     * return a string of task name base on NLP info 
+     *
+     * @return task name.
+     */
+    private static String getTaskNameViaNlp() {
+        StringBuilder taskn_builder = new StringBuilder(CAPACITY);
         boolean is_first = true;
         for (String task_name : _response.getTaskName()) {
             if (is_first) {
@@ -127,7 +130,14 @@ public class CommandWorker {
         return taskn_builder.toString();
     }
 
-    private static String getTaskDescViaNlp(StringBuilder taskd_builder) {
+    /**
+     * return a string of task description base on NLP info 
+     *
+     * @return task description.
+     */
+    private static String getTaskDescViaNlp() {
+
+        StringBuilder taskd_builder = new StringBuilder(CAPACITY);
         boolean is_first = true;
 
         for (String task_desc : _response.getTaskDesc()) {
