@@ -7,7 +7,7 @@ import com.epictodo.controller.worker.WorkDistributor;
 import java.util.Scanner;
 
 public class Main {
-	private static final String ASCII_ART_BANNER = "___________      .__         ___________        ___     \n"
+	private static final String ASCII_ART_BANNER = "\n___________      .__         ___________        ___     \n"
 			+ "\\_   _____/_____ |__| ____   \\__    ___/___   __| _/____ \n"
 			+ " |  ____)_\\____ \\|  |/ ___\\    |    | /  _ \\ / __ |/  _ \\\n"
 			+ " |        \\  |_> >  \\  \\___    |    |(  <_> ) /_/ (  <_> \n"
