@@ -24,6 +24,23 @@ public class Storage {
     public enum TaskType {
         FLOATING, DEADLINE, TIMED
     };
+
+
+    /**
+     * This method loads the Json file to ArrayList<Task> of memory objects
+     * Construct them into MAP <TaskType, List<Task>>
+     *
+     * @param list
+     * @return _result
+     */
+    public static ArrayList<Task> loadDbFile(String file_name) {
+        File f = new File(file_name);
+        Gson _gson = instantiateObject();
+        ArrayList<Task> _result = makeArrayList(f, _gson);
+
+        return _result;
+    }
+    
     
     /**
      * This method saves ArrayList<Task> from memory object to Json file.
@@ -109,7 +126,6 @@ public class Storage {
 
         return _gson;
     }
-
     
     /**
      * This method make use of makeTask to retrieve all of tasks from the storage file
