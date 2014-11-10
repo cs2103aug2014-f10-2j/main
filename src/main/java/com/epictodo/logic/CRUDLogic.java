@@ -24,7 +24,6 @@ public class CRUDLogic {
     private static final String MSG_POSTFIX_IS_REMOVED = "\" is removed";
     private static final String MSG_POSTFIX_IS_UPDATED = "\" is updated";
     private static final String MSG_POSTFIX_MARKED_AS_DONE = "\" is marked as done";
-    private static final String MSG_ERROR = "error!";
     private static final String MSG_POSTFIX_IS_ADDED = "\" is added";
     private static final String MSG_PREFIX_TASK = "task \"";
     private static final String MSG_FAILED_IO_ERROR = "failed due to file io error";
@@ -669,4 +668,12 @@ public class CRUDLogic {
     private void updateWorkingList(ArrayList<Task> li) {
         _workingList = li;
     }
+
+	public String searchDetail(Task task) {
+		String details ="";
+		if(task != null){
+			details = task.getDetail();
+		}
+		return details;
+	}
 }

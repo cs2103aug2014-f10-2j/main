@@ -267,7 +267,7 @@ public class TimedTask extends Task {
         //Step 7: Check whether date entered is in the future
         Date currDate = new Date();
         Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
-        if (!enteredDate.after(currDate)) {
+        if (!enteredDate.after(currDate) && !enteredDate.before(currDate) ) {
             throw new InvalidDateException(date);
         }
         return true;

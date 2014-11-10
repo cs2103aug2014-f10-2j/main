@@ -146,7 +146,7 @@ public class WorkDistributor {
                 }
                 break;
             case SEARCH:
-                result = task.getDetail();
+                result = _logic.searchDetail(task);
                 break;
             default:
                 break;
