@@ -57,7 +57,7 @@ public class NLPLoadEngine {
      * <p/>
      * mute();
      */
-    public void mute() {
+    private void mute() {
         System.setErr(new PrintStream(new OutputStream() {
             public void write(int b) {
                 progressBar();
@@ -73,7 +73,7 @@ public class NLPLoadEngine {
      * <p/>
      * restore();
      */
-    public void restore() {
+    private void restore() {
         System.setErr(_err);
     }
 
