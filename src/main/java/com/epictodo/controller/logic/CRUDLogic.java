@@ -99,6 +99,7 @@ public class CRUDLogic {
 	 * This method returns the whole list of incomplete tasks
 	 *
 	 * @return the ArrayList containing all the tasks
+	 * @throws IllegalArgumentException
 	 * @throws InvalidTimeException
 	 * @throws InvalidDateException
 	 * @throws ParseException
@@ -108,9 +109,10 @@ public class CRUDLogic {
 		 * the return should only deliver a duplicate of the objects
 		 */
 		ArrayList<Task> resultList = new ArrayList<Task>();
-		for (int i = 0; i < _items.size(); i++) {
-			if (!_items.get(i).getIsDone())
-				resultList.add(_items.get(i).copy());
+		ArrayList<Task> orderedList = getTasksOrderedByDueDate();
+		for (int i = 0; i < orderedList.size(); i++) {
+			if (!orderedList.get(i).getIsDone())
+				resultList.add(orderedList.get(i).copy());
 		}
 
 		updateWorkingList(resultList); // update the working list
@@ -214,9 +216,7 @@ public class CRUDLogic {
 	 * @throws InvalidDateException
 	 * @throws InvalidTimeException
 	 */
-	public ArrayList<Task> getTasksOrderedByDueDate()
-			throws IllegalArgumentException, ParseException,
-			InvalidDateException, InvalidTimeException {
+	public ArrayList<Task> getTasksOrderedByDueDate() {
 		ArrayList<Task> resultList = new ArrayList<Task>();
 		ArrayList<Task> temp = new ArrayList<Task>();
 
