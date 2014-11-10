@@ -72,9 +72,11 @@ public class DeadlineTask extends Task {
      */
     public void setDateTime(String date, String time) throws ParseException, InvalidDateException, InvalidTimeException {
         // This checks whether date and time entered are of correct length
-        assert date.length() == 6;
-        assert time.length() == 5;
-
+    	if(time== null){
+    		// in case time is missing from user's input
+    		time = "10:00";
+    	}
+    	
         if (checkTimeIsValid(time) && checkDateIsValid(date)) {
             String dateTimeTemp = date + " " + time;
             long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
@@ -222,7 +224,8 @@ public class DeadlineTask extends Task {
         }
 
         //Step 7: Check whether date entered is in the future
-        Date currDate = new Date();
+        Date d = new Date();
+        Date currDate = new Date(d.getYear(),d.getMonth(),d.getDate());
         Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
         if (!enteredDate.after(currDate)&&enteredDate.before(currDate)) {
             throw new InvalidDateException(date);
