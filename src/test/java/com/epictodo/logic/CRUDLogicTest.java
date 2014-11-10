@@ -24,9 +24,9 @@
 
 package com.epictodo.logic;
 
-import com.epictodo.model.InvalidDateException;
-import com.epictodo.model.InvalidTimeException;
 import com.epictodo.model.Task;
+import com.epictodo.model.Exception.InvalidDateException;
+import com.epictodo.model.Exception.InvalidTimeException;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -81,11 +81,12 @@ public class NLPLoadEngine {
 
         try {
             CLASSIFIER = CRFClassifier.getClassifierNoExceptions(CLASSIFIER_MODEL);
+            System.out.println("loading 1");
             LEXICAL_PARSER = LexicalizedParser.loadModel(ENGLISHPCFG_MODEL);
-
+            System.out.println("loading 2");
             _pipeline = new StanfordCoreNLP(_properties, true);
             _pipeline.addAnnotator(new TimeAnnotator("sutime", _properties));
-
+            System.out.println("loading 3");
             _logger.log(Level.INFO, "Successfully loaded models.");
         } catch (RuntimeException ex) {
             _logger.log(Level.SEVERE, "Error loading models.");

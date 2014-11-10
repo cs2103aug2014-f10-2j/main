@@ -1,4 +1,4 @@
-package com.epictodo.model;
+package com.epictodo.model.Exception;
 
 //@author A0111683L
 public class InvalidTimeException extends Exception {
