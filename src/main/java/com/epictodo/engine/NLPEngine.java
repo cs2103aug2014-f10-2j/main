@@ -523,11 +523,11 @@ public class NLPEngine {
             }
 
             if (reln_key.equalsIgnoreCase("prep")) {
-                if (!task_name.contains(dep_value)) {
+                if (!task_name.contains(dep_value) && (!date_validator.checkDateFormat(dep_value) && !date_validator.checkDateFormat2(dep_value))) {
                     task_name.add(dep_value);
                 }
 
-                if (task_time.size() < 2) {
+                if (task_time.size() > 0 && task_time.size() < 2) {
                     if (dep_value.contains(task_time.get(0))) {
                         task_name.remove(dep_value);
                     }
