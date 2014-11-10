@@ -156,7 +156,6 @@ public class TimedTask extends Task {
         try {
             cloned = new TimedTask(t, getStartDateTime(), getEndDateTime());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         cloned.setUid(t.getUid());

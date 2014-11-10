@@ -116,7 +116,6 @@ public class DeadlineTask extends Task {
         try {
             cloned = new DeadlineTask(t, getEndDateTime());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         cloned.setUid(t.getUid());
