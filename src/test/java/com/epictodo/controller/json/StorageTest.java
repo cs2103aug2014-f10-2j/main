@@ -71,8 +71,6 @@ public class StorageTest {
 
         //grab the first time Task and compare it's endDateTimeAsString
         TimedTask tt = (TimedTask) listOfTasks.get(0);
-        System.out.println(listOfTasks);
-        System.out.println(tt.getEndDateTimeAsString());
         assertEquals(timed_task.equals(tt),true);
     }
 

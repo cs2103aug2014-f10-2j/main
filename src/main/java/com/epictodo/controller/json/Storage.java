@@ -51,8 +51,7 @@ public class Storage {
      */
     public static boolean saveToJson(String file_name, ArrayList<Task> list) {
         assert file_name.equalsIgnoreCase(file_name);
-        _logger.log(Level.INFO, "Filename: \'storage.txt\' has been asserted.");
-
+   
         Map<TaskType, List<Task>> _map = makeMap(list);
 
         try {
@@ -61,11 +60,9 @@ public class Storage {
             String json_result = _gson.toJson(_map);
 
             if (_map == null || _map.isEmpty()) {
-                _logger.log(Level.WARNING, "Map<TaskType, List<Task>> is empty.");
-                file_writer.write("");
+               file_writer.write("");
             } else {
                 file_writer.write(json_result);
-                _logger.log(Level.INFO, "Successfully stored JSON results to Storage");
             }
 
             file_writer.close();
