@@ -23,12 +23,12 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.nlp;
 
-public class Sentence {
-    public final String _text;
+public class Word {
+    private final String _text;
 
-    public Sentence(String _text) {
+    public Word(String _text) {
         this._text = _text;
     }
 
@@ -38,6 +38,6 @@ public class Sentence {
 
     @Override
     public String toString() {
-        return "Sentence { " + "text = '" + _text + "\'" + " }";
+        return "Word { " + "text = '" + _text + "\'" + " }";
     }
 }

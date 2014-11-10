@@ -24,8 +24,8 @@
 
 package com.epictodo.model;
 
-import com.epictodo.model.DeadlineTask;
-import com.epictodo.model.Task;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.Task;
 
 import org.junit.Before;
 import org.junit.Test;

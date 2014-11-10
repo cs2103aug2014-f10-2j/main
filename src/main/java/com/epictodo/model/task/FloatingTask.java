@@ -1,4 +1,4 @@
-package com.epictodo.model;
+package com.epictodo.model.task;
 
 //@author A0111683L
 public class FloatingTask extends Task {

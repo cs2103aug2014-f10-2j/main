@@ -1,10 +1,10 @@
 //@author A0112918H
 package com.epictodo.controller.json;
 
-import com.epictodo.model.DeadlineTask;
-import com.epictodo.model.FloatingTask;
-import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

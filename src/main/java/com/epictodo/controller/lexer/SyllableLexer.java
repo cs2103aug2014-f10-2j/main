@@ -25,7 +25,7 @@
 
 package com.epictodo.controller.lexer;
 
-import com.epictodo.model.Word;
+import com.epictodo.model.nlp.Word;
 
 public class SyllableLexer {
     public int count(Word _word) {

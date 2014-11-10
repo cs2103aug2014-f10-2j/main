@@ -2,7 +2,7 @@
 package com.epictodo.engine;
 
 import com.epictodo.logic.CRUDLogic;
-import com.epictodo.model.Task;
+import com.epictodo.model.task.Task;
 
 import java.util.ArrayList;
 

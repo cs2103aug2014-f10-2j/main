@@ -1,4 +1,4 @@
-package com.epictodo.model;
+package com.epictodo.model.task;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -6,100 +6,70 @@ import java.util.Date;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
 
-//@ author A0111683L
-public class TimedTask extends Task {
+//@author A0111683L
+public class DeadlineTask extends Task {
     /**
      * *********** Data members *********************
      */
-    private long startDateTime;
     private long endDateTime;
 
     /**
-     * ************ Constructors
+     * *********** Constructors
      *
      * @throws InvalidTimeException
-     * @throws InvalidDateException
-     * @throws ParseException
-     * @throws Exception            *********************
+     * @throws InvalidDateException *********************
      */
-
-    public TimedTask(String taskName, String taskDescription, int priority, String ddmmyy, String time, double duration) throws InvalidDateException, InvalidTimeException {
+    public DeadlineTask(String taskName, String taskDescription, int priority, String ddmmyy, String time) throws InvalidDateException, InvalidTimeException {
         super(taskName, taskDescription, priority);
         // This checks whether date and time entered are of correct length
         assert ddmmyy.length() == 6;
         assert time.length() == 5;
-
-        // ignore the default parsing error since we already have invalid date and time
         try {
             setDateTime(ddmmyy, time);
         } catch (ParseException e) {
 
         }
-        setDuration(duration);
-
     }
 
-    public TimedTask(Task t, long startDateTime, long endDateTime) throws Exception {
+    public DeadlineTask(Task t, long endDateTime) throws Exception {
         super(t.getTaskName(), t.getTaskDescription(), t.getPriority());
-        this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
 
     /**
      * ************* Accessors **********************
      */
-
-    public long getStartDateTime() {
-        return this.startDateTime;
-    }
-
     public long getEndDateTime() {
         return this.endDateTime;
     }
 
-    // This method converts the stored unixTimeStamp into "ddMMyy HH:mm"
-    public String getStartDateTimeAsString() {
-        String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
-        return dateTime;
-    }
-
+    // This method converts the unixTimeStamp to readable date time format
     public String getEndDateTimeAsString() {
         String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(endDateTime * 1000));
         return dateTime;
     }
 
     /**
-     * ************* Accessors for local class only ***
+     * ************* Accessors for local class only **********************
      */
-    public String getStartDate() {
-        String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+    public String getDate() {
+        String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(endDateTime * 1000));
         String date = dateTime.substring(0, 6);
         return date;
     }
 
-    public String getStartTime() {
-        String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm").format(new java.util.Date(startDateTime * 1000));
+    public String getTime() {
+        String dateTime = new java.text.SimpleDateFormat("ddMMyy HH:mm")
+                .format(new java.util.Date(endDateTime * 1000));
         // Index 9 is the colon
         String timeHour = dateTime.substring(7, 9);
         String timeMinute = dateTime.substring(10);
-        return timeHour + ":" + timeMinute;
-    }
-
-    public double getDuration() {
-        long hoursInSeconds = endDateTime - startDateTime;
-        double hour = (int) hoursInSeconds / 60 / 60;
-        return hour;
+        return timeHour +":"+ timeMinute;
     }
 
     /**
      * ************* Mutators ***********************
      */
-    public void setDuration(double duration) {
-        long temp = (long) (startDateTime + (duration * 60 * 60));
-        assert temp != 0;
-        endDateTime = temp;
-    }
-
     public void setDateTime(String date, String time) throws ParseException, InvalidDateException, InvalidTimeException {
         // This checks whether date and time entered are of correct length
         assert date.length() == 6;
@@ -107,54 +77,44 @@ public class TimedTask extends Task {
 
         if (checkTimeIsValid(time) && checkDateIsValid(date)) {
             String dateTimeTemp = date + " " + time;
-            // long epoch = new
-            // java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse("01/01/1970 01:00:00").getTime()
-            // / 1000;
-            long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(
-                    dateTimeTemp).getTime() / 1000;
+            long epoch = new java.text.SimpleDateFormat("ddMMyy HH:mm").parse(dateTimeTemp).getTime() / 1000;
             assert epoch != 0;
-            startDateTime = epoch;
+            endDateTime = epoch;
         }
-
     }
 
     /**
      * ************* Class methods ***********************
      */
     public String getDetail() {
-        return super.getDetail() + "Start Date and Time: " + this.getStartDateTimeAsString() + '\n' + "End Date and Time: " + this.getEndDateTimeAsString() + '\n';
+        return super.getDetail() + "End Date and time: " + this.getEndDateTimeAsString() + '\n';
     }
 
-    public String toString() {
-        return super.toString() + " from " + this.getStartDateTimeAsString() + " to "
-                + this.getEndDateTimeAsString();
-    }
-
-    public Boolean equals(TimedTask task2) {
+    public Boolean equals(DeadlineTask task2) {
         Boolean compareTask = super.equals(task2);
         Boolean enddatetime = false;
-        Boolean startdatetime = false;
 
         if (this.getEndDateTime() == task2.getEndDateTime()) {
             enddatetime = true;
         }
 
-        if (this.getStartDateTime() == task2.getStartDateTime()) {
-            startdatetime = true;
-        }
-
-        if (compareTask && enddatetime && startdatetime) {
+        if (compareTask && enddatetime) {
             return true;
         } else {
             return false;
         }
     }
 
-    public TimedTask copy() {
+    public String toString() {
+        return super.toString() + " by " + this.getEndDateTimeAsString();
+    }
+
+    public DeadlineTask copy() {
+
         Task t = super.copy();
-        TimedTask cloned = null;
+        DeadlineTask cloned = null;
         try {
-            cloned = new TimedTask(t, getStartDateTime(), getEndDateTime());
+            cloned = new DeadlineTask(t, getEndDateTime());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -169,12 +129,7 @@ public class TimedTask extends Task {
 
     private boolean checkTimeIsValid(String time) throws InvalidTimeException {
         String regex = "[0-9]+";
-        String hour = "";
-        try{
-        hour = time.substring(0, 2);
-        }catch(Exception e){
-        	throw new InvalidTimeException("");
-        }
+        String hour = time.substring(0, 2);
         // Check whether hour is made up of digits
         if (!hour.matches(regex)) {
             throw new InvalidTimeException(time);
@@ -270,7 +225,7 @@ public class TimedTask extends Task {
         //Step 7: Check whether date entered is in the future
         Date currDate = new Date();
         Date enteredDate = new Date(yyyyInt - 1900, monthInt - 1, dayInt);
-        if (!enteredDate.after(currDate) && enteredDate.before(currDate) ) {
+        if (!enteredDate.after(currDate)&&enteredDate.before(currDate)) {
             throw new InvalidDateException(date);
         }
         return true;

@@ -2,9 +2,9 @@
 
 package com.epictodo.util;
 
-import com.epictodo.model.DeadlineTask;
-import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
 
 import java.util.Comparator;
 

@@ -25,8 +25,8 @@
 
 package com.epictodo.controller.lexer;
 
-import com.epictodo.model.Sentence;
-import com.epictodo.model.Word;
+import com.epictodo.model.nlp.Sentence;
+import com.epictodo.model.nlp.Word;
 
 import java.util.LinkedList;
 import java.util.List;

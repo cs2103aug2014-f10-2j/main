@@ -5,6 +5,9 @@ import com.epictodo.engine.WorkDistributor.KeywordType;
 import com.epictodo.model.*;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
+import com.epictodo.model.nlp.Response;
+import com.epictodo.model.nlp.Search;
+import com.epictodo.model.task.Task;
 import com.epictodo.util.TaskBuilder;
 
 import java.text.ParseException;

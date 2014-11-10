@@ -3,6 +3,10 @@ package com.epictodo.util;
 import com.epictodo.model.*;
 import com.epictodo.model.exception.InvalidDateException;
 import com.epictodo.model.exception.InvalidTimeException;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
 
 /*
     "start_date_time": 1412907000,

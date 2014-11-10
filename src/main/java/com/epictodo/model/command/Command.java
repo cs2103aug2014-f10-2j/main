@@ -1,8 +1,10 @@
 // @author A0112725N
 
-package com.epictodo.model;
+package com.epictodo.model.command;
 
 import java.util.ArrayList;
+
+import com.epictodo.model.task.Task;
 
 /**
  * This class represents a undoable command

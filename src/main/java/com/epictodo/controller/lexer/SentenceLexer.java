@@ -25,7 +25,7 @@
 
 package com.epictodo.controller.lexer;
 
-import com.epictodo.model.Sentence;
+import com.epictodo.model.nlp.Sentence;
 
 import java.text.BreakIterator;
 import java.util.LinkedList;

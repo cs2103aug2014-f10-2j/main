@@ -25,7 +25,8 @@
 
 package com.epictodo.controller.lexer;
 
-import com.epictodo.model.Sentence;
+import com.epictodo.model.nlp.Sentence;
+
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 

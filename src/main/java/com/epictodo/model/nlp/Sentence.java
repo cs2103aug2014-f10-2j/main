@@ -23,12 +23,12 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.nlp;
 
-public class Syllable {
-    private final String _text;
+public class Sentence {
+    public final String _text;
 
-    public Syllable(String _text) {
+    public Sentence(String _text) {
         this._text = _text;
     }
 
@@ -38,6 +38,6 @@ public class Syllable {
 
     @Override
     public String toString() {
-        return "Syllable { " + "text = '" + _text + '\'' + " }";
+        return "Sentence { " + "text = '" + _text + "\'" + " }";
     }
 }

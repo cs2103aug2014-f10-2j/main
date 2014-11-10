@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-package com.epictodo.model;
+package com.epictodo.model.nlp;
 
 import java.util.List;
 

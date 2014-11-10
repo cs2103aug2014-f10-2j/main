@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.epictodo.logic.CRUDLogic;
-import com.epictodo.model.Task;
+import com.epictodo.model.task.Task;
 
 public class engineTest {
 

@@ -24,8 +24,8 @@
 
 package com.epictodo.model;
 
-import com.epictodo.model.FloatingTask;
-import com.epictodo.model.Task;
+import com.epictodo.model.task.FloatingTask;
+import com.epictodo.model.task.Task;
 
 import org.junit.Before;
 import org.junit.Test;

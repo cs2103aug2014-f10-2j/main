@@ -28,11 +28,12 @@ package com.epictodo.engine;
 import com.epictodo.controller.nlp.GrammaticalParser;
 import com.epictodo.controller.nlp.SentenceAnalysis;
 import com.epictodo.controller.nlp.SentenceStructure;
-import com.epictodo.model.Delta;
-import com.epictodo.model.Response;
-import com.epictodo.model.Search;
+import com.epictodo.model.nlp.Delta;
+import com.epictodo.model.nlp.Response;
+import com.epictodo.model.nlp.Search;
 import com.epictodo.util.DateValidator;
 import com.epictodo.util.TimeValidator;
+
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.TypedDependency;
 

@@ -24,8 +24,8 @@
 
 package com.epictodo.model;
 
-import com.epictodo.model.Task;
-import com.epictodo.model.TimedTask;
+import com.epictodo.model.task.Task;
+import com.epictodo.model.task.TimedTask;
 
 import org.junit.Before;
 import org.junit.Test;
