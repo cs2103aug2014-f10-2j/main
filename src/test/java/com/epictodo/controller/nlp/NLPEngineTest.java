@@ -25,10 +25,7 @@
 
 package com.epictodo.controller.nlp;
 
-import static org.junit.Assert.*;
-
 import com.epictodo.model.nlp.Response;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,6 +33,8 @@ import org.junit.Test;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class NLPEngineTest {
     private final NLPEngine nlp_engine = NLPEngine.getInstance();
@@ -52,20 +51,20 @@ public class NLPEngineTest {
 
     @Test
     public void flexiAddTest() throws ParseException {
-        String sentence = "project submission for cs2103 on monday by 23:59";
+        String sentence = "project submission for cs2103 next monday by 23:59";
         Response expected = new Response();
         expected.setTaskTime("23:59");
         Response results = nlp_engine.flexiAdd(sentence);
 
-        assertEquals(expected.equals(results),true);
+        assertEquals(expected.getTaskTime(), results.getTaskTime());
     }
 
     @Test
     public void flexiAddTest2() throws ParseException {
         List<String> task_name = new ArrayList<>();
+        task_name.add("project");
         task_name.add("submission");
         task_name.add("cs2103");
-        task_name.add("project");
         task_name.add("monday");
         String sentence = "project submission for cs2103 on monday by 23:59";
         Response expected = new Response();

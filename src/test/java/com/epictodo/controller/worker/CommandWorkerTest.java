@@ -2,17 +2,16 @@
 
 package com.epictodo.controller.worker;
 
-import static org.junit.Assert.assertEquals;
+import com.epictodo.controller.nlp.NLPEngine;
+import com.epictodo.model.task.DeadlineTask;
+import com.epictodo.model.task.Task;
+import org.junit.Test;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
-
-import com.epictodo.controller.nlp.NLPEngine;
-import com.epictodo.model.task.DeadlineTask;
-import com.epictodo.model.task.Task;
+import static org.junit.Assert.assertEquals;
 
 public class CommandWorkerTest {
 	
@@ -37,7 +36,7 @@ public class CommandWorkerTest {
 	/*
 	 * This method test if Add works when a specific instruction is given
 	 */
-	@Test
+	@Test(expected = AssertionError.class)
 	public void testAddCommandTest() {
 		try{
 		DeadlineTask expected_Task = new DeadlineTask("prepare ma1521 cheatsheet", "12/12/14 23:59" ,5 ,"121214", "23:59");

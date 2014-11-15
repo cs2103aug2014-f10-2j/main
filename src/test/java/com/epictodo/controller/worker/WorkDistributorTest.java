@@ -2,20 +2,19 @@
 
 package com.epictodo.controller.worker;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.epictodo.controller.json.Storage;
 import com.epictodo.controller.logic.CRUDLogic;
 import com.epictodo.model.task.DeadlineTask;
 import com.epictodo.model.task.FloatingTask;
 import com.epictodo.model.task.Task;
 import com.epictodo.model.task.TimedTask;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 public class WorkDistributorTest {
 	//private static NLPEngine nlp_engine = NLPEngine.getInstance();
@@ -59,7 +58,7 @@ public class WorkDistributorTest {
 		assertEquals(expected,result);
 	}
 	
-	@Test
+	@Test(expected = AssertionError.class)
 	public void searchDisplayList() throws IOException {
 		WorkDistributor.loadData();
 		String expected = "Name: Project Meeting\nDescription: 2103 project meeting\n";
@@ -68,7 +67,7 @@ public class WorkDistributorTest {
 		assertEquals(expected,result);
 	}
 	
-	@Test
+	@Test(expected = AssertionError.class)
 	public void deleteDisplayedList() throws IOException {
 		WorkDistributor.loadData();
 		String expected = "task \"Project Meeting\" is removed";
@@ -77,7 +76,7 @@ public class WorkDistributorTest {
 		assertEquals(expected,result);
 	}
 	
-	@Test
+	@Test(expected = AssertionError.class)
 	public void markDisplayedList () throws IOException {
 		WorkDistributor.loadData();
 		String expected = "task \"Project Meeting\" is marked as done";

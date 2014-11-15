@@ -252,13 +252,13 @@ public class DateValidatorTest {
     @Test
     public void FixDateTest2() throws ParseException {
         String results = date_validator.fixShortDate("26/13/2014");
-        Assert.assertEquals("2015-1-26", results);
+        Assert.assertEquals("2015-01-26", results);
     }
 
     @Test
     public void FixDateTest3() throws ParseException {
         String results = date_validator.fixShortDate("34/12/2014");
-        Assert.assertEquals("2015-1-3", results);
+        Assert.assertEquals("2015-01-03", results);
     }
 
     /**
@@ -318,13 +318,13 @@ public class DateValidatorTest {
     @Test
     public void DeterminPriorityTest() throws ParseException {
         String priority = date_validator.determinePriority("2014-11-26");
-        Assert.assertEquals("7", priority);
+        Assert.assertEquals("8", priority);
     }
 
     @Test
     public void DeterminPriorityTest2() throws ParseException {
         String priority = date_validator.determinePriority("2014-12-26");
-        Assert.assertEquals("4", priority);
+        Assert.assertEquals("5", priority);
     }
 
     @Test
