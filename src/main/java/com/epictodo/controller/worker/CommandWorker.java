@@ -22,7 +22,7 @@ public class CommandWorker {
     private static final int CAPACITY = 100;
     private static NLPEngine _nlp_engine = NLPEngine.getInstance();
     private static Response _response;
-    private static Search _search = new Search();
+    private static Search _search;
     private static Logger _logger = Logger.getLogger("System Log");
 
     /**
@@ -83,12 +83,14 @@ public class CommandWorker {
      * @return result String as ddmmyy.
      */
     public static String getDateViaNlp(String keyword) {
+        _search = new Search();
         String ddmmyy;
 
         try {
             _search = _nlp_engine.flexiSearch(keyword);
         } catch (ParseException ex) {
             _logger.info(LOG_INVALID);
+            return null;
         }
 
         ddmmyy = _search.getSearchDate();

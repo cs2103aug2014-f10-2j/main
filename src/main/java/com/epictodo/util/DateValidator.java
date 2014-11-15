@@ -25,6 +25,8 @@
 
 package com.epictodo.util;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -110,12 +112,13 @@ public class DateValidator {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
 //        int num_days;
         String _result;
+        String[] exact_date = extractDate(_date);
 
         Pattern date_pattern = Pattern.compile(GENERIC_PATTERN);
         Matcher date_matcher = date_pattern.matcher(_date);
 
-        Date today_date = date_format.parse(getTodayDate());
-        Date next_date = date_format.parse(_date);
+//        Date today_date = date_format.parse(getTodayDate());
+//        Date next_date = date_format.parse(_date);
 //        num_days = calculateDays(today_date, next_date);
 
         // Algorithm causing a bug for tomorrow's date
@@ -131,9 +134,10 @@ public class DateValidator {
 
         if (!date_matcher.matches()) {
             return null;
-        } else {
-            _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
         }
+
+//        _result = date_matcher.group(5) + date_matcher.group(4) + date_matcher.group(3);
+        _result = exact_date[0] + exact_date[1] + date_matcher.group(3);
 
         return _result;
     }
@@ -300,13 +304,17 @@ public class DateValidator {
     public String fixShortDate(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
         String _result;
+        DecimalFormat decimal_format= new DecimalFormat("00");
+        decimal_format.setRoundingMode(RoundingMode.DOWN);
         _calendar.setTime(date_format.parse(_date));
 
         int _year = _calendar.get(Calendar.YEAR);
         int _month = _calendar.get(Calendar.MONTH) + 1;
+        String month = decimal_format.format(_month);
         int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+        String day = decimal_format.format(_day);
 
-        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+        _result = String.valueOf(_year) + "-" + String.valueOf(month) + "-" + String.valueOf(day);
 
         return _result;
     }
@@ -328,13 +336,17 @@ public class DateValidator {
 
         SimpleDateFormat date_format = new SimpleDateFormat("ddMMyy", Locale.ENGLISH);
         String _result;
+        DecimalFormat decimal_format= new DecimalFormat("00");
+        decimal_format.setRoundingMode(RoundingMode.DOWN);
         _calendar.setTime(date_format.parse(_date));
 
         int _year = _calendar.get(Calendar.YEAR);
         int _month = _calendar.get(Calendar.MONTH) + 1;
+        String month = decimal_format.format(_month);
         int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+        String day = decimal_format.format(_day);
 
-        _result = String.valueOf(_year) + "-" + String.valueOf(_month) + "-" + String.valueOf(_day);
+        _result = String.valueOf(_year) + "-" + String.valueOf(month) + "-" + String.valueOf(day);
 
         return _result;
     }
@@ -342,7 +354,6 @@ public class DateValidator {
     public String compareDateTime(String date_begin, String date_end) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String result_begin;
-        String result_end;
         int num_days;
 
         Pattern date_pattern = Pattern.compile(TIMEX_PATTERN_2);
@@ -389,14 +400,18 @@ public class DateValidator {
     public String[] extractDate(String _date) throws ParseException {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String[] _list = new String[3];
+        DecimalFormat decimal_format= new DecimalFormat("00");
+        decimal_format.setRoundingMode(RoundingMode.DOWN);
         _calendar.setTime(date_format.parse(_date));
 
         int _year = _calendar.get(Calendar.YEAR);
         int _month = _calendar.get(Calendar.MONTH) + 1;
+        String month = decimal_format.format(_month);
         int _day = _calendar.get(Calendar.DAY_OF_MONTH);
+        String day = decimal_format.format(_day);
 
-        _list[0] = String.valueOf(_day);
-        _list[1] = String.valueOf(_month);
+        _list[0] = String.valueOf(day);
+        _list[1] = String.valueOf(month);
         _list[2] = String.valueOf(_year);
 
         return _list;

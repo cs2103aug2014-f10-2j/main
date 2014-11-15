@@ -667,6 +667,7 @@ public class NLPEngine {
      * @throws ParseException
      */
     public Search flexiSearch(String _sentence) throws ParseException {
+        _search = new Search();
         String date_value;
         String parse_date;
         StringBuilder string_builder = new StringBuilder(CAPACITY);
